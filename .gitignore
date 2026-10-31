@@ -1,0 +1,7 @@
+# Raw chats and secrets
+exports/
+.env
+
+# Script caches
+tools/palace-builder/.cache/
+__pycache__/
