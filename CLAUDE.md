@@ -1,3 +1,5 @@
+@AGENTS.md
+
 # Loci: project rules
 
 Loci is a SPECS Lens for Devpost's Learn AR with SPECS hackathon. It turns a chosen set of my AI conversations into a memory palace in my room.
