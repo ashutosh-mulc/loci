@@ -99,6 +99,25 @@ export class LociLabelsUI extends BaseScriptComponent {
     if (e) e.root.getTransform().setLocalPosition(localOffset)
   }
 
+  /** Uniform scale of one label (1 = its normal size). */
+  setScale(key: string, scale: number): void {
+    const e = this.labels.get(key)
+    if (e && !isNull(e.root)) e.root.getTransform().setLocalScale(vec3.one().uniformScale(scale))
+  }
+
+  getScale(key: string): number {
+    const e = this.labels.get(key)
+    return e && !isNull(e.root) ? e.root.getTransform().getLocalScale().x : 1
+  }
+
+  /** Fade one label (1 = its normal colour). */
+  setAlpha(key: string, alpha: number): void {
+    const e = this.labels.get(key)
+    if (!e || isNull(e.root)) return
+    const c = this.textColor
+    e.text.textFill.color = new vec4(c.r, c.g, c.b, c.a * alpha)
+  }
+
   setVisible(key: string, visible: boolean): void {
     const e = this.labels.get(key)
     if (!e) return

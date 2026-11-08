@@ -106,3 +106,9 @@ Prompt: "run the suggested loop" over `loci-review-v2.md` (one item per round: L
 - Demo tour now answers at every topic so the video shows "Round done". `video-script.md` timings updated (about 2:40).
 - verify-preview: tour screenshot shows "Round done", five topics at 1/7, and the Go again button, all readable. The tour still finishes all four steps (guitar 4/4).
 - LEAF: 1, 2, 3, 5, 6, 7, 8, 9 all **pass (8/8)**. The `loci-5-recall` tool call times out because the scenario is long; the result was read from the log ("Scenario loci-5-recall completed successfully").
+
+### Round 6: #6, star labels were well under the brief's ~4 cm cap height
+- Test first: new `loci-10-aimed-label`. Open a topic, aim the gaze at its outermost star: that star must be "aimed" with a label scale above 2, others at about 1, and it must shrink back when the gaze moves on. Before: **failed** (aimed = null, scale 1.00).
+- Fix: `updateAimedLabel` picks the star under the hand ray, else the one nearest the gaze within 4° (`aimConeDeg`). Its label eases to `aimedLabelCapCm` = 4 cm (the brief's size), 2.2× the normal 1.8 cm; the others fade to 30% while one is aimed. `LociLabelsUI.setScale`/`getScale`/`setAlpha` added.
+- verify-preview: two tour screenshots. First pass: the big label ("Data first, then CLAD") read well but covered a neighbour's label. After the fade, the other labels sit back and the aimed one stands out.
+- LEAF: 1, 2, 3, 5, 6, 7, 8, 9, 10 all **pass (9/9)**. Run **one at a time** at your request, after a batch collided in the background and five runs were cancelled (cancelled, not failed).

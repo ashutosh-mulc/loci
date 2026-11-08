@@ -187,6 +187,12 @@ export class LociPalaceController extends BaseScriptComponent {
   @input @hint("Star label cap height (cm) for a topic 2.5 m away; nearer topics get proportionally smaller labels.")
   @widget(new SliderWidget(0.5, 6, 0.1))
   starLabelCapCm: number = 1.8
+  @input @hint("Cap height (cm, at 2.5 m) of the label of the star you aim at: the brief's ~4 cm, readable from 2.5 m.")
+  @widget(new SliderWidget(1, 6, 0.1))
+  aimedLabelCapCm: number = 4
+  @input @hint("A star within this angle of your gaze counts as aimed at (a hand hover always wins).")
+  @widget(new SliderWidget(1, 10, 0.5))
+  aimConeDeg: number = 4
   @input @hint("Topic name cap height above an anchor (cm).")
   @widget(new SliderWidget(0.5, 6, 0.1))
   spotLabelCapCm: number = 2
@@ -235,6 +241,8 @@ export class LociPalaceController extends BaseScriptComponent {
   private flights: Flight[] = []
   private threadsObj: SceneObject | null = null
   private threadSegs: [vec3, vec3][] = []
+  private aimedStar: string | null = null
+  private labelAlpha = new Map<string, number>()
   private camT: Transform | null = null
   private audio: AudioComponent | null = null
   private hitSession: HitTestSession | null = null
@@ -284,6 +292,9 @@ export class LociPalaceController extends BaseScriptComponent {
   }
   getThreadLineCount(): number { return this.threadsObj ? this.threadCountShown : 0 }
   /** The drawn thread segments (world start at a star, end at the other topic). For tests. */
+  /** The star whose label is shown at full size (hand hover, else nearest the gaze). */
+  getAimedStar(): string | null { return this.aimedStar }
+  getStarLabelScale(thoughtId: string): number { return this.labels.getScale(`star:${thoughtId}`) }
   getThreadSegments(): [vec3, vec3][] { return this.threadsObj ? this.threadSegs.slice() : [] }
 
   /** World point of a topic's anchor (where its dot sits). */
@@ -425,6 +436,7 @@ export class LociPalaceController extends BaseScriptComponent {
     })
     this.anchors.clear()
     this.stars.clear()
+    this.labelAlpha.clear()
     this.flights = []
     // Start over in front of where the user is now, not where the Lens started.
     if (this.anchorToCameraAtStart && this.camT) this.anchorPalaceToUser()
@@ -679,6 +691,7 @@ export class LociPalaceController extends BaseScriptComponent {
       const interactable = obj.createComponent(Interactable.getTypeName()) as Interactable
       const star: StarEntry = {thought, obj, visual, mat, halo, baseColor: color, hovered: false}
       this.stars.set(thought.id, star)
+      this.labelAlpha.delete(thought.id) // a new label starts at full colour
       const side = thought.offset[0] > 3 ? "left" : thought.offset[0] < -3 ? "right" : "center"
       const labelPos = side === "left" ? new vec3(r + 1.2, 0, 0) : side === "right" ? new vec3(-(r + 1.2), 0, 0) : new vec3(0, r + 1, 0)
       this.labels.addLabel(`star:${thought.id}`, "star", obj, thought.label, labelPos, labelCap, side === "center", side)
@@ -750,6 +763,7 @@ export class LociPalaceController extends BaseScriptComponent {
     const dt = getDeltaTime()
     this.updateFlights(dt)
     this.animate(dt)
+    this.updateAimedLabel(dt)
     if (this.state.mode === "place") return // gaze opens topics in Explore and Recall
     const cam = this.camT.getWorldPosition()
     const gaze = this.camT.getWorldRotation().multiplyVec3(new vec3(0, 0, -1))
@@ -785,6 +799,40 @@ export class LociPalaceController extends BaseScriptComponent {
         if (this.awayTime >= this.closeAwaySec) this.closeCluster()
       }
     }
+  }
+
+  /**
+   * Only one star label is big at a time: the star under the hand ray, else the one nearest the
+   * gaze (within aimConeDeg). It eases up to aimedLabelCapCm; the others ease back to normal.
+   */
+  private updateAimedLabel(dt: number): void {
+    const open = this.state.openSpot
+    let aimed: string | null = null
+    if (open !== null && this.state.mode === "explore") {
+      const cam = this.camT!.getWorldPosition()
+      const gaze = this.camT!.getWorldRotation().multiplyVec3(new vec3(0, 0, -1))
+      let best = this.aimConeDeg
+      for (const t of this.thoughtsAt(open)) {
+        const st = this.stars.get(t.id)
+        if (!st) continue
+        if (st.hovered) { aimed = t.id; break }
+        const d = st.obj.getTransform().getWorldPosition().sub(cam).normalize()
+        const ang = Math.acos(Math.max(-1, Math.min(1, gaze.dot(d)))) / DEG
+        if (ang < best) { best = ang; aimed = t.id }
+      }
+    }
+    this.aimedStar = aimed
+    const big = this.aimedLabelCapCm / Math.max(0.1, this.starLabelCapCm)
+    const k = Math.min(1, dt * 12)
+    this.stars.forEach((st, id) => {
+      const key = `star:${id}`
+      const cur = this.labels.getScale(key)
+      const target = id === aimed ? big : 1
+      if (Math.abs(cur - target) > 0.001) this.labels.setScale(key, cur + (target - cur) * k)
+      // While one star is aimed at, the others' labels fade so the big one reads cleanly.
+      const alpha = aimed === null || id === aimed ? 1 : 0.3
+      if (this.labelAlpha.get(id) !== alpha) { this.labels.setAlpha(key, alpha); this.labelAlpha.set(id, alpha) }
+    })
   }
 
   /** Halos face the user and breathe; stars twinkle; clusters bloom; orbs bob; dwell brightens a dot. */
