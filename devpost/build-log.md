@@ -127,3 +127,9 @@ Prompt: "run the suggested loop" over `loci-review-v2.md` (one item per round: L
 - verify-preview: screenshots of the orb arc and an open cluster with a card look the same as before. Nothing was culled by winding, and the halo glow is unchanged.
 - Measurement: triangle counts are exact and repeatable; the Perfetto ms/frame baseline was too noisy in this preview (see Phase 0), so I didn't use it for before/after.
 - LEAF: 1, 2, 3, 5, 6, 7, 8, 9, 10, 11 all **pass (10/10)**, run one at a time.
+
+### Round 9: #11, World Query never stopped and trusted hits up to 4 m
+- Test first: extended `loci-1-place`. Once every topic is placed, World Query must be stopped and `maxHitCm` ≤ 250; after `resetPalace` it must be running again. Before: **failed** (`Expected false, received true`).
+- Fix: `setWorldQuery(on)` starts or stops the hit-test session. It stops when the last topic is placed and restarts on reset or palace swap. Hits are trusted only between 50 cm and `maxHitCm` = 250 cm (new input); further than that, the topic uses the default distance. A release while stopped still lands via the 0.4 s fallback.
+- verify-preview (log, since nothing visible changed): the full demo tour placed 5/5, then the guitar palace 4/4 after the swap restarted World Query. No errors.
+- LEAF: 1, 2, 3, 5, 6, 7, 8, 9, 10, 11 all **pass (10/10)**, run one at a time.

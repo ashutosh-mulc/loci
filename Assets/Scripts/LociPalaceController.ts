@@ -122,6 +122,9 @@ export class LociPalaceController extends BaseScriptComponent {
   placeDistanceCm: number = 160
   @input @hint("Use World Query to snap onto the real surface you aimed at (Specs).")
   useWorldQuery: boolean = true
+  @input @hint("Only trust a surface hit up to this far away (cm); further, use the default distance.")
+  @widget(new SliderWidget(100, 400, 10))
+  maxHitCm: number = 250
   @input @hint("Topics must be at least this far apart (degrees, as seen from you) so each can be looked at alone.")
   @widget(new SliderWidget(8, 40, 1))
   minSeparationDeg: number = 18
@@ -250,6 +253,7 @@ export class LociPalaceController extends BaseScriptComponent {
   private camT: Transform | null = null
   private audio: AudioComponent | null = null
   private hitSession: HitTestSession | null = null
+  private wqRunning = false
   private dwellSpot: string | null = null
   private dwellTime = 0
   private awayTime = 0
@@ -296,6 +300,10 @@ export class LociPalaceController extends BaseScriptComponent {
   }
   getThreadLineCount(): number { return this.threadsObj ? this.threadCountShown : 0 }
   /** The drawn thread segments (world start at a star, end at the other topic). For tests. */
+  /** Whether a World Query session exists at all (false in editors without it). */
+  hasWorldQuery(): boolean { return this.hitSession !== null }
+  /** Whether surface finding is running now (only needed while placing). */
+  isWorldQueryRunning(): boolean { return this.hitSession !== null && this.wqRunning }
   /** Average triangles per halo built so far (perf, review #9). For tests. */
   getHaloTrianglesEach(): number { return this.haloCount ? this.haloTris / this.haloCount : 0 }
   /** Whether a star's solid mesh is drawn double-sided (review #10). For tests. */
@@ -459,6 +467,7 @@ export class LociPalaceController extends BaseScriptComponent {
     })
     const wasMode = this.state.mode
     this.state.reset()
+    this.setWorldQuery(true)
     this.dwellSpot = null
     this.dwellTime = 0
     if (wasMode !== "place") this.onModeChanged.invoke("place")
@@ -487,7 +496,7 @@ export class LociPalaceController extends BaseScriptComponent {
         const options = HitTestSessionOptions.create()
         options.filter = true
         this.hitSession = WQ.createHitTestSessionWithOptions(options)
-        this.hitSession.start()
+        this.setWorldQuery(true)
       } catch (e) {
         this.hitSession = null
       }
@@ -578,12 +587,12 @@ export class LociPalaceController extends BaseScriptComponent {
       land(fallback)
     })
     timeout.reset(0.4)
-    this.hitSession.hitTest(cam, cam.add(dir.uniformScale(400)), (r) => {
+    this.hitSession.hitTest(cam, cam.add(dir.uniformScale(this.maxHitCm)), (r) => {
       if (answered) return
       answered = true
       const d = r ? r.position.distance(cam) : 0
       // A real surface 50–400 cm away: sit just in front of it. Otherwise use the fallback distance.
-      land(r && d > 50 && d < 400 ? this.clampToRoom(r.position.add(r.normal.uniformScale(3))) : fallback)
+      land(r && d > 50 && d < this.maxHitCm ? this.clampToRoom(r.position.add(r.normal.uniformScale(3))) : fallback)
     })
   }
 
@@ -670,7 +679,10 @@ export class LociPalaceController extends BaseScriptComponent {
     anchor.cluster.enabled = false
     this.onTopicPlaced.invoke({topicId, spot: topicId})
     print(`Loci: placed ${topicId} (${this.state.placedCount()}/${this.data.topics.length}).`)
-    if (this.state.allPlaced()) this.setMode("explore")
+    if (this.state.allPlaced()) {
+      this.setWorldQuery(false) // nothing left to place: stop depth work until a reset
+      this.setMode("explore")
+    }
   }
 
   private closedLabelOffset(): vec3 {
@@ -933,6 +945,17 @@ export class LociPalaceController extends BaseScriptComponent {
    * overlap fades from a bright centre to a faint edge. Alpha-blended (not additive), so it shows
    * in Lens Studio's preview, which composites by alpha, as well as on Specs.
    */
+  private setWorldQuery(on: boolean): void {
+    if (!this.hitSession || this.wqRunning === on) return
+    try {
+      if (on) this.hitSession.start()
+      else this.hitSession.stop()
+      this.wqRunning = on
+    } catch (e) {
+      print(`Loci: world query ${on ? "start" : "stop"} failed: ${e}`)
+    }
+  }
+
   private makeHalo(parent: SceneObject, size: number, color: vec4): Halo {
     const obj = global.scene.createSceneObject("Halo")
     obj.setParent(parent)

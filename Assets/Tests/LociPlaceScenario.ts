@@ -69,9 +69,18 @@ export class LociPlaceScenario extends Scenario {
 
     // Placing every other topic starts Explore automatically.
     expect(loci.getMode()).toBe("place")
+    expect(loci.isWorldQueryRunning()).toBe(loci.hasWorldQuery()) // on while placing
     PALACE.topics.filter((t) => t.id !== topic.id).forEach((t) => {
       expect(loci.placeTopic(t.id)).toBe(true)
     })
+    expect(loci.getMode()).toBe("explore")
+
+    // Review #11: surface finding stops once everything is placed, and restarts on reset.
+    expect(loci.isWorldQueryRunning()).toBe(false)
+    expect(loci.maxHitCm).toBeLessThan(251) // hits beyond 2.5 m aren't trusted
+    loci.resetPalace()
+    expect(loci.isWorldQueryRunning()).toBe(loci.hasWorldQuery())
+    PALACE.topics.forEach((t) => loci.placeTopic(t.id))
     expect(loci.getMode()).toBe("explore")
   }
 }
