@@ -112,3 +112,9 @@ Prompt: "run the suggested loop" over `loci-review-v2.md` (one item per round: L
 - Fix: `updateAimedLabel` picks the star under the hand ray, else the one nearest the gaze within 4° (`aimConeDeg`). Its label eases to `aimedLabelCapCm` = 4 cm (the brief's size), 2.2× the normal 1.8 cm; the others fade to 30% while one is aimed. `LociLabelsUI.setScale`/`getScale`/`setAlpha` added.
 - verify-preview: two tour screenshots. First pass: the big label ("Data first, then CLAD") read well but covered a neighbour's label. After the fade, the other labels sit back and the aimed one stands out.
 - LEAF: 1, 2, 3, 5, 6, 7, 8, 9, 10 all **pass (9/9)**. Run **one at a time** at your request, after a batch collided in the background and five runs were cancelled (cancelled, not failed).
+
+### Round 7: #7, card text didn't scale with distance
+- Test first: extended `loci-3-star-card`. Open the farthest topic, show a card, and expect the card's scale to equal max(1, distance / 150 cm). Before: **failed**, with the card at scale 1.00 on a topic 221 cm away (1.47 needed).
+- Fix: `LociCardUI.place()` scales the card (and its offset from the star) by max(1, distance / readingDistanceCm), the same rule the Recall panel uses, so the text keeps the angular size it has at 1.5 m.
+- verify-preview: tour Explore screenshot. The card beside "Fresh chat per build" reads clearly and sits fully in view.
+- LEAF: 1, 2, 3, 5, 6, 7, 8, 9, 10 all **pass (9/9)**, run one at a time.

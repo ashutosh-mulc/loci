@@ -6,6 +6,7 @@ import {expect} from "Leaf.lspkg/Utils/common/Expect"
 import {sleep} from "Leaf.lspkg/Utils/common/Utils"
 import {DefaultLeafInteractor} from "Leaf.lspkg/Interactors/interactor/DefaultLeafInteractor"
 import {findInteractableByName} from "Leaf.lspkg/Interactors/InteractableUtils"
+import WorldCameraFinderProvider from "SpectaclesInteractionKit.lspkg/Providers/CameraProvider/WorldCameraFinderProvider"
 import {GazeDriver, ensureExplore, getLoci, topicId, waitForReady} from "./LociLeafCommon"
 
 @component
@@ -59,6 +60,29 @@ export class LociCardScenario extends Scenario {
     await sleep(2400)
     expect(loci.getOpenSpot()).toBeNull()
     expect(loci.isCardShown()).toBe(false)
+
+    // Review #7: on a far topic the card grows with distance, so its text keeps the same angular
+    // size as at the reading distance (1.5 m).
+    const cam = WorldCameraFinderProvider.getInstance().getComponent().getTransform()
+    const eye = cam.getWorldPosition()
+    const far = loci.getTopicIds().slice().sort((x, y) =>
+      loci.getClusterCentreWorld(y)!.distance(eye) - loci.getClusterCentreWorld(x)!.distance(eye))[0]
+    gaze.lookAt(loci.getClusterCentreWorld(far))
+    await sleep(1400)
+    expect(loci.isOpen(far)).toBe(true)
+    const farStar = loci.thoughtsAt(far)[0]
+    expect(loci.toggleCard(farStar.id)).toBe(true)
+    await sleep(200)
+    const dist = loci.getStarObject(farStar.id)!.getTransform().getWorldPosition().distance(cam.getWorldPosition())
+    const want = Math.max(1, dist / loci.card.readingDistanceCm)
+    const got = loci.card.getSceneObject().getTransform().getWorldScale().x
+    print(`[LociCard] far topic ${far} at ${dist.toFixed(0)} cm: card scale ${got.toFixed(2)}, want ${want.toFixed(2)}`)
+    expect(want).toBeGreaterThan(1.2) // the test needs a genuinely far topic
+    expect(Math.abs(got - want)).toBeLessThan(0.08)
+
+    loci.toggleCard(farStar.id)
+    gaze.lookAway()
+    await sleep(2400)
     gaze.lookAt(null)
   }
 }

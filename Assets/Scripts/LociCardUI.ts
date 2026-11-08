@@ -178,10 +178,13 @@ export class LociCardUI extends BaseScriptComponent {
     const fwd = flat.normalize()
     // Right as seen by the user: up x toCamera.
     const right = vec3.up().cross(fwd).normalize()
-    const offset = right.uniformScale(this.side * (this.cardWidthCm / 2 + this.gapFromStarCm))
+    // Grow with distance past the reading distance, so the text keeps its angular size far away.
+    const k = Math.max(1, toCam.length / this.readingDistanceCm)
+    const offset = right.uniformScale(this.side * (this.cardWidthCm / 2 + this.gapFromStarCm) * k)
     const tr = this.sceneObject.getTransform()
     tr.setWorldPosition(this.anchorWorld.add(offset))
     tr.setWorldRotation(quat.lookAt(fwd, vec3.up()))
+    tr.setWorldScale(vec3.one().uniformScale(k))
   }
 
   private onLateUpdate(): void {
