@@ -9,6 +9,7 @@ import {LociRecallScenario} from "./LociRecallScenario"
 import {LociDataScenario} from "./LociDataScenario"
 import {LociSameSpotScenario} from "./LociSameSpotScenario"
 import {LociThreadsScenario} from "./LociThreadsScenario"
+import {LociResetHereScenario} from "./LociResetHereScenario"
 
 @component
 export class LeafIndex extends BaseScriptComponent {
@@ -21,5 +22,6 @@ export class LeafIndex extends BaseScriptComponent {
     {id: "loci-6-any-data", typename: LociDataScenario.getTypeName()},
     {id: "loci-7-same-spot", typename: LociSameSpotScenario.getTypeName()},
     {id: "loci-8-threads", typename: LociThreadsScenario.getTypeName()},
+    {id: "loci-9-reset-here", typename: LociResetHereScenario.getTypeName()},
   ]
 }

@@ -85,3 +85,8 @@ Prompt: "run the suggested loop" over `loci-review-v2.md` (one item per round: L
 - Fix: `buildThreads` reads star positions with the cluster at full size, since it is still at 1% when threads are built, then restores the bloom scale. Added `getThreadSegments()` for tests.
 - LEAF: 1, 2, 3, 5, 6, 7, 8 all **pass (7/7)**.
 - verify-preview: screenshot of the tour's Explore step ("Build plan") shows threads leaving from four different stars.
+
+### Round 3: #3, reset and palace swap put the orbs where the Lens started
+- Test first: new `loci-9-reset-here` turns the head 90° right and resets, then 90° left and swaps palaces, and measures the orbs' angle from the view direction. The first version passed falsely because preview tracking reset the head between frames, so it now applies the head turn in the same frame. Before the fix: **failed**, with an orb 114° off the view.
+- Fix: `resetPalace` re-anchors the palace to the user (as at start) and puts each orb back at its arc position under the moved root (new `homeLocal`), recomputing `home`. `setPalace` goes through `resetPalace`, so it gets the same.
+- LEAF: 1, 2, 3, 5, 6, 7, 8, 9 all **pass (8/8)**. After the fix the worst orb is 24° off, which is the arc's half-width.

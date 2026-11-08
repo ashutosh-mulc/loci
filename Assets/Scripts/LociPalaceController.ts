@@ -62,6 +62,7 @@ interface OrbEntry {
   mat: Material
   halo: Halo
   home: vec3
+  homeLocal: vec3 // its place on the arc, under orbsRoot
   flying: boolean
 }
 
@@ -422,10 +423,13 @@ export class LociPalaceController extends BaseScriptComponent {
     this.anchors.clear()
     this.stars.clear()
     this.flights = []
+    // Start over in front of where the user is now, not where the Lens started.
+    if (this.anchorToCameraAtStart && this.camT) this.anchorPalaceToUser()
     this.orbs.forEach((o) => {
       o.obj.enabled = true
       o.flying = false
-      o.obj.getTransform().setWorldPosition(o.home)
+      o.obj.getTransform().setLocalPosition(o.homeLocal)
+      o.home = o.obj.getTransform().getWorldPosition()
     })
     const wasMode = this.state.mode
     this.state.reset()
@@ -498,7 +502,7 @@ export class LociPalaceController extends BaseScriptComponent {
       const manip = obj.createComponent(InteractableManipulation.getTypeName()) as InteractableManipulation
       manip.setCanRotate(false)
       manip.setCanScale(false)
-      const entry: OrbEntry = {topic, obj, visual, mat, halo, home: obj.getTransform().getWorldPosition(), flying: false}
+      const entry: OrbEntry = {topic, obj, visual, mat, halo, home: obj.getTransform().getWorldPosition(), homeLocal: obj.getTransform().getLocalPosition(), flying: false}
       this.orbs.set(topic.id, entry)
       this.labels.addLabel(`orb:${topic.id}`, "orb", obj, topic.name, new vec3(0, r + 1.2, 0), this.orbLabelCapCm)
       interactable.onHoverEnter.add(() => this.setHover(visual, mat, this.orbColor, true))
