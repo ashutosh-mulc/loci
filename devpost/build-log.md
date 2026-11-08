@@ -118,3 +118,12 @@ Prompt: "run the suggested loop" over `loci-review-v2.md` (one item per round: L
 - Fix: `LociCardUI.place()` scales the card (and its offset from the star) by max(1, distance / readingDistanceCm), the same rule the Recall panel uses, so the text keeps the angular size it has at 1.5 m.
 - verify-preview: tour Explore screenshot. The card beside "Fresh chat per build" reads clearly and sits fully in view.
 - LEAF: 1, 2, 3, 5, 6, 7, 8, 9, 10 all **pass (9/9)**, run one at a time.
+
+### Round 8: #9 and #10, halo cost and double-sided solids (performance)
+- Test first: new `loci-11-render-cost`. Average triangles per halo must be under 400, and a star's solid mesh must not be two-sided. Before: **failed**, with 5,040 triangles per halo (five nested 28×18 spheres) and stars two-sided.
+- Fix:
+  - Halos already turn to face the user every frame, so each is now five flat discs sharing one 32-triangle mesh scaled per layer: 160 triangles instead of 5,040 (31× fewer). Across the 45 halos (5 orbs, 5 dots, 35 stars), that's about 7,200 halo triangles instead of about 227,000.
+  - Solid meshes (orbs, dots, stars, rings) are single-sided, so hidden inside faces aren't drawn (#10).
+- verify-preview: screenshots of the orb arc and an open cluster with a card look the same as before. Nothing was culled by winding, and the halo glow is unchanged.
+- Measurement: triangle counts are exact and repeatable; the Perfetto ms/frame baseline was too noisy in this preview (see Phase 0), so I didn't use it for before/after.
+- LEAF: 1, 2, 3, 5, 6, 7, 8, 9, 10, 11 all **pass (10/10)**, run one at a time.

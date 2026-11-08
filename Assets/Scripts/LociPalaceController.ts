@@ -16,7 +16,7 @@ import {PALACE, Thought, Topic, Thread} from "./PalaceData"
 import {LociState, PalaceMode, StarState} from "./LociState"
 import {LociLabelsUI} from "./LociLabelsUI"
 import {LociCardUI} from "./LociCardUI"
-import {linesMesh, ringMesh, sphereMesh, starMesh} from "./LociMeshes"
+import {discMesh, linesMesh, ringMesh, sphereMesh, starMesh} from "./LociMeshes"
 import {Interactable} from "SpectaclesInteractionKit.lspkg/Components/Interaction/Interactable/Interactable"
 import {InteractableManipulation} from "SpectaclesInteractionKit.lspkg/Components/Interaction/InteractableManipulation/InteractableManipulation"
 import WorldCameraFinderProvider from "SpectaclesInteractionKit.lspkg/Providers/CameraProvider/WorldCameraFinderProvider"
@@ -77,6 +77,7 @@ interface Flight {
 
 const DEG = Math.PI / 180
 const HALO_ALPHA = 0.1 // per layer; five layers overlap toward the centre
+const HALO_DISC_SEGMENTS = 32 // triangles per halo layer (a camera-facing disc)
 const WQ = (() => {
   try { return require("LensStudio:WorldQueryModule") as WorldQueryModule } catch (e) { return null }
 })()
@@ -243,6 +244,9 @@ export class LociPalaceController extends BaseScriptComponent {
   private threadSegs: [vec3, vec3][] = []
   private aimedStar: string | null = null
   private labelAlpha = new Map<string, number>()
+  private haloTris = 0
+  private haloDisc: RenderMesh | null = null
+  private haloCount = 0
   private camT: Transform | null = null
   private audio: AudioComponent | null = null
   private hitSession: HitTestSession | null = null
@@ -292,6 +296,13 @@ export class LociPalaceController extends BaseScriptComponent {
   }
   getThreadLineCount(): number { return this.threadsObj ? this.threadCountShown : 0 }
   /** The drawn thread segments (world start at a star, end at the other topic). For tests. */
+  /** Average triangles per halo built so far (perf, review #9). For tests. */
+  getHaloTrianglesEach(): number { return this.haloCount ? this.haloTris / this.haloCount : 0 }
+  /** Whether a star's solid mesh is drawn double-sided (review #10). For tests. */
+  isStarTwoSided(thoughtId: string): boolean {
+    const st = this.stars.get(thoughtId)
+    return st ? st.mat.mainPass.twoSided : false
+  }
   /** The star whose label is shown at full size (hand hover, else nearest the gaze). */
   getAimedStar(): string | null { return this.aimedStar }
   getStarLabelScale(thoughtId: string): number { return this.labels.getScale(`star:${thoughtId}`) }
@@ -913,7 +924,7 @@ export class LociPalaceController extends BaseScriptComponent {
     const m = this.glowMaterial.clone()
     m.mainPass.baseColor = color
     m.mainPass.blendMode = BlendMode.Normal
-    m.mainPass.twoSided = true
+    m.mainPass.twoSided = false // closed solids: their inside faces are never seen
     return m
   }
 
@@ -929,11 +940,18 @@ export class LociPalaceController extends BaseScriptComponent {
     mat.mainPass.baseColor = new vec4(color.x, color.y, color.z, HALO_ALPHA)
     mat.mainPass.blendMode = BlendMode.Normal
     mat.mainPass.depthWrite = false
+    // The halo always faces the user (faceHalo), so flat discs look like nested spheres at a
+    // fraction of the cost: one shared 32-triangle disc, scaled per layer.
+    if (!this.haloDisc) this.haloDisc = discMesh(1, HALO_DISC_SEGMENTS)
+    mat.mainPass.twoSided = true // a single flat face; nothing is drawn twice
     for (const k of [0.13, 0.19, 0.27, 0.37, 0.5]) {
       const layer = global.scene.createSceneObject("HaloLayer")
       layer.setParent(obj)
-      this.addMesh(layer, sphereMesh(size * k, 28, 18), mat)
+      layer.getTransform().setLocalScale(vec3.one().uniformScale(size * k))
+      this.addMesh(layer, this.haloDisc, mat)
+      this.haloTris += HALO_DISC_SEGMENTS
     }
+    this.haloCount++
     return {obj, mat, size, color, phase: Math.random() * Math.PI * 2}
   }
 

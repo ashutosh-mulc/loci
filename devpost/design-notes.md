@@ -52,3 +52,4 @@ What we saw, what changed, and why.
 - **Same-spot drops.** If two topics are aimed at the same place, the second is refused straight away and flies home.
 - **Recall rounds.** One question per topic makes a round. When every topic has been asked, "Round done" shows the recalled count per topic with a **Go again** button; Go again starts the next round where you are (recalled stars stay dimmed). Pinching Explore any time ends Recall and shows the counts above the button.
 - **One big label at a time.** The star you aim at (hand ray, or gaze within 4°) shows its label at the brief's ~4 cm size; the other labels in the cluster fade back to 30%. Eight full-size labels in a ±20 cm cluster would overlap.
+- **Cheaper glow.** Halos are camera-facing discs instead of nested spheres: 160 triangles each instead of 5,040, with the same look. Solid shapes are no longer drawn double-sided.

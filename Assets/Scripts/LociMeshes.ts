@@ -237,6 +237,19 @@ export function quadMesh(size: number): RenderMesh {
   return mb.getMesh()
 }
 
+/** Flat disc in the XY plane facing +Z (counter-clockwise from the front). */
+export function discMesh(radius: number, segments: number = 32): RenderMesh {
+  const acc = new MeshAccumulator()
+  const n = new vec3(0, 0, 1)
+  const c = acc.vertex(vec3.zero(), n)
+  for (let i = 0; i < segments; i++) {
+    const a = (2 * Math.PI * i) / segments
+    acc.vertex(new vec3(Math.cos(a) * radius, Math.sin(a) * radius, 0), n)
+  }
+  for (let i = 0; i < segments; i++) acc.tri(c, 1 + i, 1 + ((i + 1) % segments))
+  return acc.build()
+}
+
 /** Thin straight lines (one strut each), e.g. thread lines between stars. */
 export function linesMesh(segments: [vec3, vec3][], thickness: number): RenderMesh {
   return wireframeMesh(segments, thickness)
