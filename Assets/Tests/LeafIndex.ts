@@ -8,6 +8,7 @@ import {LociCardScenario} from "./LociCardScenario"
 import {LociRecallScenario} from "./LociRecallScenario"
 import {LociDataScenario} from "./LociDataScenario"
 import {LociSameSpotScenario} from "./LociSameSpotScenario"
+import {LociThreadsScenario} from "./LociThreadsScenario"
 
 @component
 export class LeafIndex extends BaseScriptComponent {
@@ -19,5 +20,6 @@ export class LeafIndex extends BaseScriptComponent {
     {id: "loci-5-recall", typename: LociRecallScenario.getTypeName()},
     {id: "loci-6-any-data", typename: LociDataScenario.getTypeName()},
     {id: "loci-7-same-spot", typename: LociSameSpotScenario.getTypeName()},
+    {id: "loci-8-threads", typename: LociThreadsScenario.getTypeName()},
   ]
 }

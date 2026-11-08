@@ -79,3 +79,9 @@ Prompt: "run the suggested loop" over `loci-review-v2.md` (one item per round: L
   - `rejectReason` also counts orbs still flying to a place.
   - `updateFlights` runs `done()` after replacing the flight list. Before, a fly-home started inside `done()` was dropped.
 - LEAF: loci-1-place, 2-explore-gaze, 3-star-card, 5-recall, 6-any-data and 7-same-spot all **pass (6/6)**. The refused orb ends 0.0 cm from home.
+
+### Round 2: #1, threads started near the cluster centre, not at their stars
+- Test first: new `loci-8-threads` compares each thread's start with its own star after the bloom. My first version compared with the *nearest* star and passed falsely, because the star at offset (0,0,0) sits at the centre. Fixed the test. Before the fix: **failed**, with the worst start 13.8 cm from its star.
+- Fix: `buildThreads` reads star positions with the cluster at full size, since it is still at 1% when threads are built, then restores the bloom scale. Added `getThreadSegments()` for tests.
+- LEAF: 1, 2, 3, 5, 6, 7, 8 all **pass (7/7)**.
+- verify-preview: screenshot of the tour's Explore step ("Build plan") shows threads leaving from four different stars.

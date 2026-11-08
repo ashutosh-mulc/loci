@@ -230,6 +230,7 @@ export class LociPalaceController extends BaseScriptComponent {
   private stars = new Map<string, StarEntry>()
   private flights: Flight[] = []
   private threadsObj: SceneObject | null = null
+  private threadSegs: [vec3, vec3][] = []
   private camT: Transform | null = null
   private audio: AudioComponent | null = null
   private hitSession: HitTestSession | null = null
@@ -278,6 +279,8 @@ export class LociPalaceController extends BaseScriptComponent {
     return topic ? this.data.thoughts.filter((t) => t.topic === topic) : []
   }
   getThreadLineCount(): number { return this.threadsObj ? this.threadCountShown : 0 }
+  /** The drawn thread segments (world start at a star, end at the other topic). For tests. */
+  getThreadSegments(): [vec3, vec3][] { return this.threadsObj ? this.threadSegs.slice() : [] }
 
   /** World point of a topic's anchor (where its dot sits). */
   getSpotPointWorld(spot: string): vec3 | null {
@@ -686,6 +689,11 @@ export class LociPalaceController extends BaseScriptComponent {
     if (!this.showThreads) return
     const topic = this.state.topicAt(spot)
     const segs: [vec3, vec3][] = []
+    // The cluster is still tiny (it blooms from 1%), so read star positions at full size.
+    const cluster = this.anchors.get(spot)?.cluster ?? null
+    const ct = cluster ? cluster.getTransform() : null
+    const bloomScale = ct ? ct.getLocalScale() : null
+    if (ct) ct.setLocalScale(vec3.one())
     for (const th of this.data.threads) {
       const from = this.data.thoughts.filter((t) => t.id === th.from)[0]
       const to = this.data.thoughts.filter((t) => t.id === th.to)[0]
@@ -699,7 +707,9 @@ export class LociPalaceController extends BaseScriptComponent {
       if (!star || !end) continue
       segs.push([star.obj.getTransform().getWorldPosition(), end])
     }
+    if (ct && bloomScale) ct.setLocalScale(bloomScale)
     this.threadCountShown = segs.length
+    this.threadSegs = segs
     if (segs.length === 0) return
     const obj = global.scene.createSceneObject("Threads")
     obj.setParent(this.palaceRoot)
