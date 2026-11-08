@@ -133,3 +133,13 @@ Prompt: "run the suggested loop" over `loci-review-v2.md` (one item per round: L
 - Fix: `setWorldQuery(on)` starts or stops the hit-test session. It stops when the last topic is placed and restarts on reset or palace swap. Hits are trusted only between 50 cm and `maxHitCm` = 250 cm (new input); further than that, the topic uses the default distance. A release while stopped still lands via the 0.4 s fallback.
 - verify-preview (log, since nothing visible changed): the full demo tour placed 5/5, then the guitar palace 4/4 after the swap restarted World Query. No errors.
 - LEAF: 1, 2, 3, 5, 6, 7, 8, 9, 10, 11 all **pass (10/10)**, run one at a time.
+
+### Round 10: #13, user JSON wasn't held to the data-spec limits
+- Test first: extended `loci-6-any-data` with a small file breaking each rule. Before: **failed** (3 threads kept from one thought; 2 allowed).
+- Fix (`LociPalaceSchema`):
+  - At most 2 threads per thought and 40 overall, with a warning per dropped thread.
+  - Topic names over 3 words are clipped *with* a warning.
+  - The default prompt uses the clipped label.
+  - Stars closer than 6 cm within a topic are pushed apart, staying inside ±20 cm, with a warning. A file mixing explicit and default offsets can't stack stars any more.
+- No visual change; the validator is pure logic.
+- LEAF: 1, 2, 3, 5, 6, 7, 8, 9, 10, 11 all **pass (10/10)**, run one at a time.

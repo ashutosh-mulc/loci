@@ -55,6 +55,34 @@ export class LociDataScenario extends Scenario {
     expect(data!.threads.length).toBe(1) // same-topic + unknown dropped
     expect(warnings.length).toBeGreaterThan(4)
 
+    // Review #13: the data-spec limits hold for any user file.
+    const strict = validatePalace({
+      topics: [
+        {id: "a", name: "A very long topic name", spot: "desk"},
+        {id: "b", name: "Bee", spot: "shelf"},
+      ],
+      thoughts: [
+        {id: "a1", topic: "a", label: "One two three four five six", text: "A.", kind: "insight", offset: [0, 0, 0]},
+        {id: "a2", topic: "a", label: "Close", text: "B.", kind: "insight", offset: [1, 0, 0]},
+        {id: "b1", topic: "b", label: "B one", text: "C.", kind: "insight"},
+        {id: "b2", topic: "b", label: "B two", text: "D.", kind: "insight"},
+        {id: "b3", topic: "b", label: "B three", text: "E.", kind: "insight"},
+      ],
+      threads: [
+        {from: "a1", to: "b1", why: "1"}, {from: "a1", to: "b2", why: "2"}, {from: "a1", to: "b3", why: "3"},
+      ],
+    })
+    const sd = strict.data!
+    expect(sd.threads.length).toBe(2) // at most 2 threads per thought
+    expect(sd.topics[0].name).toBe("A very long")
+    expect(strict.warnings.filter((w) => w.indexOf("topic name") >= 0).length).toBe(1) // clipping is reported
+    const a1 = sd.thoughts.filter((t) => t.id === "a1")[0]
+    expect(a1.prompt.indexOf("One two three four\"")).toBeGreaterThan(0) // fallback prompt uses the clipped label
+    const a2 = sd.thoughts.filter((t) => t.id === "a2")[0]
+    const gap = Math.hypot(a1.offset[0] - a2.offset[0], a1.offset[1] - a2.offset[1], a1.offset[2] - a2.offset[2])
+    print(`[LociData] stars 1 cm apart in the file end ${gap.toFixed(1)} cm apart`)
+    expect(gap).toBeGreaterThan(5.9) // stars at least 6 cm apart
+
     // (b) Load it: the palace rebuilds from this user's data.
     const gaze = new GazeDriver(this, loci)
     gaze.lookAway()

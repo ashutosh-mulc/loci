@@ -13,6 +13,10 @@ export const MAX_STARS_PER_TOPIC = 8
 export const MAX_LABEL_WORDS = 4
 export const MAX_TEXT_WORDS = 20
 export const MAX_OFFSET_CM = 20
+export const MAX_TOPIC_NAME_WORDS = 3
+export const MAX_THREADS_PER_THOUGHT = 2
+export const MAX_THREADS = 40
+export const MIN_STAR_GAP_CM = 6
 
 export interface ParseResult {
   data: PalaceDataShape | null
@@ -52,7 +56,8 @@ export function validatePalace(raw: any): ParseResult {
     if (seenTopic.has(id)) { warnings.push(`Dropped duplicate topic ${id}`); continue }
     if (topics.length >= MAX_TOPICS) { warnings.push(`Dropped topic ${id}: at most ${MAX_TOPICS} topics`); continue }
     seenTopic.add(id)
-    topics.push({id, name: words(name) > 3 ? clipWords(name, 3) : name, spot: str(t.spot) || "wall"})
+    if (words(name) > MAX_TOPIC_NAME_WORDS) warnings.push(`Shortened topic name of ${id} to ${MAX_TOPIC_NAME_WORDS} words`)
+    topics.push({id, name: clipWords(name, MAX_TOPIC_NAME_WORDS), spot: str(t.spot) || "wall"})
   }
 
   const thoughts: Thought[] = []
@@ -78,32 +83,74 @@ export function validatePalace(raw: any): ParseResult {
       : ringOffset(n) // no offset given: lay stars out in a ring
     if (words(label) > MAX_LABEL_WORDS) warnings.push(`Shortened label of ${id} to ${MAX_LABEL_WORDS} words`)
     if (words(text) > MAX_TEXT_WORDS) warnings.push(`Shortened text of ${id} to ${MAX_TEXT_WORDS} words`)
+    const shortLabel = clipWords(label, MAX_LABEL_WORDS)
     thoughts.push({
       id, topic, kind, offset,
-      label: clipWords(label, MAX_LABEL_WORDS),
+      label: shortLabel,
       text: words(text) > MAX_TEXT_WORDS ? clipWords(text, MAX_TEXT_WORDS) + "…" : text,
       date: str(t.date),
       source: clipWords(str(t.source), 6),
-      prompt: str(t.prompt) || `What did you conclude about "${label}"?`,
+      prompt: str(t.prompt) || `What did you conclude about "${shortLabel}"?`,
     })
   }
 
   const topicOf = new Map<string, string>()
   thoughts.forEach((t) => topicOf.set(t.id, t.topic))
   const threads: Thread[] = []
+  const perThought = new Map<string, number>()
   for (const th of Array.isArray(raw.threads) ? raw.threads : []) {
     const from = str(th && th.from)
     const to = str(th && th.to)
     if (!topicOf.has(from) || !topicOf.has(to)) { warnings.push(`Dropped thread ${from}→${to}: unknown thought`); continue }
     if (topicOf.get(from) === topicOf.get(to)) { warnings.push(`Dropped thread ${from}→${to}: same topic`); continue }
+    if ((perThought.get(from) ?? 0) >= MAX_THREADS_PER_THOUGHT || (perThought.get(to) ?? 0) >= MAX_THREADS_PER_THOUGHT) {
+      warnings.push(`Dropped thread ${from}→${to}: at most ${MAX_THREADS_PER_THOUGHT} threads per thought`); continue
+    }
+    if (threads.length >= MAX_THREADS) { warnings.push(`Dropped thread ${from}→${to}: at most ${MAX_THREADS} threads`); continue }
+    perThought.set(from, (perThought.get(from) ?? 0) + 1)
+    perThought.set(to, (perThought.get(to) ?? 0) + 1)
     threads.push({from, to, why: clipWords(str(th.why), 8)})
   }
+  spreadStars(thoughts, warnings)
 
   // A topic with no stars has nothing to open; drop it.
   const used = topics.filter((t) => (perTopic.get(t.id) ?? 0) > 0)
   if (used.length < topics.length) warnings.push(`Dropped ${topics.length - used.length} topic(s) with no thoughts`)
   if (used.length === 0) return {data: null, warnings: warnings.concat(["No topic has any thoughts"])}
   return {data: {topics: used, thoughts, threads}, warnings}
+}
+
+/**
+ * Keep stars in a topic at least MIN_STAR_GAP_CM apart (a mixed file can put a ring-layout star
+ * on top of an explicit one). Pushes close pairs apart a little at a time, inside ±MAX_OFFSET_CM.
+ */
+function spreadStars(thoughts: Thought[], warnings: string[]): void {
+  const clamp = (v: number) => Math.max(-MAX_OFFSET_CM, Math.min(MAX_OFFSET_CM, v))
+  const byTopic = new Map<string, Thought[]>()
+  thoughts.forEach((t) => byTopic.set(t.topic, (byTopic.get(t.topic) ?? []).concat([t])))
+  byTopic.forEach((list, topic) => {
+    let moved = false
+    for (let iter = 0; iter < 40; iter++) {
+      let any = false
+      for (let i = 0; i < list.length; i++) {
+        for (let j = i + 1; j < list.length; j++) {
+          const a = list[i].offset
+          const b = list[j].offset
+          let dx = b[0] - a[0], dy = b[1] - a[1], dz = b[2] - a[2]
+          let d = Math.hypot(dx, dy, dz)
+          if (d >= MIN_STAR_GAP_CM) continue
+          if (d < 0.01) { dx = 1; dy = 0.3; dz = 0; d = Math.hypot(dx, dy) } // same point: pick a side
+          const push = (MIN_STAR_GAP_CM - d) / 2 + 0.05
+          const ux = dx / d, uy = dy / d, uz = dz / d
+          list[i].offset = [clamp(a[0] - ux * push), clamp(a[1] - uy * push), clamp(a[2] - uz * push)]
+          list[j].offset = [clamp(b[0] + ux * push), clamp(b[1] + uy * push), clamp(b[2] + uz * push)]
+          any = moved = true
+        }
+      }
+      if (!any) break
+    }
+    if (moved) warnings.push(`Spread out stars in ${topic} that were closer than ${MIN_STAR_GAP_CM} cm`)
+  })
 }
 
 /** Default layout for the n-th star when the file gives no offset: a ring 13 cm across, alternating depth. */
