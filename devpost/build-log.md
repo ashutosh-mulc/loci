@@ -43,3 +43,11 @@ CLAD prompts, outcomes and LEAF results, session by session.
 - Probe: World Query in Interactive Preview rooms returns only a fixed plane 5 m ahead; no hits on furniture or floor.
 - Built: drop-anywhere Place with flights (LociPalaceController rewrite), LociPalaceSchema + LociPalaceSource (per-user JSON), LociHintUI, glow halos, bloom, threads. Removed LociSpotStandIn and the Spots stand-ins.
 - LEAF results (5/5 pass): loci-1-place (real SIK drag, anchor 147 cm out, 6.7° off the aim line; too-close refusal), loci-2-explore-gaze, loci-3-star-card, loci-5-recall, loci-6-any-data (new: validator + rebuild from another user's palace).
+
+## Sun Nov 8 (later): demo tour
+
+- Prompt: "Can you commit before you proceed with the demo?" Committed 80ffaad first, then built the tour.
+- Built LociDemoTour (scripted, smooth head turns, uses the real controller/Recall/data APIs) and the video kit (devpost/video-script.md).
+- Watching the tour exposed two bugs, fixed: the debrief vanished when glancing down to pinch Explore; the Recall hint re-armed and overlapped. Recall panel enlarged 1.4x.
+- LEAF results, final code (5/5 pass): loci-1-place, loci-2-explore-gaze, loci-3-star-card, loci-5-recall (now also asserts the debrief shows within 30 cm of the button), loci-6-any-data.
+- Review fixes (relayed ultrareview of the uncommitted demo work): committed LociDemoTour + video script; one restartable debrief timer; the Recall nudge keeps its full 6 s when other topics open; the smaller debrief size applies only beside the button; removed the unreachable 1 m-ahead debrief fallback. LEAF 5/5 pass after the fixes.

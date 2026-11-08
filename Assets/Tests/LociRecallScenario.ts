@@ -93,6 +93,9 @@ export class LociRecallScenario extends Scenario {
     await press("RecallButton")
     expect(recall.isDebriefShown()).toBe(true)
     expect(ui.getPanelMode()).toBe("debrief")
+    // It shows right above the button, where the user is looking after pinching it.
+    expect(ui.getPanelWorldPosition().distance(ui.getRecallButtonWorldPosition())).toBeLessThan(30)
+    expect(ui.isPanelShown()).toBe(true)
     const deskTopic = PALACE.topics.filter((t) => t.id === q1.topic)[0]
     const debrief = ui.getDebriefText()
     for (const t of PALACE.topics) expect(debrief.includes(t.name)).toBe(true)

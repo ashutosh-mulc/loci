@@ -30,6 +30,8 @@
   ScriptInputsHidden:
     allDoneMessage: false
     controller: false
+    debriefAboveButtonCm: false
+    debriefSeconds: false
     panelLiftCm: false
     recallUI: false
   ScriptTypesHidden:
@@ -45,6 +47,8 @@
       recallUI: !<MappingBased.AssignableType_2> 00000000-0000-0000-0000-000000000000
       panelLiftCm: !<float> 27.000000
       allDoneMessage: All recalled here
+      debriefAboveButtonCm: !<float> 17.000000
+      debriefSeconds: !<float> 10.000000
   ScriptTypes:
     -
       {}
@@ -57,6 +61,8 @@
     - '// @ui {"widget":"group_end"}'
     - '// @ui {"widget":"separator"}'
     - '// @ui {"widget":"group_start", "label":"Settings"}'
-    - "// @input float panelLiftCm = 24 {\"hint\":\"Height of the question panel's centre above the cluster centre (cm).\", \"widget\":\"slider\", \"min\":10, \"max\":50, \"step\":1}"
+    - "// @input float panelLiftCm = 20 {\"hint\":\"Height of the question panel's centre above the cluster centre (cm).\", \"widget\":\"slider\", \"min\":10, \"max\":50, \"step\":1}"
     - '// @input string allDoneMessage = "All recalled here" {"hint":"Message when every star at a spot is mastered."}'
+    - '// @input float debriefAboveButtonCm = 17 {"hint":"After leaving Recall, the debrief floats this far above the Recall button (cm).", "widget":"slider", "min":5, "max":40, "step":1}'
+    - '// @input float debriefSeconds = 10 {"hint":"Seconds the debrief stays after leaving Recall.", "widget":"slider", "min":3, "max":30, "step":1}'
     - '// @ui {"widget":"group_end"}'

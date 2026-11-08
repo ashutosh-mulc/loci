@@ -7,6 +7,7 @@
     - !<own> 88131ed4-b81e-447a-bbaa-644f1d450cf5
     - !<own> 0aaee190-e477-4ce1-8ab5-d6863509e84e
     - !<own> 6118d7b8-14d1-4458-bb1f-f143c7e77155
+    - !<own> 03b54f95-22a7-4204-8dca-fd456170eb5c
   layers: !<Layers/267ee9a7-aff2-4f9d-9a49-f71214747d03>
     userLayers:
       - id: 1
@@ -222,6 +223,21 @@
     []
   Components:
     - !<own> 0a07e6a6-d36b-4ecd-9d71-e14da3a3a03e
+- !<SceneObject/03b54f95-22a7-4204-8dca-fd456170eb5c>
+  PrefabRemaps:
+    []
+  Name: DemoTour
+  Enabled: true
+  Layers: 1
+  LocalTransform: !<TransformEntity>
+    Position: {x: 0.000000, y: 0.000000, z: 0.000000}
+    Rotation: {x: 0.000000, y: 0.000000, z: 0.000000}
+    Scale: {x: 1.000000, y: 1.000000, z: 1.000000}
+    HasSegmentScaleCompensation: false
+  Children:
+    []
+  Components:
+    - !<own> df522053-4684-43c7-91d6-4011b510fcc3
 - !<SceneObject/0451d993-a1f7-464e-9b69-32c0d9af8ed7>
   PrefabRemaps:
     []
@@ -1631,6 +1647,8 @@
   ScriptInputsDefault:
     panelLiftCm: true
     allDoneMessage: true
+    debriefAboveButtonCm: true
+    debriefSeconds: true
   ScriptTypesDefault:
     {}
   ScriptInputs:
@@ -1639,6 +1657,8 @@
       recallUI: !<MappingBased.AssignableType_2> bbec28f1-2623-4118-a8d2-28b9086d1626
       panelLiftCm: !<float> 27.000000
       allDoneMessage: All recalled here
+      debriefAboveButtonCm: !<float> 17.000000
+      debriefSeconds: !<float> 10.000000
   ScriptTypes:
     "":
       {}
@@ -1865,6 +1885,8 @@
     "":
       controller: !<MappingBased.AssignableType_1> 59e1237d-c191-43c9-a0dc-106b6c35468d
       palaceJson: !<reference.JsonAsset> 00000000-0000-0000-0000-000000000000
+      alternatePalaces: !<reference.JsonAsset[]>
+        - !<reference> c9fad487-7d61-45e4-b79a-24cc538c46ff
   ScriptTypes:
     "":
       {}
@@ -2334,6 +2356,7 @@
     panelWidthCm: true
     actionButtonWidthCm: true
     actionButtonHeightCm: true
+    panelScale: true
     readingDistanceCm: true
     glowColor: true
     glowHoverColor: true
@@ -2355,6 +2378,7 @@
       panelWidthCm: !<float> 30.000000
       actionButtonWidthCm: 8.500000
       actionButtonHeightCm: 4.500000
+      panelScale: 1.400000
       readingDistanceCm: !<float> 160.000000
       glowColor: !<Vec4> {x: 0.620000, y: 0.860000, z: 1.000000, w: 0.950000}
       glowHoverColor: !<Vec4> {x: 1.000000, y: 1.000000, z: 1.000000, w: 1.000000}
@@ -2678,6 +2702,29 @@
     - !<own> d4a9c5e3-fe96-4824-9b20-59f5ad39eabd
   Components:
     []
+- !<ScriptComponent/df522053-4684-43c7-91d6-4011b510fcc3>
+  PrefabRemaps:
+    []
+  Name: LociDemoTour
+  Enabled: true
+  ScriptAsset: !<reference> bcadbde1-2c62-48fe-a804-b101f29031c6
+  ScriptInputsDefault:
+    playOnStart: true
+    speed: true
+    showAnyUser: true
+  ScriptTypesDefault:
+    {}
+  ScriptInputs:
+    "":
+      controller: !<MappingBased.AssignableType_1> 59e1237d-c191-43c9-a0dc-106b6c35468d
+      recall: !<MappingBased.AssignableType_2> 7d981101-c138-43a3-ab44-65672ea99d2c
+      source: !<MappingBased.AssignableType_3> 8e2b277a-f715-4ba5-941f-a6e3438c3630
+      playOnStart: false
+      speed: !<float> 1.000000
+      showAnyUser: true
+  ScriptTypes:
+    "":
+      {}
 - !<RenderMeshVisual/e1031f7e-3474-489f-a529-282f7192f812>
   PrefabRemaps:
     []

@@ -27,9 +27,15 @@ export class LociRecall extends BaseScriptComponent {
   @ui.group_start("Settings")
   @input @hint("Height of the question panel's centre above the cluster centre (cm).")
   @widget(new SliderWidget(10, 50, 1))
-  panelLiftCm: number = 24
+  panelLiftCm: number = 20
   @input @hint("Message when every star at a spot is mastered.")
   allDoneMessage: string = "All recalled here"
+  @input @hint("After leaving Recall, the debrief floats this far above the Recall button (cm).")
+  @widget(new SliderWidget(5, 40, 1))
+  debriefAboveButtonCm: number = 17
+  @input @hint("Seconds the debrief stays after leaving Recall.")
+  @widget(new SliderWidget(3, 30, 1))
+  debriefSeconds: number = 10
   @ui.group_end
 
   private active = false
@@ -41,12 +47,15 @@ export class LociRecall extends BaseScriptComponent {
   private current: Thought | null = null
   private revealed = false
   private panelSpot: string | null = null
+  private debriefTimer!: DelayedCallbackEvent
 
   onAwake(): void {
     if (!this.controller || !this.recallUI) {
       print("LociRecall: controller and recallUI must be wired.")
       return
     }
+    this.debriefTimer = this.createEvent("DelayedCallbackEvent")
+    this.debriefTimer.bind(() => { if (!this.active && this.recallUI.getPanelMode() === "debrief") this.recallUI.hidePanel() })
     this.createEvent("OnStartEvent").bind(() => this.wire())
   }
 
@@ -90,7 +99,7 @@ export class LociRecall extends BaseScriptComponent {
   /** Pinching the button again: show the debrief here, then go back to Explore. */
   endRecall(): void {
     if (!this.active) return
-    this.showDebrief()
+    this.showDebrief(true)
     this.active = false
     this.current = null
     this.revealed = false
@@ -210,24 +219,28 @@ export class LociRecall extends BaseScriptComponent {
     this.recallUI.showQuestion(pick.prompt, this.panelAnchor(spot))
   }
 
-  private showDebrief(): void {
+  /**
+   * Show the per-topic debrief. `atButton`: the user just glanced down to pinch Explore, so show it
+   * right above the button where they are looking (it stays ~10 s or until another topic opens).
+   * Otherwise (every topic asked) show it above the open topic.
+   */
+  private showDebrief(atButton: boolean = false): void {
     this.debriefShown = true
     const text = this.debriefText()
     if (this.current && !this.mastered.has(this.current.id)) this.controller.setStarState(this.current.id, "normal")
     this.current = null
     this.revealed = false
     const spot = this.controller.getOpenSpot()
-    if (spot) {
+    if (atButton) {
+      if (this.panelSpot) this.controller.setSpotLabelVisible(this.panelSpot, true)
+      this.panelSpot = null
+      this.recallUI.showDebrief(text, this.recallUI.getRecallButtonWorldPosition().add(new vec3(0, this.debriefAboveButtonCm, 0)), true)
+      this.debriefTimer.reset(this.debriefSeconds) // one timer, restarted each time
+    } else if (spot) {
+      // Every topic asked: answer() only runs with a topic open, so `spot` is always set here.
       this.panelSpot = spot
       this.controller.setSpotLabelVisible(spot, false)
       this.recallUI.showDebrief(text, this.panelAnchor(spot))
-    } else {
-      // No spot open: show it 1 m ahead at eye level, where the user is looking.
-      const camT = WorldCameraFinderProvider.getInstance().getComponent().getTransform()
-      const fwd = camT.getWorldRotation().multiplyVec3(new vec3(0, 0, -1))
-      const flat = new vec3(fwd.x, 0, fwd.z).normalize()
-      this.panelSpot = null
-      this.recallUI.showDebrief(text, camT.getWorldPosition().add(flat.uniformScale(100)))
     }
     print(`Loci: debrief ${text.replace(/\n/g, " | ")}`)
   }
@@ -241,7 +254,7 @@ export class LociRecall extends BaseScriptComponent {
   private panelAnchor(spot: string): vec3 {
     const c = this.controller.getClusterCentreWorld(spot)!
     const cam = WorldCameraFinderProvider.getInstance().getComponent().getTransform().getWorldPosition()
-    const k = Math.max(1, c.distance(cam) / this.recallUI.readingDistanceCm)
+    const k = this.recallUI.panelScale * Math.max(1, c.distance(cam) / this.recallUI.readingDistanceCm)
     return c.add(new vec3(0, this.panelLiftCm * k, 0))
   }
 

@@ -28,6 +28,7 @@
   ExportUid: 00000000-0000-0000-0000-000000000000
   PackagePolicy: CanBeUnpacked
   ScriptInputsHidden:
+    alternatePalaces: false
     controller: false
     palaceJson: false
   ScriptTypesHidden:
@@ -41,6 +42,8 @@
   DefaultScriptInputs:
     - controller: !<MappingBased.AssignableType_1> 00000000-0000-0000-0000-000000000000
       palaceJson: !<reference.JsonAsset> 00000000-0000-0000-0000-000000000000
+      alternatePalaces: !<reference.JsonAsset[]>
+        []
   ScriptTypes:
     -
       {}
@@ -53,4 +56,5 @@
     - '// @ui {"widget":"separator"}'
     - '// @ui {"widget":"group_start", "label":"Data"}'
     - "// @input Asset.JsonAsset palaceJson {\"hint\":\"A user's palace as JSON (same schema as PalaceData.ts). Empty = PalaceData.ts.\"}"
+    - "// @input Asset.JsonAsset[] alternatePalaces = {} {\"hint\":\"Other users' palaces the demo tour can switch to (loadAlternate).\"}"
     - '// @ui {"widget":"group_end"}'

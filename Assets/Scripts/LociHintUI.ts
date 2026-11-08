@@ -2,12 +2,14 @@
 // Owns: the one-line onboarding hint that tells the user the next step, then gets out of the way.
 //   Place:   "Drag a topic toward any spot in your room · N left" (and "Too close to X" on a refusal)
 //   Explore: "Look at a topic to open it" -> "Pinch a star to read it" -> "Pinch Recall below to test yourself"
-//   Recall:  "Answer at each topic · pinch Explore to finish"
+//   Recall:  quiet (the Recall panel and the "Explore" button explain themselves)
 // Lazily follows the user near the top of the view, fades in and out. Light text only.
 // Listens to LociPalaceController events; holds no palace state of its own.
 
 import {LociPalaceController} from "./LociPalaceController"
 import WorldCameraFinderProvider from "SpectaclesInteractionKit.lspkg/Providers/CameraProvider/WorldCameraFinderProvider"
+
+const NUDGE = "Pinch Recall below to test yourself"
 
 @component
 export class LociHintUI extends BaseScriptComponent {
@@ -42,6 +44,7 @@ export class LociHintUI extends BaseScriptComponent {
   private expireAt = -1
   private seenOpen = false
   private seenCard = false
+  private nudgeUntil = -1
   private override: string | null = null
   private overrideUntil = -1
 
@@ -69,14 +72,15 @@ export class LociHintUI extends BaseScriptComponent {
     if (!this.controller) return
     const c = this.controller
     c.onTopicPlaced.add(() => this.refresh())
-    c.onPalaceLoaded.add(() => { this.seenOpen = false; this.seenCard = false; this.refresh() })
+    c.onPalaceLoaded.add(() => { this.seenOpen = false; this.seenCard = false; this.nudgeUntil = -1; this.refresh() })
     c.onPlaceRejected.add((e) => this.flash(`${e.reason}. Pick a spot further away`, 3))
     c.onClusterOpened.add(() => { this.seenOpen = true; this.refresh() })
     c.onCardChanged.add((id) => {
-      if (id && !this.seenCard) { this.seenCard = true; this.refresh(); this.expireAt = getTime() + this.linger }
+      if (id && !this.seenCard) { this.seenCard = true; this.nudgeUntil = getTime() + this.linger; this.refresh() }
     })
     c.onModeChanged.add((m) => {
-      if (m === "place") { this.seenOpen = false; this.seenCard = false }
+      if (m === "place") { this.seenOpen = false; this.seenCard = false; this.nudgeUntil = -1 }
+      if (m === "recall") this.nudgeUntil = -1 // they found Recall: no need to nudge again
       this.refresh()
       if (m === "recall") this.expireAt = getTime() + this.linger
       if (m === "explore" && this.seenCard) this.expireAt = getTime() // back from Recall: stay quiet
@@ -93,13 +97,14 @@ export class LociHintUI extends BaseScriptComponent {
       const left = c.getTopicIds().length - c.placedCount()
       this.message = `Drag a topic toward any spot in your room  ·  ${left} left`
     } else if (mode === "recall") {
-      this.message = "Answer at each topic  ·  pinch Explore to finish"
+      this.message = "" // the Recall panel explains itself; a hint here would sit under its buttons
     } else if (!this.seenOpen) {
       this.message = "Look at a topic to open it"
     } else if (!this.seenCard) {
       this.message = "Pinch a star to read it"
     } else {
-      this.message = "Pinch Recall below to test yourself"
+      // Shown for `linger` seconds after the first card, however many topics open meanwhile.
+      this.message = getTime() < this.nudgeUntil ? NUDGE : ""
     }
   }
 
@@ -111,6 +116,7 @@ export class LociHintUI extends BaseScriptComponent {
   private currentTarget(): string {
     const now = getTime()
     if (this.override && now < this.overrideUntil) return this.override
+    if (this.message === NUDGE && now >= this.nudgeUntil) return ""
     if (this.expireAt >= 0 && now > this.expireAt) return ""
     return this.message
   }

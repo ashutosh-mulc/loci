@@ -1,0 +1,68 @@
+- !<AssetImportMetadata/3d884ff9-fa2d-4978-a0c3-c11eabbcf326>
+  ImportedAssetIds:
+    TypeScriptAsset: !<reference> bcadbde1-2c62-48fe-a804-b101f29031c6
+  ImporterName: TypeScriptAssetImporter
+  PrimaryAsset: !<reference> bcadbde1-2c62-48fe-a804-b101f29031c6
+  PackageType: NotAPackage
+  LegacyPackagePolicy: ~
+  ExtraData:
+    {}
+  AssetDataMap:
+    TypeScriptAsset: !<own> 5d36e4ae-ee1a-4e9a-ba68-66b9e4d3cf54
+  DependentFiles:
+    []
+  ImporterSettings: !<AssetImporterSettings>
+    {}
+  CompressionSettings: !<own> 00000000-0000-0000-0000-000000000000
+- !<TypeScriptAssetData/5d36e4ae-ee1a-4e9a-ba68-66b9e4d3cf54>
+  SvgIcon: ""
+  SetupScript:
+    code: ""
+  Description: ""
+  VersionMajor: 0
+  VersionMinor: 0
+  VersionPatch: 0
+  VersionPrerelease: ""
+  UpdateOrder: 0
+  ComponentUid: 89e14346-8031-4c95-97e7-f2333c6f3d78
+  ExportUid: 00000000-0000-0000-0000-000000000000
+  PackagePolicy: CanBeUnpacked
+  ScriptInputsHidden:
+    controller: false
+    playOnStart: false
+    recall: false
+    showAnyUser: false
+    source: false
+    speed: false
+  ScriptTypesHidden:
+    {}
+  ReadMe: !<reference> 00000000-0000-0000-0000-000000000000
+  DeclarationFile: !<reference> 00000000-0000-0000-0000-000000000000
+  Tags:
+    []
+  Attachments:
+    []
+  DefaultScriptInputs:
+    - controller: !<MappingBased.AssignableType_1> 00000000-0000-0000-0000-000000000000
+      recall: !<MappingBased.AssignableType_2> 00000000-0000-0000-0000-000000000000
+      source: !<MappingBased.AssignableType_3> 00000000-0000-0000-0000-000000000000
+      playOnStart: false
+      speed: !<float> 1.000000
+      showAnyUser: true
+  ScriptTypes:
+    -
+      {}
+  InputLines:
+    - '// @ui {"widget":"label", "label":"<span style=\"color: #60A5FA;\">LociDemoTour – scripted walkthrough for the video</span>"}'
+    - '// @ui {"widget":"separator"}'
+    - '// @ui {"widget":"group_start", "label":"References"}'
+    - // @input AssignableType_1 controller
+    - // @input AssignableType_2 recall
+    - // @input AssignableType_3 source
+    - '// @ui {"widget":"group_end"}'
+    - '// @ui {"widget":"separator"}'
+    - '// @ui {"widget":"group_start", "label":"Settings"}'
+    - '// @input bool playOnStart {"hint":"Play the tour when the Preview starts. Turn off for normal use."}'
+    - '// @input float speed = 1 {"hint":"Speed multiplier (1 = natural pace, about 90 s).", "widget":"slider", "min":0.5, "max":2, "step":0.05}'
+    - "// @input bool showAnyUser = true {\"hint\":\"Include step 4: switch to another user's palace.\"}"
+    - '// @ui {"widget":"group_end"}'

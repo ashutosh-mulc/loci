@@ -81,6 +81,9 @@ export class LociRecallUI extends BaseScriptComponent {
   @input @hint("Reveal / Right / Wrong button height (cm).")
   @widget(new SliderWidget(4, 8, 0.5))
   actionButtonHeightCm: number = 4.5
+  @input @hint("Overall size of the question panel and its buttons.")
+  @widget(new SliderWidget(0.8, 2.5, 0.05))
+  panelScale: number = 1.4
   @input @hint("Panel is authored for this distance (cm); farther spots scale it up so it reads the same size everywhere.")
   @widget(new SliderWidget(80, 200, 5))
   readingDistanceCm: number = 110
@@ -137,6 +140,7 @@ export class LociRecallUI extends BaseScriptComponent {
   private buttonPlaced = false
   private mode: PanelMode = "hidden"
   private anchorWorld = vec3.zero()
+  private compact = false
 
   onAwake(): void {
     this.buildRecallButton()
@@ -189,7 +193,9 @@ export class LociRecallUI extends BaseScriptComponent {
     this.apply()
   }
 
-  showDebrief(text: string, anchor: vec3): void {
+  /** `byButton`: shown at arm's length above the Recall button, so it may shrink to fit there. */
+  showDebrief(text: string, anchor: vec3, byButton: boolean = false): void {
+    this.compact = byButton
     this.debriefText.text = text
     this.anchorWorld = anchor
     this.mode = "debrief"
@@ -412,7 +418,7 @@ export class LociRecallUI extends BaseScriptComponent {
     const cam = this.camT.getWorldPosition()
     tr.setWorldPosition(this.anchorWorld)
     // Keep the same angular size at every spot (1.2 to 2.5 m away).
-    tr.setLocalScale(vec3.one().uniformScale(Math.max(1, this.anchorWorld.distance(cam) / this.readingDistanceCm)))
+    tr.setLocalScale(vec3.one().uniformScale(this.panelScale * Math.max(this.mode === "debrief" && this.compact ? 0.6 : 1, this.anchorWorld.distance(cam) / this.readingDistanceCm)))
     this.faceUser(tr, this.anchorWorld, cam)
   }
 

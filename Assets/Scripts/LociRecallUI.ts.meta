@@ -37,6 +37,7 @@
     followSpeed: false
     glowColor: false
     glowHoverColor: false
+    panelScale: false
     panelWidthCm: false
     readingDistanceCm: false
     recallButtonHeightCm: false
@@ -64,6 +65,7 @@
       panelWidthCm: !<float> 30.000000
       actionButtonWidthCm: 8.500000
       actionButtonHeightCm: 4.500000
+      panelScale: 1.400000
       readingDistanceCm: !<float> 160.000000
       glowColor: !<Vec4> {x: 0.620000, y: 0.860000, z: 1.000000, w: 0.950000}
       glowHoverColor: !<Vec4> {x: 1.000000, y: 1.000000, z: 1.000000, w: 1.000000}
@@ -91,6 +93,7 @@
     - '// @input float panelWidthCm = 30 {"hint":"Panel width (cm).", "widget":"slider", "min":20, "max":45, "step":0.5}'
     - '// @input float actionButtonWidthCm = 8.5 {"hint":"Reveal / Right / Wrong button width (cm). At least 6 cm.", "widget":"slider", "min":6, "max":12, "step":0.5}'
     - '// @input float actionButtonHeightCm = 4.5 {"hint":"Reveal / Right / Wrong button height (cm).", "widget":"slider", "min":4, "max":8, "step":0.5}'
+    - '// @input float panelScale = 1.4 {"hint":"Overall size of the question panel and its buttons.", "widget":"slider", "min":0.8, "max":2.5, "step":0.05}'
     - '// @input float readingDistanceCm = 110 {"hint":"Panel is authored for this distance (cm); farther spots scale it up so it reads the same size everywhere.", "widget":"slider", "min":80, "max":200, "step":5}'
     - '// @ui {"widget":"group_end"}'
     - '// @ui {"widget":"separator"}'

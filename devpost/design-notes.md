@@ -37,3 +37,10 @@ What we saw, what changed, and why.
 - **Any data:** a user's palace is a JSON file (same schema as PalaceData.ts), dropped into Palace Json on `Loci`. A validator drops or repairs bad entries (unknown topics, duplicates, same-topic threads, long labels, offsets beyond ±20 cm) instead of failing. Sample second user: `Assets/Data/guitar-palace.json`. PalaceData.ts stays the default.
 - **Look:** preview environment set to Evening Room. Stars, dots and orbs have soft glows (five nested translucent spheres; additive glows vanish in the preview, which composites by alpha), stars twinkle, clusters bloom open, faint thread lines link related ideas across topics.
 - **Clear flow:** a one-line hint near the top of the view gives the next step and goes quiet once done.
+
+## Sun Nov 8 (later): video tour and fixes it exposed
+
+- **Demo tour:** `DemoTour` object (LociDemoTour). Tick Play On Start, reset the preview, record. The head turns smoothly through Place, Explore, a card, a Recall round, the debrief, then switches to another user's palace. Off by default. Recording steps, shot list and voiceover: `devpost/video-script.md`.
+- **Debrief moved:** pressing Recall/Explore means glancing ~35° down, which counts as looking away, so the open topic closed and took the debrief with it. After leaving Recall the debrief now appears just above the button, where you are looking, for 10 s or until you open another topic. The automatic debrief (every topic asked) still shows above the topic.
+- **Bigger Recall panel:** question, answer and buttons are 1.4x (Panel Scale on RecallUI).
+- **Quieter hints:** the "Pinch Recall below" nudge shows once; no hint during Recall (it sat under the buttons).

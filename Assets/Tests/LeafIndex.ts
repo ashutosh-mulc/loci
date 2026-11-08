@@ -6,7 +6,6 @@ import {LociPlaceScenario} from "./LociPlaceScenario"
 import {LociExploreScenario} from "./LociExploreScenario"
 import {LociCardScenario} from "./LociCardScenario"
 import {LociRecallScenario} from "./LociRecallScenario"
-import {LociPoseShot} from "./LociPoseShot"
 import {LociDataScenario} from "./LociDataScenario"
 
 @component
@@ -18,6 +17,5 @@ export class LeafIndex extends BaseScriptComponent {
     {id: "loci-3-star-card", typename: LociCardScenario.getTypeName()},
     {id: "loci-5-recall", typename: LociRecallScenario.getTypeName()},
     {id: "loci-6-any-data", typename: LociDataScenario.getTypeName()},
-    {id: "zz-pose-shot", typename: LociPoseShot.getTypeName()},
   ]
 }
