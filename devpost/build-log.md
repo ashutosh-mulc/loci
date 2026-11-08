@@ -51,3 +51,14 @@ CLAD prompts, outcomes and LEAF results, session by session.
 - Watching the tour exposed two bugs, fixed: the debrief vanished when glancing down to pinch Explore; the Recall hint re-armed and overlapped. Recall panel enlarged 1.4x.
 - LEAF results, final code (5/5 pass): loci-1-place, loci-2-explore-gaze, loci-3-star-card, loci-5-recall (now also asserts the debrief shows within 30 cm of the button), loci-6-any-data.
 - Review fixes (relayed ultrareview of the uncommitted demo work): committed LociDemoTour + video script; one restartable debrief timer; the Recall nudge keeps its full 6 s when other topics open; the smaller debrief size applies only beside the button; removed the unreachable 1 m-ahead debrief fallback. LEAF 5/5 pass after the fixes.
+
+## Nov 8: /verify-preview QA pass
+
+Prompt: `/ls-clad:verify-preview`.
+
+- Ran the demo tour in Interactive Preview and screenshotted Explore, a Recall question and the debrief. The debrief shows above the Recall button and is readable (first visual check of that change).
+- Found: one tour run placed only 2 of 4 guitar topics, and the debrief counted 1 Right answer instead of 2. Cause: the tour used fixed timers. When the preview drops frames, gaze dwell and the async World Query answer arrive late, and the tour moves on too early.
+- Fixed in `LociPalaceController.releaseOrb`: if World Query hasn't answered within 0.4 s, the orb uses the default distance. Before, the orb could hang forever. The orb now stays busy while a release is pending, a palace swap mid-release is ignored, and refusals are logged.
+- Fixed in `LociDemoTour`: it waits for the real state (anchored, open, question asked), up to 3 s, and logs if it gives up.
+- Re-ran: the tour placed 5/5, the debrief counted both answers (2 Right), and all 4 guitar topics placed. No "gave up" lines.
+- LEAF after the change: loci-1-place, loci-2-explore-gaze, loci-3-star-card, loci-5-recall and loci-6-any-data all pass (5/5).

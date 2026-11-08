@@ -78,6 +78,7 @@ export class LociDemoTour extends BaseScriptComponent {
       await this.look(p, 1.1)
       c.aimAndRelease(id, p)
       await this.wait(1.4)
+      await this.until(() => c.isAnchored(id), 3, `${id} anchored`)
     }
     print("LociDemoTour: 2 Explore")
 
@@ -89,6 +90,7 @@ export class LociDemoTour extends BaseScriptComponent {
     await this.wait(2.2)
     await this.look(c.getClusterCentreWorld(first)!, 1.4)
     await this.wait(2)
+    await this.until(() => c.getOpenSpot() === first, 3, `${first} open`)
     const star = c.thoughtsAt(first)[2] ?? c.thoughtsAt(first)[0]
     c.toggleCard(star.id)
     await this.wait(3.5)
@@ -100,16 +102,19 @@ export class LociDemoTour extends BaseScriptComponent {
     await this.pressRecall()
     await this.look(c.getClusterCentreWorld(first)!.add(new vec3(0, 14, 0)), 1.2)
     await this.wait(2.5)
+    await this.untilAsked(first)
     this.recall.reveal()
     await this.wait(2.8)
     this.recall.answer(true)
     await this.wait(2)
+    await this.untilAsked(first)
     this.recall.reveal()
     await this.wait(2)
     this.recall.answer(false)
     await this.wait(1.5)
     await this.look(c.getClusterCentreWorld(second)!.add(new vec3(0, 14, 0)), 1.6)
     await this.wait(2.4)
+    await this.untilAsked(second)
     this.recall.reveal()
     await this.wait(2.4)
     this.recall.answer(true)
@@ -128,10 +133,12 @@ export class LociDemoTour extends BaseScriptComponent {
         await this.look(p, 0.8)
         c.aimAndRelease(id, p)
         await this.wait(1)
+        await this.until(() => c.isAnchored(id), 3, `${id} anchored`)
       }
       const g = c.getTopicIds()[0]
       await this.look(c.getClusterCentreWorld(g)!, 1.4)
       await this.wait(2)
+      await this.until(() => c.getOpenSpot() === g, 3, `${g} open`)
       const gs = c.thoughtsAt(g)[1] ?? c.thoughtsAt(g)[0]
       c.toggleCard(gs.id)
       await this.wait(3.5)
@@ -140,6 +147,16 @@ export class LociDemoTour extends BaseScriptComponent {
     await this.wait(1)
     this.driving = false
     print("LociDemoTour: done")
+  }
+
+  /** Fixed timers alone drift if the preview drops frames (gaze dwell needs frames); wait for the real state. */
+  private async until(cond: () => boolean, maxSec: number, what: string): Promise<void> {
+    for (let t = 0; t < maxSec && !cond(); t += 0.1) await this.wait(0.1 * this.speed)
+    if (!cond()) print(`LociDemoTour: gave up waiting for ${what}`)
+  }
+
+  private untilAsked(spot: string): Promise<void> {
+    return this.until(() => this.controller.getOpenSpot() === spot && this.recall.getCurrentThoughtId() !== null, 3, `a question at ${spot}`)
   }
 
   private async pressRecall(): Promise<void> {

@@ -516,12 +516,15 @@ export class LociPalaceController extends BaseScriptComponent {
   /** Aim-and-release: find where the line of sight through `through` meets the room, then fly there. */
   private releaseOrb(orb: OrbEntry, through: vec3): void {
     if (this.state.mode !== "place" || this.state.spotOf(orb.topic.id) || orb.flying) return
+    orb.flying = true // busy until it lands or flies home (every path below ends in fly())
     const cam = this.camT!.getWorldPosition()
     const dir = through.sub(cam).normalize()
     const fallback = this.clampToRoom(cam.add(dir.uniformScale(this.placeDistanceCm)))
     const land = (target: vec3) => {
+      if (this.orbs.get(orb.topic.id) !== orb) return // the palace was swapped meanwhile
       const reason = this.rejectReason(orb.topic.id, target)
       if (reason) {
+        print(`Loci: ${orb.topic.id} not placed: ${reason}.`)
         this.onPlaceRejected.invoke({topicId: orb.topic.id, reason})
         this.flyHome(orb)
         return
@@ -530,6 +533,14 @@ export class LociPalaceController extends BaseScriptComponent {
     }
     if (!this.hitSession) { land(fallback); return }
     let answered = false
+    // World Query answers at ~5 Hz and may not answer at all; never leave the orb hanging.
+    const timeout = this.createEvent("DelayedCallbackEvent")
+    timeout.bind(() => {
+      if (answered) return
+      answered = true
+      land(fallback)
+    })
+    timeout.reset(0.4)
     this.hitSession.hitTest(cam, cam.add(dir.uniformScale(400)), (r) => {
       if (answered) return
       answered = true
