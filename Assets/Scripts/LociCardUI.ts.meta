@@ -1,0 +1,71 @@
+- !<AssetImportMetadata/8003a8ca-6844-4f45-9478-f7b691258f12>
+  ImportedAssetIds:
+    TypeScriptAsset: !<reference> e289da71-3aa2-420c-97c9-87db88d8b181
+  ImporterName: TypeScriptAssetImporter
+  PrimaryAsset: !<reference> e289da71-3aa2-420c-97c9-87db88d8b181
+  PackageType: NotAPackage
+  LegacyPackagePolicy: ~
+  ExtraData:
+    {}
+  AssetDataMap:
+    TypeScriptAsset: !<own> 07f021ba-4c7c-40e2-ab68-6d5cb26692ea
+  DependentFiles:
+    []
+  ImporterSettings: !<AssetImporterSettings>
+    {}
+  CompressionSettings: !<own> 00000000-0000-0000-0000-000000000000
+- !<TypeScriptAssetData/07f021ba-4c7c-40e2-ab68-6d5cb26692ea>
+  SvgIcon: ""
+  SetupScript:
+    code: ""
+  Description: ""
+  VersionMajor: 0
+  VersionMinor: 0
+  VersionPatch: 0
+  VersionPrerelease: ""
+  UpdateOrder: 0
+  ComponentUid: e6ac845c-c485-4001-9aba-31f7871a041b
+  ExportUid: 00000000-0000-0000-0000-000000000000
+  PackagePolicy: CanBeUnpacked
+  ScriptInputsHidden:
+    cardHeightCm: false
+    cardWidthCm: false
+    gapFromStarCm: false
+    metaColor: false
+    outlineColor: false
+    outlineWidthCm: false
+    readingDistanceCm: false
+    sentenceColor: false
+  ScriptTypesHidden:
+    {}
+  ReadMe: !<reference> 00000000-0000-0000-0000-000000000000
+  DeclarationFile: !<reference> 00000000-0000-0000-0000-000000000000
+  Tags:
+    []
+  Attachments:
+    []
+  DefaultScriptInputs:
+    - cardWidthCm: !<float> 25.000000
+      cardHeightCm: !<float> 10.000000
+      gapFromStarCm: !<float> 4.000000
+      outlineColor: !<Vec4> {x: 0.620000, y: 0.860000, z: 1.000000, w: 0.950000}
+      outlineWidthCm: 0.200000
+      sentenceColor: !<Vec4> {x: 0.970000, y: 0.980000, z: 1.000000, w: 1.000000}
+      metaColor: !<Vec4> {x: 0.800000, y: 0.880000, z: 1.000000, w: 0.750000}
+      readingDistanceCm: !<float> 150.000000
+  ScriptTypes:
+    -
+      {}
+  InputLines:
+    - '// @ui {"widget":"label", "label":"<span style=\"color: #60A5FA;\">LociCardUI – one-line thought card, glowing outline, no dark panel</span>"}'
+    - '// @ui {"widget":"separator"}'
+    - '// @ui {"widget":"group_start", "label":"Settings"}'
+    - '// @input float cardWidthCm = 25 {"hint":"Card width in cm.", "widget":"slider", "min":15, "max":40, "step":0.5}'
+    - '// @input float cardHeightCm = 10 {"hint":"Card height in cm.", "widget":"slider", "min":6, "max":20, "step":0.5}'
+    - "// @input float gapFromStarCm = 4 {\"hint\":\"Gap between the star and the card's near edge, in cm.\", \"widget\":\"slider\", \"min\":0, \"max\":15, \"step\":0.5}"
+    - '// @input vec4 outlineColor = "{0.62, 0.86, 1.0, 0.95}" {"hint":"Thin glowing outline colour.", "widget":"color"}'
+    - '// @input float outlineWidthCm = 0.2 {"hint":"Outline width in cm.", "widget":"slider", "min":0.05, "max":1, "step":0.05}'
+    - '// @input vec4 sentenceColor = "{0.97, 0.98, 1.0, 1.0}" {"hint":"Sentence text colour (light).", "widget":"color"}'
+    - '// @input vec4 metaColor = "{0.8, 0.88, 1.0, 0.75}" {"hint":"Source and date text colour (lighter weight, still light).", "widget":"color"}'
+    - '// @input float readingDistanceCm = 150 {"hint":"Text is sized to read from this distance (cm). Cards sit 1.2–2.5 m away.", "widget":"slider", "min":110, "max":260, "step":5}'
+    - '// @ui {"widget":"group_end"}'

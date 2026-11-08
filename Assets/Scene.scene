@@ -4,6 +4,9 @@
     - !<own> 00000000-0000-0065-0000-000000000064
     - !<own> 0005641c-028d-459a-0000-000000014b4d
     - !<own> f5d74682-203a-4970-81ea-9fa7b88c96bb
+    - !<own> 88131ed4-b81e-447a-bbaa-644f1d450cf5
+    - !<own> 0aaee190-e477-4ce1-8ab5-d6863509e84e
+    - !<own> 6118d7b8-14d1-4458-bb1f-f143c7e77155
   layers: !<Layers/267ee9a7-aff2-4f9d-9a49-f71214747d03>
     userLayers:
       - id: 1
@@ -174,6 +177,21 @@
   FalloffType: None
   FalloffRange: .inf
   ShadowType: None
+- !<SceneObject/00b20556-02cd-459e-a9ed-2e3409612f77>
+  PrefabRemaps:
+    []
+  Name: Hint
+  Enabled: true
+  Layers: 1
+  LocalTransform: !<TransformEntity>
+    Position: {x: 0.000000, y: 0.000000, z: 0.000000}
+    Rotation: {x: 0.000000, y: 0.000000, z: 0.000000}
+    Scale: {x: 1.000000, y: 1.000000, z: 1.000000}
+    HasSegmentScaleCompensation: false
+  Children:
+    []
+  Components:
+    - !<own> b45ec838-d852-4c88-99d7-0ecf5e4b1f19
 - !<SceneObject/012a3973-9507-4230-a6ff-2b8dfd2154fe>
   PrefabRemaps:
     []
@@ -189,6 +207,21 @@
     - !<own> 276368e3-f687-4cc6-947d-24de3a78c9af
   Components:
     []
+- !<SceneObject/0256add7-a9bc-4483-b9f9-a6f4e7f81ede>
+  PrefabRemaps:
+    []
+  Name: Labels
+  Enabled: true
+  Layers: 1
+  LocalTransform: !<TransformEntity>
+    Position: {x: 0.000000, y: 0.000000, z: 0.000000}
+    Rotation: {x: 0.000000, y: 0.000000, z: 0.000000}
+    Scale: {x: 1.000000, y: 1.000000, z: 1.000000}
+    HasSegmentScaleCompensation: false
+  Children:
+    []
+  Components:
+    - !<own> 0a07e6a6-d36b-4ecd-9d71-e14da3a3a03e
 - !<SceneObject/0451d993-a1f7-464e-9b69-32c0d9af8ed7>
   PrefabRemaps:
     []
@@ -349,6 +382,24 @@
     - !<own> 6a99bdcf-c194-46c1-ba16-945f1d48a1dd
   Components:
     []
+- !<ScriptComponent/0a07e6a6-d36b-4ecd-9d71-e14da3a3a03e>
+  PrefabRemaps:
+    []
+  Name: LociLabelsUI
+  Enabled: true
+  ScriptAsset: !<reference> 84fb9ad5-284e-4eba-830d-4a4e8d55f198
+  ScriptInputsDefault:
+    textColor: true
+    faceUser: true
+  ScriptTypesDefault:
+    {}
+  ScriptInputs:
+    "":
+      textColor: !<Vec4> {x: 0.950000, y: 0.970000, z: 1.000000, w: 1.000000}
+      faceUser: true
+  ScriptTypes:
+    "":
+      {}
 - !<SceneObject/0a0e1d78-8246-4f5b-ab1a-fdc51837956d>
   PrefabRemaps:
     []
@@ -364,6 +415,22 @@
     - !<own> 05147ea1-cb6b-4629-9484-199a4aa4d92a
   Components:
     []
+- !<SceneObject/0aaee190-e477-4ce1-8ab5-d6863509e84e>
+  PrefabRemaps:
+    []
+  Name: LeafIndex
+  Enabled: true
+  Layers: 1
+  LocalTransform: !<TransformEntity>
+    Position: {x: 0.000000, y: 0.000000, z: 0.000000}
+    Rotation: {x: 0.000000, y: 0.000000, z: 0.000000}
+    Scale: {x: 1.000000, y: 1.000000, z: 1.000000}
+    HasSegmentScaleCompensation: false
+  Children:
+    []
+  Components:
+    - !<own> 22b128d0-5a8e-4cd2-af27-d339e1fc2cd8
+    - !<own> 327a1ae7-3716-481a-9514-d926e7fcbd33
 - !<SceneObject/0c355300-e635-47c1-a8c3-5ddef30b8824>
   PrefabRemaps:
     []
@@ -546,6 +613,22 @@
     []
   Components:
     - !<own> e1031f7e-3474-489f-a529-282f7192f812
+- !<ScriptComponent/22b128d0-5a8e-4cd2-af27-d339e1fc2cd8>
+  PrefabRemaps:
+    []
+  Name: LeafIndex
+  Enabled: true
+  ScriptAsset: !<reference> 0dc8b077-9e88-4ab2-a92e-9ebd39337235
+  ScriptInputsDefault:
+    {}
+  ScriptTypesDefault:
+    {}
+  ScriptInputs:
+    "":
+      {}
+  ScriptTypes:
+    "":
+      {}
 - !<SceneObject/23018601-1041-4785-a20e-9ad5ab722f95>
   PrefabRemaps:
     []
@@ -589,6 +672,21 @@
     HasSegmentScaleCompensation: false
   Children:
     []
+  Components:
+    []
+- !<SceneObject/24576f20-8410-4e1f-aab2-75899e78543b>
+  PrefabRemaps:
+    []
+  Name: Palace
+  Enabled: true
+  Layers: 1
+  LocalTransform: !<TransformEntity>
+    Position: {x: 0.000000, y: 0.000000, z: 0.000000}
+    Rotation: {x: 0.000000, y: 0.000000, z: 0.000000}
+    Scale: {x: 1.000000, y: 1.000000, z: 1.000000}
+    HasSegmentScaleCompensation: false
+  Children:
+    - !<own> ccd862de-b8b3-4bf3-8368-1cd54523fb50
   Components:
     []
 - !<SceneObject/264571d0-f879-411b-8deb-ff6d9921317f>
@@ -708,6 +806,22 @@
     - !<own> a7da4af4-3d84-4acd-a31e-920a56b4c5c8
   Components:
     []
+- !<ScriptComponent/327a1ae7-3716-481a-9514-d926e7fcbd33>
+  PrefabRemaps:
+    []
+  Name: LociLeafRunner
+  Enabled: true
+  ScriptAsset: !<reference> dd2aaabb-d86b-4647-85bb-b2b7f6263751
+  ScriptInputsDefault:
+    autoRun: true
+  ScriptTypesDefault:
+    {}
+  ScriptInputs:
+    "":
+      autoRun: false
+  ScriptTypes:
+    "":
+      {}
 - !<RenderMeshVisual/335c5f8b-2917-49e8-8af5-220696e9bc09>
   PrefabRemaps:
     []
@@ -743,6 +857,22 @@
     - !<own> e42bbb9f-e951-4432-be2e-3cc712b1fc33
   Components:
     []
+- !<ScriptComponent/34bc5d67-ef4a-48f0-9a00-356d2205ee46>
+  PrefabRemaps:
+    []
+  Name: MessagingBridge
+  Enabled: true
+  ScriptAsset: !<reference> ceaea52e-5a92-49ba-8e5f-a31096933dad
+  ScriptInputsDefault:
+    {}
+  ScriptTypesDefault:
+    {}
+  ScriptInputs:
+    "":
+      {}
+  ScriptTypes:
+    "":
+      {}
 - !<RenderMeshVisual/35501b69-b651-41e6-9b64-72a252df8105>
   PrefabRemaps:
     []
@@ -914,6 +1044,24 @@
     - !<own> 8fe2a532-9bf3-4cde-b598-04ce5470718d
   Components:
     []
+- !<SceneObject/4b1d0f3a-0cb7-45bc-9c6a-5aa2a3d50bc5>
+  PrefabRemaps:
+    []
+  Name: UI
+  Enabled: true
+  Layers: 1
+  LocalTransform: !<TransformEntity>
+    Position: {x: 0.000000, y: 0.000000, z: 0.000000}
+    Rotation: {x: 0.000000, y: 0.000000, z: 0.000000}
+    Scale: {x: 1.000000, y: 1.000000, z: 1.000000}
+    HasSegmentScaleCompensation: false
+  Children:
+    - !<own> 0256add7-a9bc-4483-b9f9-a6f4e7f81ede
+    - !<own> af96035d-a89d-420d-86d5-fcb2570932df
+    - !<own> 62731e55-3d34-4059-a62e-3495b4655782
+    - !<own> 00b20556-02cd-459e-a9ed-2e3409612f77
+  Components:
+    []
 - !<SceneObject/4c195c04-c397-454e-bd08-3485f37d84fe>
   PrefabRemaps:
     []
@@ -989,6 +1137,82 @@
     - !<own> bf2095b6-c6f8-48c8-b840-e0a6cec0dc99
   Components:
     []
+- !<ScriptComponent/59e1237d-c191-43c9-a0dc-106b6c35468d>
+  PrefabRemaps:
+    []
+  Name: LociPalaceController
+  Enabled: true
+  ScriptAsset: !<reference> fd5989d3-d370-42e0-a893-6ded95b5deb3
+  ScriptInputsDefault:
+    anchorToCameraAtStart: true
+    eyeHeightCm: true
+    placeDistanceCm: true
+    useWorldQuery: true
+    minSeparationDeg: true
+    minDragCm: true
+    orbArcRadiusCm: true
+    orbColor: true
+    openDwellSec: true
+    closeAwaySec: true
+    gazeHoldConeDeg: true
+    clusterLiftCm: true
+    dotDiameterCm: true
+    dotColor: true
+    bloomSec: true
+    starTargetRadiusCm: true
+    spotLabelCapCm: true
+    decisionColor: true
+    insightColor: true
+    questionColor: true
+    pulsePeriodSec: true
+    showThreads: true
+    chimeVolume: true
+  ScriptTypesDefault:
+    {}
+  ScriptInputs:
+    "":
+      palaceRoot: !<reference.SceneObject> 24576f20-8410-4e1f-aab2-75899e78543b
+      orbsRoot: !<reference.SceneObject> ccd862de-b8b3-4bf3-8368-1cd54523fb50
+      labels: !<MappingBased.AssignableType_1> 0a07e6a6-d36b-4ecd-9d71-e14da3a3a03e
+      card: !<MappingBased.AssignableType_2> 6e8d6b00-440a-4e3d-981a-ed90df510fd6
+      glowMaterial: !<reference.Material> 70410b07-57e9-4f55-94a3-06e4a2287b06
+      haloMaterial: !<reference.Material> cebdf719-6b58-4875-a809-c7d45ea98b6d
+      chimeTrack: !<reference.AudioTrackAsset> 49b0fe5a-fc60-4ed6-9c49-3cb75de28b76
+      anchorToCameraAtStart: true
+      eyeHeightCm: !<float> 160.000000
+      placeDistanceCm: !<float> 160.000000
+      useWorldQuery: true
+      minSeparationDeg: !<float> 18.000000
+      minDragCm: !<float> 6.000000
+      orbDiameterCm: !<float> 8.000000
+      orbArcRadiusCm: !<float> 60.000000
+      orbBelowEyeCm: !<float> 9.000000
+      orbArcSpanDeg: !<float> 48.000000
+      orbColor: !<Vec4> {x: 0.700000, y: 0.900000, z: 1.000000, w: 0.900000}
+      openDwellSec: 0.600000
+      closeAwaySec: !<float> 2.000000
+      gazeOpenConeDeg: !<float> 9.000000
+      gazeHoldConeDeg: !<float> 20.000000
+      clusterLiftCm: !<float> 12.000000
+      dotDiameterCm: !<float> 3.000000
+      dotColor: !<Vec4> {x: 0.700000, y: 0.850000, z: 1.000000, w: 0.450000}
+      bloomSec: 0.450000
+      starSizeCm: 3.200000
+      starHaloCm: !<float> 12.000000
+      starTargetRadiusCm: !<float> 3.000000
+      starLabelCapCm: 1.800000
+      spotLabelCapCm: !<float> 2.000000
+      orbLabelCapCm: !<float> 1.000000
+      decisionColor: !<Vec4> {x: 1.000000, y: 0.880000, z: 0.550000, w: 1.000000}
+      insightColor: !<Vec4> {x: 0.600000, y: 0.950000, z: 1.000000, w: 1.000000}
+      questionColor: !<Vec4> {x: 0.850000, y: 0.750000, z: 1.000000, w: 1.000000}
+      pulsePeriodSec: 2.400000
+      threadColor: !<Vec4> {x: 0.700000, y: 0.850000, z: 1.000000, w: 0.220000}
+      showThreads: true
+      chimeVolume: 0.500000
+  ScriptTypes:
+    "":
+      {}
 - !<ScriptComponent/5f153ad7-2baa-4fd9-a298-0dcfad86da3b>
   PrefabRemaps:
     []
@@ -1013,6 +1237,36 @@
   ScriptTypes:
     "":
       {}
+- !<SceneObject/6118d7b8-14d1-4458-bb1f-f143c7e77155>
+  PrefabRemaps:
+    []
+  Name: LEAF Plugin Bridge
+  Enabled: true
+  Layers: 1
+  LocalTransform: !<TransformEntity>
+    Position: {x: 0.000000, y: 0.000000, z: 0.000000}
+    Rotation: {x: 0.000000, y: 0.000000, z: 0.000000}
+    Scale: {x: 1.000000, y: 1.000000, z: 1.000000}
+    HasSegmentScaleCompensation: false
+  Children:
+    []
+  Components:
+    - !<own> 34bc5d67-ef4a-48f0-9a00-356d2205ee46
+- !<SceneObject/62731e55-3d34-4059-a62e-3495b4655782>
+  PrefabRemaps:
+    []
+  Name: RecallUI
+  Enabled: true
+  Layers: 1
+  LocalTransform: !<TransformEntity>
+    Position: {x: 0.000000, y: 0.000000, z: 0.000000}
+    Rotation: {x: 0.000000, y: 0.000000, z: 0.000000}
+    Scale: {x: 1.000000, y: 1.000000, z: 1.000000}
+    HasSegmentScaleCompensation: false
+  Children:
+    []
+  Components:
+    - !<own> bbec28f1-2623-4118-a8d2-28b9086d1626
 - !<ScriptComponent/62967490-d66e-4479-8829-e5c9da5b5b57>
   PrefabRemaps:
     []
@@ -1214,6 +1468,36 @@
     - !<own> 4c195c04-c397-454e-bd08-3485f37d84fe
   Components:
     []
+- !<ScriptComponent/6e8d6b00-440a-4e3d-981a-ed90df510fd6>
+  PrefabRemaps:
+    []
+  Name: LociCardUI
+  Enabled: true
+  ScriptAsset: !<reference> e289da71-3aa2-420c-97c9-87db88d8b181
+  ScriptInputsDefault:
+    cardWidthCm: true
+    cardHeightCm: true
+    gapFromStarCm: true
+    outlineColor: true
+    outlineWidthCm: true
+    sentenceColor: true
+    metaColor: true
+    readingDistanceCm: true
+  ScriptTypesDefault:
+    {}
+  ScriptInputs:
+    "":
+      cardWidthCm: !<float> 25.000000
+      cardHeightCm: !<float> 10.000000
+      gapFromStarCm: !<float> 4.000000
+      outlineColor: !<Vec4> {x: 0.620000, y: 0.860000, z: 1.000000, w: 0.950000}
+      outlineWidthCm: 0.200000
+      sentenceColor: !<Vec4> {x: 0.970000, y: 0.980000, z: 1.000000, w: 1.000000}
+      metaColor: !<Vec4> {x: 0.800000, y: 0.880000, z: 1.000000, w: 0.750000}
+      readingDistanceCm: !<float> 150.000000
+  ScriptTypes:
+    "":
+      {}
 - !<SceneObject/7037a633-4899-4f2e-bc97-2e3f35395687>
   PrefabRemaps:
     []
@@ -1338,6 +1622,26 @@
     - !<own> 3b4f5057-b516-4d3b-9c8d-14c81af2f505
   Components:
     []
+- !<ScriptComponent/7d981101-c138-43a3-ab44-65672ea99d2c>
+  PrefabRemaps:
+    []
+  Name: LociRecall
+  Enabled: true
+  ScriptAsset: !<reference> 4348d5ad-7d3f-4add-a40d-4abfdf7a7f42
+  ScriptInputsDefault:
+    panelLiftCm: true
+    allDoneMessage: true
+  ScriptTypesDefault:
+    {}
+  ScriptInputs:
+    "":
+      controller: !<MappingBased.AssignableType_1> 59e1237d-c191-43c9-a0dc-106b6c35468d
+      recallUI: !<MappingBased.AssignableType_2> bbec28f1-2623-4118-a8d2-28b9086d1626
+      panelLiftCm: !<float> 27.000000
+      allDoneMessage: All recalled here
+  ScriptTypes:
+    "":
+      {}
 - !<SceneObject/7e2075c6-0882-4275-8365-16a03da73298>
   PrefabRemaps:
     []
@@ -1476,6 +1780,24 @@
     - !<own> 1fc7fa3e-6910-4741-b8a7-1b6660a39a9d
   Components:
     - !<own> 28e05826-1521-46fa-a54c-80f2957ec80c
+- !<SceneObject/88131ed4-b81e-447a-bbaa-644f1d450cf5>
+  PrefabRemaps:
+    []
+  Name: Loci
+  Enabled: true
+  Layers: 1
+  LocalTransform: !<TransformEntity>
+    Position: {x: 0.000000, y: 0.000000, z: 0.000000}
+    Rotation: {x: 0.000000, y: 0.000000, z: 0.000000}
+    Scale: {x: 1.000000, y: 1.000000, z: 1.000000}
+    HasSegmentScaleCompensation: false
+  Children:
+    - !<own> 24576f20-8410-4e1f-aab2-75899e78543b
+    - !<own> 4b1d0f3a-0cb7-45bc-9c6a-5aa2a3d50bc5
+  Components:
+    - !<own> 59e1237d-c191-43c9-a0dc-106b6c35468d
+    - !<own> 7d981101-c138-43a3-ab44-65672ea99d2c
+    - !<own> 8e2b277a-f715-4ba5-941f-a6e3438c3630
 - !<SceneObject/8b877074-7eee-4be1-b669-714f8d5a1da3>
   PrefabRemaps:
     []
@@ -1529,6 +1851,23 @@
     - !<own> b859e31c-4c76-46bd-bd6a-042228e52728
   Components:
     []
+- !<ScriptComponent/8e2b277a-f715-4ba5-941f-a6e3438c3630>
+  PrefabRemaps:
+    []
+  Name: LociPalaceSource
+  Enabled: true
+  ScriptAsset: !<reference> 4e312b99-53c8-4dfb-ab32-15386852a0db
+  ScriptInputsDefault:
+    palaceJson: true
+  ScriptTypesDefault:
+    {}
+  ScriptInputs:
+    "":
+      controller: !<MappingBased.AssignableType_1> 59e1237d-c191-43c9-a0dc-106b6c35468d
+      palaceJson: !<reference.JsonAsset> 00000000-0000-0000-0000-000000000000
+  ScriptTypes:
+    "":
+      {}
 - !<SceneObject/8fe2a532-9bf3-4cde-b598-04ce5470718d>
   PrefabRemaps:
     []
@@ -1775,6 +2114,21 @@
     - !<own> f6687ab7-52ac-408d-a892-8a9559125450
   Components:
     []
+- !<SceneObject/af96035d-a89d-420d-86d5-fcb2570932df>
+  PrefabRemaps:
+    []
+  Name: Card
+  Enabled: true
+  Layers: 1
+  LocalTransform: !<TransformEntity>
+    Position: {x: 0.000000, y: 0.000000, z: -150.000000}
+    Rotation: {x: 0.000000, y: 0.000000, z: 0.000000}
+    Scale: {x: 1.000000, y: 1.000000, z: 1.000000}
+    HasSegmentScaleCompensation: false
+  Children:
+    []
+  Components:
+    - !<own> 6e8d6b00-440a-4e3d-981a-ed90df510fd6
 - !<SceneObject/b22d97e6-4c06-4135-af29-d26adb2b9d86>
   PrefabRemaps:
     []
@@ -1790,6 +2144,29 @@
     - !<own> 3de2c7ea-1525-465a-9056-68565a4014a7
   Components:
     []
+- !<ScriptComponent/b45ec838-d852-4c88-99d7-0ecf5e4b1f19>
+  PrefabRemaps:
+    []
+  Name: LociHintUI
+  Enabled: true
+  ScriptAsset: !<reference> 129a766b-a2d9-4b9c-9981-85b7490fcff9
+  ScriptInputsDefault:
+    aheadCm: true
+    aboveEyeCm: true
+    linger: true
+    textColor: true
+  ScriptTypesDefault:
+    {}
+  ScriptInputs:
+    "":
+      controller: !<MappingBased.AssignableType_1> 59e1237d-c191-43c9-a0dc-106b6c35468d
+      aheadCm: !<float> 75.000000
+      aboveEyeCm: !<float> 11.000000
+      linger: !<float> 6.000000
+      textColor: !<Vec4> {x: 0.920000, y: 0.960000, z: 1.000000, w: 0.900000}
+  ScriptTypes:
+    "":
+      {}
 - !<SceneObject/b463be13-dddb-4b36-a3dd-c344bd3d8ef5>
   PrefabRemaps:
     []
@@ -1940,6 +2317,54 @@
     - !<own> fe93d992-1114-4f1f-8bef-0a0bbd75747d
   Components:
     []
+- !<ScriptComponent/bbec28f1-2623-4118-a8d2-28b9086d1626>
+  PrefabRemaps:
+    []
+  Name: LociRecallUI
+  Enabled: true
+  ScriptAsset: !<reference> c22a1596-9f1d-4851-8e1d-0c16109e7234
+  ScriptInputsDefault:
+    recallButtonWidthCm: true
+    recallButtonHeightCm: true
+    followAheadCm: true
+    followBelowEyeCm: true
+    followSpeed: true
+    recallLabel: true
+    exploreLabel: true
+    panelWidthCm: true
+    actionButtonWidthCm: true
+    actionButtonHeightCm: true
+    readingDistanceCm: true
+    glowColor: true
+    glowHoverColor: true
+    textColor: true
+    answerColor: true
+    rightColor: true
+    wrongColor: true
+  ScriptTypesDefault:
+    {}
+  ScriptInputs:
+    "":
+      recallButtonWidthCm: !<float> 12.000000
+      recallButtonHeightCm: !<float> 5.000000
+      followAheadCm: !<float> 50.000000
+      followBelowEyeCm: !<float> 35.000000
+      followSpeed: !<float> 2.000000
+      recallLabel: Recall
+      exploreLabel: Explore
+      panelWidthCm: !<float> 30.000000
+      actionButtonWidthCm: 8.500000
+      actionButtonHeightCm: 4.500000
+      readingDistanceCm: !<float> 160.000000
+      glowColor: !<Vec4> {x: 0.620000, y: 0.860000, z: 1.000000, w: 0.950000}
+      glowHoverColor: !<Vec4> {x: 1.000000, y: 1.000000, z: 1.000000, w: 1.000000}
+      textColor: !<Vec4> {x: 0.970000, y: 0.980000, z: 1.000000, w: 1.000000}
+      answerColor: !<Vec4> {x: 1.000000, y: 0.900000, z: 0.600000, w: 1.000000}
+      rightColor: !<Vec4> {x: 0.550000, y: 0.950000, z: 0.650000, w: 1.000000}
+      wrongColor: !<Vec4> {x: 1.000000, y: 0.600000, z: 0.600000, w: 1.000000}
+  ScriptTypes:
+    "":
+      {}
 - !<SceneObject/bf2095b6-c6f8-48c8-b840-e0a6cec0dc99>
   PrefabRemaps:
     []
@@ -1996,6 +2421,21 @@
     HasSegmentScaleCompensation: false
   Children:
     - !<own> 0a0e1d78-8246-4f5b-ab1a-fdc51837956d
+  Components:
+    []
+- !<SceneObject/ccd862de-b8b3-4bf3-8368-1cd54523fb50>
+  PrefabRemaps:
+    []
+  Name: Orbs
+  Enabled: true
+  Layers: 1
+  LocalTransform: !<TransformEntity>
+    Position: {x: 0.000000, y: 146.000000, z: 0.000000}
+    Rotation: {x: 0.000000, y: 0.000000, z: 0.000000}
+    Scale: {x: 1.000000, y: 1.000000, z: 1.000000}
+    HasSegmentScaleCompensation: false
+  Children:
+    []
   Components:
     []
 - !<Skin/ccf4d3bc-d3c2-4580-b9c5-62f164ef7eef>

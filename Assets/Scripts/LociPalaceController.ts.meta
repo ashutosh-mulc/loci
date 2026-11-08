@@ -1,0 +1,179 @@
+- !<AssetImportMetadata/e5e0a66d-a4ee-48ff-9775-df7291b0f3f1>
+  ImportedAssetIds:
+    TypeScriptAsset: !<reference> fd5989d3-d370-42e0-a893-6ded95b5deb3
+  ImporterName: TypeScriptAssetImporter
+  PrimaryAsset: !<reference> fd5989d3-d370-42e0-a893-6ded95b5deb3
+  PackageType: NotAPackage
+  LegacyPackagePolicy: ~
+  ExtraData:
+    {}
+  AssetDataMap:
+    TypeScriptAsset: !<own> 92a81988-5b87-4478-958e-5a5814cc6cbb
+  DependentFiles:
+    []
+  ImporterSettings: !<AssetImporterSettings>
+    {}
+  CompressionSettings: !<own> 00000000-0000-0000-0000-000000000000
+- !<TypeScriptAssetData/92a81988-5b87-4478-958e-5a5814cc6cbb>
+  SvgIcon: ""
+  SetupScript:
+    code: ""
+  Description: ""
+  VersionMajor: 0
+  VersionMinor: 0
+  VersionPatch: 0
+  VersionPrerelease: ""
+  UpdateOrder: 0
+  ComponentUid: b17ba20e-7459-4968-b095-ce5d7ff139ba
+  ExportUid: 00000000-0000-0000-0000-000000000000
+  PackagePolicy: CanBeUnpacked
+  ScriptInputsHidden:
+    anchorToCameraAtStart: false
+    bloomSec: false
+    card: false
+    chimeTrack: false
+    chimeVolume: false
+    closeAwaySec: false
+    clusterLiftCm: false
+    decisionColor: false
+    dotColor: false
+    dotDiameterCm: false
+    eyeHeightCm: false
+    gazeHoldConeDeg: false
+    gazeOpenConeDeg: false
+    glowMaterial: false
+    haloMaterial: false
+    insightColor: false
+    labels: false
+    minDragCm: false
+    minSeparationDeg: false
+    openDwellSec: false
+    orbArcRadiusCm: false
+    orbArcSpanDeg: false
+    orbBelowEyeCm: false
+    orbColor: false
+    orbDiameterCm: false
+    orbLabelCapCm: false
+    orbsRoot: false
+    palaceRoot: false
+    placeDistanceCm: false
+    pulsePeriodSec: false
+    questionColor: false
+    showThreads: false
+    spotLabelCapCm: false
+    starHaloCm: false
+    starLabelCapCm: false
+    starSizeCm: false
+    starTargetRadiusCm: false
+    threadColor: false
+    useWorldQuery: false
+  ScriptTypesHidden:
+    {}
+  ReadMe: !<reference> 00000000-0000-0000-0000-000000000000
+  DeclarationFile: !<reference> 00000000-0000-0000-0000-000000000000
+  Tags:
+    []
+  Attachments:
+    []
+  DefaultScriptInputs:
+    - palaceRoot: !<reference.SceneObject> 00000000-0000-0000-0000-000000000000
+      orbsRoot: !<reference.SceneObject> 00000000-0000-0000-0000-000000000000
+      labels: !<MappingBased.AssignableType_1> 00000000-0000-0000-0000-000000000000
+      card: !<MappingBased.AssignableType_2> 00000000-0000-0000-0000-000000000000
+      glowMaterial: !<reference.Material> 00000000-0000-0000-0000-000000000000
+      haloMaterial: !<reference.Material> 00000000-0000-0000-0000-000000000000
+      chimeTrack: !<reference.AudioTrackAsset> 00000000-0000-0000-0000-000000000000
+      anchorToCameraAtStart: true
+      eyeHeightCm: !<float> 160.000000
+      placeDistanceCm: !<float> 160.000000
+      useWorldQuery: true
+      minSeparationDeg: !<float> 18.000000
+      minDragCm: !<float> 6.000000
+      orbDiameterCm: !<float> 10.000000
+      orbArcRadiusCm: !<float> 60.000000
+      orbBelowEyeCm: !<float> 25.000000
+      orbArcSpanDeg: !<float> 60.000000
+      orbColor: !<Vec4> {x: 0.700000, y: 0.900000, z: 1.000000, w: 0.900000}
+      openDwellSec: 0.600000
+      closeAwaySec: !<float> 2.000000
+      gazeOpenConeDeg: !<float> 12.000000
+      gazeHoldConeDeg: !<float> 20.000000
+      clusterLiftCm: !<float> 12.000000
+      dotDiameterCm: !<float> 3.000000
+      dotColor: !<Vec4> {x: 0.700000, y: 0.850000, z: 1.000000, w: 0.450000}
+      bloomSec: 0.450000
+      starSizeCm: 2.500000
+      starHaloCm: !<float> 9.000000
+      starTargetRadiusCm: !<float> 3.000000
+      starLabelCapCm: !<float> 4.000000
+      spotLabelCapCm: !<float> 2.000000
+      orbLabelCapCm: 1.500000
+      decisionColor: !<Vec4> {x: 1.000000, y: 0.880000, z: 0.550000, w: 1.000000}
+      insightColor: !<Vec4> {x: 0.600000, y: 0.950000, z: 1.000000, w: 1.000000}
+      questionColor: !<Vec4> {x: 0.850000, y: 0.750000, z: 1.000000, w: 1.000000}
+      pulsePeriodSec: 2.400000
+      threadColor: !<Vec4> {x: 0.700000, y: 0.850000, z: 1.000000, w: 0.350000}
+      showThreads: true
+      chimeVolume: 0.500000
+  ScriptTypes:
+    -
+      {}
+  InputLines:
+    - '// @ui {"widget":"label", "label":"<span style=\"color: #60A5FA;\">LociPalaceController – any-room memory palace</span>"}'
+    - '// @ui {"widget":"separator"}'
+    - '// @ui {"widget":"group_start", "label":"References"}'
+    - '// @input SceneObject palaceRoot {"hint":"Authored root of the palace. Its origin is the floor under the user at start."}'
+    - '// @input SceneObject orbsRoot {"hint":"Parent for the topic orbs (created from the palace data at start)."}'
+    - '// @input AssignableType_1 labels {"hint":"Labels UI module (orb, spot and star labels)."}'
+    - '// @input AssignableType_2 card {"hint":"Card UI module (the one-line thought card)."}'
+    - '// @input Asset.Material glowMaterial {"hint":"Unlit material cloned for orb, dot and star cores."}'
+    - '// @input Asset.Material haloMaterial {"hint":"Optional: unused since halos moved to nested spheres; kept so the scene wiring stays valid."}'
+    - '// @input Asset.AudioTrackAsset chimeTrack {"hint":"Soft chime played when a cluster opens. Leave empty for silence."}'
+    - '// @ui {"widget":"group_end"}'
+    - '// @ui {"widget":"separator"}'
+    - '// @ui {"widget":"group_start", "label":"Room"}'
+    - "// @input bool anchorToCameraAtStart = true {\"hint\":\"Move the palace so its floor sits under the user's head at start.\"}"
+    - '// @input float eyeHeightCm = 160 {"hint":"Assumed standing eye height in cm (floor = eye - this).", "widget":"slider", "min":120, "max":200, "step":1}'
+    - '// @ui {"widget":"group_end"}'
+    - '// @ui {"widget":"separator"}'
+    - '// @ui {"widget":"group_start", "label":"Place"}'
+    - '// @input float placeDistanceCm = 160 {"hint":"How far an aimed orb flies when no real surface is found (cm). In preview it always uses this.", "widget":"slider", "min":80, "max":300, "step":5}'
+    - '// @input bool useWorldQuery = true {"hint":"Use World Query to snap onto the real surface you aimed at (Specs)."}'
+    - '// @input float minSeparationDeg = 18 {"hint":"Topics must be at least this far apart (degrees, as seen from you) so each can be looked at alone.", "widget":"slider", "min":8, "max":40, "step":1}'
+    - '// @input float minDragCm = 6 {"hint":"An orb must be dragged at least this far (cm) before release counts as a placement.", "widget":"slider", "min":2, "max":30, "step":1}'
+    - '// @input float orbDiameterCm = 8 {"hint":"Topic orb diameter (cm).", "widget":"slider", "min":4, "max":20, "step":0.5}'
+    - '// @input float orbArcRadiusCm = 60 {"hint":"Distance of the orb arc in front of the user (cm).", "widget":"slider", "min":30, "max":100, "step":1}'
+    - '// @input float orbBelowEyeCm = 9 {"hint":"Orb arc height below eye level at start (cm).", "widget":"slider", "min":0, "max":60, "step":1}'
+    - '// @input float orbArcSpanDeg = 48 {"hint":"Total width of the orb arc in degrees.", "widget":"slider", "min":20, "max":120, "step":1}'
+    - '// @input vec4 orbColor = "{0.7, 0.9, 1.0, 1.0}" {"hint":"Orb glow colour.", "widget":"color"}'
+    - '// @ui {"widget":"group_end"}'
+    - '// @ui {"widget":"separator"}'
+    - '// @ui {"widget":"group_start", "label":"Explore"}'
+    - '// @input float openDwellSec = 0.6 {"hint":"Seconds of looking at a topic before its cluster opens.", "widget":"slider", "min":0.1, "max":3, "step":0.05}'
+    - '// @input float closeAwaySec = 2 {"hint":"Seconds of looking away before the open cluster closes.", "widget":"slider", "min":0.5, "max":6, "step":0.1}'
+    - '// @input float gazeOpenConeDeg = 9 {"hint":"Half-angle (deg) of the gaze cone that counts as looking at a closed topic.", "widget":"slider", "min":3, "max":25, "step":0.5}'
+    - '// @input float gazeHoldConeDeg = 20 {"hint":"Half-angle (deg) that still counts as looking at the open cluster.", "widget":"slider", "min":5, "max":35, "step":0.5}'
+    - '// @input float clusterLiftCm = 12 {"hint":"Cluster centre height above the anchor point (cm).", "widget":"slider", "min":0, "max":40, "step":1}'
+    - '// @input float dotDiameterCm = 3 {"hint":"Closed-topic dot diameter (cm).", "widget":"slider", "min":1, "max":8, "step":0.5}'
+    - '// @input vec4 dotColor = "{0.75, 0.88, 1.0, 0.8}" {"hint":"Closed-topic dot colour.", "widget":"color"}'
+    - '// @input float bloomSec = 0.45 {"hint":"Seconds for a cluster to bloom open.", "widget":"slider", "min":0.05, "max":1.5, "step":0.05}'
+    - '// @ui {"widget":"group_end"}'
+    - '// @ui {"widget":"separator"}'
+    - '// @ui {"widget":"group_start", "label":"Stars and labels"}'
+    - '// @input float starSizeCm = 3.2 {"hint":"Star size across (cm).", "widget":"slider", "min":1, "max":6, "step":0.1}'
+    - '// @input float starHaloCm = 12 {"hint":"Halo size around each star (cm).", "widget":"slider", "min":2, "max":20, "step":0.5}'
+    - '// @input float starTargetRadiusCm = 3 {"hint":"Pinch target radius around each star (cm). Big and forgiving.", "widget":"slider", "min":1, "max":6, "step":0.1}'
+    - '// @input float starLabelCapCm = 1.8 {"hint":"Star label cap height (cm) for a topic 2.5 m away; nearer topics get proportionally smaller labels.", "widget":"slider", "min":0.5, "max":6, "step":0.1}'
+    - '// @input float spotLabelCapCm = 2 {"hint":"Topic name cap height above an anchor (cm).", "widget":"slider", "min":0.5, "max":6, "step":0.1}'
+    - '// @input float orbLabelCapCm = 1 {"hint":"Topic name cap height on an orb (cm).", "widget":"slider", "min":0.5, "max":4, "step":0.1}'
+    - '// @input vec4 decisionColor = "{1.0, 0.86, 0.5, 1.0}" {"hint":"Decision star colour (solid star).", "widget":"color"}'
+    - '// @input vec4 insightColor = "{0.55, 0.95, 1.0, 1.0}" {"hint":"Insight star colour (ring).", "widget":"color"}'
+    - '// @input vec4 questionColor = "{0.85, 0.72, 1.0, 1.0}" {"hint":"Question star colour (slow pulse).", "widget":"color"}'
+    - '// @input float pulsePeriodSec = 2.4 {"hint":"Seconds per slow pulse on question stars.", "widget":"slider", "min":0.5, "max":6, "step":0.1}'
+    - '// @input vec4 threadColor = "{0.7, 0.85, 1.0, 0.22}" {"hint":"Thread line colour; alpha is its strength (links to related ideas in other topics).", "widget":"color"}'
+    - '// @input bool showThreads = true {"hint":"Show faint thread lines from an open cluster to related topics."}'
+    - '// @ui {"widget":"group_end"}'
+    - '// @ui {"widget":"separator"}'
+    - '// @ui {"widget":"group_start", "label":"Audio"}'
+    - '// @input float chimeVolume = 0.5 {"hint":"Chime volume.", "widget":"slider", "min":0, "max":1, "step":0.05}'
+    - '// @ui {"widget":"group_end"}'

@@ -10,3 +10,36 @@ CLAD prompts, outcomes and LEAF results, session by session.
 - Created the SPECS Base Template project (Lens Studio 5.23.2), then moved it into the repo root so the repo is the Lens Studio project. The only files with the same name, `.gitignore` and `CLAUDE.md`, were merged by hand. Git LFS is on for binary assets, as Lens Studio's `.gitattributes` expects.
 - Installed CLAD (`ls-clad@ls-extensions`) and connected the Lens Studio MCP. TypeScript, including `PalaceData.ts`, compiles with no errors. The only Logger warnings are adb looking for a device over USB.
 - `.agents/` vanished after the project reopened, which left `.claude/skills/plan-lens` a broken link. I replaced it with a real copy from `agent/skills/plan-lens`. No CLAD build yet, so no LEAF results.
+
+## Sun Nov 8: CLAD build of done criteria 1 to 3
+
+- Prompt: "Read devpost/design-brief.md and build it for SPECS. Follow the brief closely. Get the basic flow working first, then add detail. Write and run LEAF tests for each done criterion, and tell me which pass." Scope this run: criteria 1, 2, 3 only.
+- Lens Studio had an empty temp project open; CLAD opened Loci-Proj.esproj.
+- Built: `LociPalaceController` (Place, Explore gaze, cards; test API), `LociState`, `LociMeshes` (code-built orbs, stars, rings, wireframe stand-ins), `LociSpotStandIn`, `LociLabelsUI`, `LociCardUI` (UI Kit rounded outline + flex layout, no dark panel), and a soft `ClusterChime.wav`.
+- LEAF: installed Leaf 2.0.2 (4.0.0 needs a newer SIK than this project's SpectaclesInteractionKit 2.0.0). Scenarios in `Assets/Tests/`, run by `LociLeafRunner` (tick Auto Run on the LeafIndex object, then reset the preview).
+- LEAF results (3/3 pass, run three times):
+  - loci-1-place: PASS (real SIK grab and drag of an orb onto the desk; a missed drop does not anchor)
+  - loci-2-explore-gaze: PASS (0.3 s not open, 0.9 s open, switch spots, still open at 1 s away, closed at 2.4 s, never more than one open)
+  - loci-3-star-card: PASS (pinch shows the card with sentence and source/date beside the star, pinch again hides, one card at a time, closes with its cluster)
+- Not built yet: Recall (criterion 5) and Follow (criterion 4).
+
+## Sun Nov 8: Recall (criterion 5), built in the main session with CLAD skills
+
+- Prompt: "Yes please. Keep me updated about this." (go-ahead to build Recall and fix the orb position).
+- Built: `LociRecall.ts` (Recall flow, reads PalaceData), `LociRecallUI.ts` (UI Kit Ghost buttons with a thin glowing outline, flex layout, no dark panel). Controller: gaze also opens spots in Recall, cards are blocked in Recall, the asked star grows 1.7x, spot label toggle.
+- Scene: `Loci > UI > RecallUI` (LociRecallUI) and a LociRecall component on `Loci`, wired through the Editor API. Saved.
+- Environment: the Lens Studio capture tool re-installed `AiPreviewAgentInspect`, `Icons` and `Motion` (and an "AiPreviewAgent Handler" object), which break compilation against SIK 2.0.0. Removed again.
+- LEAF now runs through the LEAF panel and the `run_leaf_scenario` MCP tool (the LociLeafRunner still works too).
+- LEAF results, final code (4/4 pass):
+  - loci-1-place: PASS
+  - loci-2-explore-gaze: PASS
+  - loci-3-star-card: PASS
+  - loci-5-recall: PASS (pinches the real Recall, Reveal, Right and Wrong buttons; labels hide; the prompt shows and its star is highlighted; Reveal shows the card text; Right dims and counts; Wrong stays bright and moves on; debrief on a second Recall pinch, and on its own once all five spots have been answered, with per-topic counts)
+- Criterion 4 (Follow) is not built and has no test.
+
+## Sun Nov 8 (later): any room, any data, new look
+
+- Prompt: "it looks very bad actually ... I need a presentable project. Lets build a scalable more general product. The scene can change for different users right." Then approved: any room + any data, look, hints, video.
+- Probe: World Query in Interactive Preview rooms returns only a fixed plane 5 m ahead; no hits on furniture or floor.
+- Built: drop-anywhere Place with flights (LociPalaceController rewrite), LociPalaceSchema + LociPalaceSource (per-user JSON), LociHintUI, glow halos, bloom, threads. Removed LociSpotStandIn and the Spots stand-ins.
+- LEAF results (5/5 pass): loci-1-place (real SIK drag, anchor 147 cm out, 6.7° off the aim line; too-close refusal), loci-2-explore-gaze, loci-3-star-card, loci-5-recall, loci-6-any-data (new: validator + rebuild from another user's palace).

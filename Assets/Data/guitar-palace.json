@@ -1,0 +1,373 @@
+{
+ "topics": [
+  {
+   "id": "practice",
+   "name": "Practice habits",
+   "spot": "desk"
+  },
+  {
+   "id": "chords",
+   "name": "Chord shapes",
+   "spot": "shelf"
+  },
+  {
+   "id": "theory",
+   "name": "Music theory",
+   "spot": "window"
+  },
+  {
+   "id": "gear",
+   "name": "Gear choices",
+   "spot": "plant"
+  }
+ ],
+ "thoughts": [
+  {
+   "id": "g01",
+   "topic": "practice",
+   "label": "Fifteen minutes daily",
+   "text": "Short daily practice beats one long weekend session for building finger memory.",
+   "kind": "decision",
+   "date": "2026-11-01",
+   "source": "Guitar lessons notes",
+   "prompt": "How long should a practice session be?",
+   "offset": [
+    0,
+    0,
+    0
+   ]
+  },
+  {
+   "id": "g02",
+   "topic": "practice",
+   "label": "Slow is smooth",
+   "text": "Practise new changes at half speed until they are clean, then speed up.",
+   "kind": "insight",
+   "date": "2026-11-02",
+   "source": "Guitar lessons notes",
+   "prompt": "Why practise changes slowly first?",
+   "offset": [
+    13,
+    0,
+    5
+   ]
+  },
+  {
+   "id": "g03",
+   "topic": "practice",
+   "label": "Metronome every time",
+   "text": "Always practise with a metronome so timing grows with technique.",
+   "kind": "decision",
+   "date": "2026-11-03",
+   "source": "Guitar lessons notes",
+   "prompt": "What should every practice session use?",
+   "offset": [
+    6.5,
+    9.6,
+    -5
+   ]
+  },
+  {
+   "id": "g04",
+   "topic": "practice",
+   "label": "Record and listen",
+   "text": "Recording a take each week shows progress the ear misses while playing.",
+   "kind": "insight",
+   "date": "2026-11-04",
+   "source": "Guitar lessons notes",
+   "prompt": "How do you notice slow progress?",
+   "offset": [
+    -6.5,
+    9.6,
+    5
+   ]
+  },
+  {
+   "id": "g05",
+   "topic": "practice",
+   "label": "Warm up fingers",
+   "text": "Two minutes of spider exercises prevents strain before chord work.",
+   "kind": "decision",
+   "date": "2026-11-05",
+   "source": "Guitar lessons notes",
+   "prompt": "What comes before chord work?",
+   "offset": [
+    -13,
+    0,
+    -5
+   ]
+  },
+  {
+   "id": "g06",
+   "topic": "practice",
+   "label": "When to stop?",
+   "text": "Is it better to stop when tired or push through sore fingertips?",
+   "kind": "question",
+   "date": "2026-11-06",
+   "source": "Guitar lessons notes",
+   "prompt": "What is still undecided about sore fingers?",
+   "offset": [
+    -6.5,
+    -9.6,
+    5
+   ]
+  },
+  {
+   "id": "g07",
+   "topic": "chords",
+   "label": "Open chords first",
+   "text": "Learn G, C, D, E minor and A minor before any barre chord.",
+   "kind": "decision",
+   "date": "2026-11-01",
+   "source": "Guitar lessons notes",
+   "prompt": "Which chords come before barre chords?",
+   "offset": [
+    0,
+    0,
+    0
+   ]
+  },
+  {
+   "id": "g08",
+   "topic": "chords",
+   "label": "Anchor finger",
+   "text": "Keep one finger on the string while changing chords to move faster.",
+   "kind": "insight",
+   "date": "2026-11-02",
+   "source": "Guitar lessons notes",
+   "prompt": "What speeds up chord changes?",
+   "offset": [
+    13,
+    0,
+    5
+   ]
+  },
+  {
+   "id": "g09",
+   "topic": "chords",
+   "label": "Thumb behind neck",
+   "text": "Thumb behind the neck, not over it, makes barre chords possible.",
+   "kind": "insight",
+   "date": "2026-11-03",
+   "source": "Guitar lessons notes",
+   "prompt": "Where does the thumb go for barre chords?",
+   "offset": [
+    6.5,
+    9.6,
+    -5
+   ]
+  },
+  {
+   "id": "g10",
+   "topic": "chords",
+   "label": "Barre F later",
+   "text": "Tackle the F barre chord after a month of open chords.",
+   "kind": "decision",
+   "date": "2026-11-04",
+   "source": "Guitar lessons notes",
+   "prompt": "When should the F barre chord start?",
+   "offset": [
+    -6.5,
+    9.6,
+    5
+   ]
+  },
+  {
+   "id": "g11",
+   "topic": "chords",
+   "label": "Mute with palm",
+   "text": "Light palm muting cleans up strumming between chord changes.",
+   "kind": "insight",
+   "date": "2026-11-05",
+   "source": "Guitar lessons notes",
+   "prompt": "How do you clean up strumming?",
+   "offset": [
+    -13,
+    0,
+    -5
+   ]
+  },
+  {
+   "id": "g12",
+   "topic": "chords",
+   "label": "Power chords useful?",
+   "text": "Should power chords come before full barre chords for rock songs?",
+   "kind": "question",
+   "date": "2026-11-06",
+   "source": "Guitar lessons notes",
+   "prompt": "Which chord type is still an open choice?",
+   "offset": [
+    -6.5,
+    -9.6,
+    5
+   ]
+  },
+  {
+   "id": "g13",
+   "topic": "theory",
+   "label": "Learn the fretboard",
+   "text": "Knowing note names on the low E string unlocks every barre shape.",
+   "kind": "decision",
+   "date": "2026-11-01",
+   "source": "Guitar lessons notes",
+   "prompt": "Which string's notes come first?",
+   "offset": [
+    0,
+    0,
+    0
+   ]
+  },
+  {
+   "id": "g14",
+   "topic": "theory",
+   "label": "Major scale pattern",
+   "text": "Whole, whole, half, whole, whole, whole, half builds every major scale.",
+   "kind": "insight",
+   "date": "2026-11-02",
+   "source": "Guitar lessons notes",
+   "prompt": "What step pattern builds a major scale?",
+   "offset": [
+    13,
+    0,
+    5
+   ]
+  },
+  {
+   "id": "g15",
+   "topic": "theory",
+   "label": "Keys share chords",
+   "text": "Songs in one key reuse the same few chords, so learn by key.",
+   "kind": "insight",
+   "date": "2026-11-03",
+   "source": "Guitar lessons notes",
+   "prompt": "Why learn songs grouped by key?",
+   "offset": [
+    6.5,
+    9.6,
+    -5
+   ]
+  },
+  {
+   "id": "g16",
+   "topic": "theory",
+   "label": "Circle of fifths",
+   "text": "Use the circle of fifths to find which chords sound good together.",
+   "kind": "decision",
+   "date": "2026-11-04",
+   "source": "Guitar lessons notes",
+   "prompt": "What tool shows which chords fit together?",
+   "offset": [
+    -6.5,
+    9.6,
+    5
+   ]
+  },
+  {
+   "id": "g17",
+   "topic": "theory",
+   "label": "Ear before tabs",
+   "text": "Try to find a melody by ear before reading the tab.",
+   "kind": "decision",
+   "date": "2026-11-05",
+   "source": "Guitar lessons notes",
+   "prompt": "What comes before reading a tab?",
+   "offset": [
+    -13,
+    0,
+    -5
+   ]
+  },
+  {
+   "id": "g18",
+   "topic": "theory",
+   "label": "Read notation too?",
+   "text": "Is standard notation worth learning, or are tabs enough for now?",
+   "kind": "question",
+   "date": "2026-11-06",
+   "source": "Guitar lessons notes",
+   "prompt": "Which reading skill is still undecided?",
+   "offset": [
+    -6.5,
+    -9.6,
+    5
+   ]
+  },
+  {
+   "id": "g19",
+   "topic": "gear",
+   "label": "Lighter strings",
+   "text": "Light gauge strings are kinder on beginner fingertips.",
+   "kind": "decision",
+   "date": "2026-11-01",
+   "source": "Guitar lessons notes"
+  },
+  {
+   "id": "g20",
+   "topic": "gear",
+   "label": "Tune every session",
+   "text": "An electronic tuner at the start of each session keeps ears honest.",
+   "kind": "decision",
+   "date": "2026-11-02",
+   "source": "Guitar lessons notes"
+  },
+  {
+   "id": "g21",
+   "topic": "gear",
+   "label": "Action matters",
+   "text": "A shop setup lowering the action made chords far easier.",
+   "kind": "insight",
+   "date": "2026-11-03",
+   "source": "Guitar lessons notes"
+  },
+  {
+   "id": "g22",
+   "topic": "gear",
+   "label": "Capo for keys",
+   "text": "A capo lets you play songs in new keys with the same shapes.",
+   "kind": "insight",
+   "date": "2026-11-04",
+   "source": "Guitar lessons notes"
+  },
+  {
+   "id": "g23",
+   "topic": "gear",
+   "label": "Upgrade later?",
+   "text": "When is the right time to buy a better guitar?",
+   "kind": "question",
+   "date": "2026-11-05",
+   "source": "Guitar lessons notes"
+  }
+ ],
+ "threads": [
+  {
+   "from": "g02",
+   "to": "g08",
+   "why": "Slow changes need an anchor finger"
+  },
+  {
+   "from": "g07",
+   "to": "g15",
+   "why": "Open chords live in common keys"
+  },
+  {
+   "from": "g10",
+   "to": "g13",
+   "why": "Barre shapes need fretboard notes"
+  },
+  {
+   "from": "g05",
+   "to": "g19",
+   "why": "Light strings make warm-ups gentler"
+  },
+  {
+   "from": "g16",
+   "to": "g22",
+   "why": "Capo moves shapes across keys"
+  },
+  {
+   "from": "g06",
+   "to": "g19",
+   "why": "Sore fingers partly a string choice"
+  }
+ ]
+}

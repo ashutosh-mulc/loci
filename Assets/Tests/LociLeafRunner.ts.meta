@@ -1,0 +1,50 @@
+- !<AssetImportMetadata/83c23cfb-d1fc-46aa-b160-d48b8045aa05>
+  ImportedAssetIds:
+    TypeScriptAsset: !<reference> dd2aaabb-d86b-4647-85bb-b2b7f6263751
+  ImporterName: TypeScriptAssetImporter
+  PrimaryAsset: !<reference> dd2aaabb-d86b-4647-85bb-b2b7f6263751
+  PackageType: NotAPackage
+  LegacyPackagePolicy: ~
+  ExtraData:
+    {}
+  AssetDataMap:
+    TypeScriptAsset: !<own> cd5b2716-ff6c-4660-bd9c-2260376c0e7d
+  DependentFiles:
+    []
+  ImporterSettings: !<AssetImporterSettings>
+    {}
+  CompressionSettings: !<own> 00000000-0000-0000-0000-000000000000
+- !<TypeScriptAssetData/cd5b2716-ff6c-4660-bd9c-2260376c0e7d>
+  SvgIcon: ""
+  SetupScript:
+    code: ""
+  Description: ""
+  VersionMajor: 0
+  VersionMinor: 0
+  VersionPatch: 0
+  VersionPrerelease: ""
+  UpdateOrder: 0
+  ComponentUid: be9a7547-f8b6-42ab-a019-9d8313a7c77b
+  ExportUid: 00000000-0000-0000-0000-000000000000
+  PackagePolicy: CanBeUnpacked
+  ScriptInputsHidden:
+    autoRun: false
+  ScriptTypesHidden:
+    {}
+  ReadMe: !<reference> 00000000-0000-0000-0000-000000000000
+  DeclarationFile: !<reference> 00000000-0000-0000-0000-000000000000
+  Tags:
+    []
+  Attachments:
+    []
+  DefaultScriptInputs:
+    - autoRun: false
+  ScriptTypes:
+    -
+      {}
+  InputLines:
+    - '// @ui {"widget":"label", "label":"<span style=\"color: #60A5FA;\">LociLeafRunner – runs the Loci LEAF scenarios in preview</span>"}'
+    - '// @ui {"widget":"separator"}'
+    - '// @ui {"widget":"group_start", "label":"Settings"}'
+    - '// @input bool autoRun {"hint":"Run all scenarios when the preview starts. Leave off for normal use."}'
+    - '// @ui {"widget":"group_end"}'

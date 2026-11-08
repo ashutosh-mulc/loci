@@ -1,0 +1,104 @@
+- !<AssetImportMetadata/90e37cf7-1c10-4764-b35d-31bf966aa9d6>
+  ImportedAssetIds:
+    TypeScriptAsset: !<reference> c22a1596-9f1d-4851-8e1d-0c16109e7234
+  ImporterName: TypeScriptAssetImporter
+  PrimaryAsset: !<reference> c22a1596-9f1d-4851-8e1d-0c16109e7234
+  PackageType: NotAPackage
+  LegacyPackagePolicy: ~
+  ExtraData:
+    {}
+  AssetDataMap:
+    TypeScriptAsset: !<own> b5b8fd9c-581b-4a27-924a-e0b6f50e8f28
+  DependentFiles:
+    []
+  ImporterSettings: !<AssetImporterSettings>
+    {}
+  CompressionSettings: !<own> 00000000-0000-0000-0000-000000000000
+- !<TypeScriptAssetData/b5b8fd9c-581b-4a27-924a-e0b6f50e8f28>
+  SvgIcon: ""
+  SetupScript:
+    code: ""
+  Description: ""
+  VersionMajor: 0
+  VersionMinor: 0
+  VersionPatch: 0
+  VersionPrerelease: ""
+  UpdateOrder: 0
+  ComponentUid: a405617c-97cf-467b-8030-dfbfd3596c54
+  ExportUid: 00000000-0000-0000-0000-000000000000
+  PackagePolicy: CanBeUnpacked
+  ScriptInputsHidden:
+    actionButtonHeightCm: false
+    actionButtonWidthCm: false
+    answerColor: false
+    exploreLabel: false
+    followAheadCm: false
+    followBelowEyeCm: false
+    followSpeed: false
+    glowColor: false
+    glowHoverColor: false
+    panelWidthCm: false
+    readingDistanceCm: false
+    recallButtonHeightCm: false
+    recallButtonWidthCm: false
+    recallLabel: false
+    rightColor: false
+    textColor: false
+    wrongColor: false
+  ScriptTypesHidden:
+    {}
+  ReadMe: !<reference> 00000000-0000-0000-0000-000000000000
+  DeclarationFile: !<reference> 00000000-0000-0000-0000-000000000000
+  Tags:
+    []
+  Attachments:
+    []
+  DefaultScriptInputs:
+    - recallButtonWidthCm: !<float> 12.000000
+      recallButtonHeightCm: !<float> 5.000000
+      followAheadCm: !<float> 50.000000
+      followBelowEyeCm: !<float> 35.000000
+      followSpeed: !<float> 2.000000
+      recallLabel: Recall
+      exploreLabel: Explore
+      panelWidthCm: !<float> 30.000000
+      actionButtonWidthCm: 8.500000
+      actionButtonHeightCm: 4.500000
+      readingDistanceCm: !<float> 160.000000
+      glowColor: !<Vec4> {x: 0.620000, y: 0.860000, z: 1.000000, w: 0.950000}
+      glowHoverColor: !<Vec4> {x: 1.000000, y: 1.000000, z: 1.000000, w: 1.000000}
+      textColor: !<Vec4> {x: 0.970000, y: 0.980000, z: 1.000000, w: 1.000000}
+      answerColor: !<Vec4> {x: 1.000000, y: 0.900000, z: 0.600000, w: 1.000000}
+      rightColor: !<Vec4> {x: 0.550000, y: 0.950000, z: 0.650000, w: 1.000000}
+      wrongColor: !<Vec4> {x: 1.000000, y: 0.600000, z: 0.600000, w: 1.000000}
+  ScriptTypes:
+    -
+      {}
+  InputLines:
+    - '// @ui {"widget":"label", "label":"<span style=\"color: #60A5FA;\">LociRecallUI – Recall button, question panel and debrief</span>"}'
+    - '// @ui {"widget":"separator"}'
+    - '// @ui {"widget":"group_start", "label":"Recall button"}'
+    - '// @input float recallButtonWidthCm = 12 {"hint":"Recall button width (cm). The brief asks for one large 12 cm button.", "widget":"slider", "min":6, "max":20, "step":0.5}'
+    - '// @input float recallButtonHeightCm = 5 {"hint":"Recall button height (cm).", "widget":"slider", "min":4, "max":10, "step":0.5}'
+    - '// @input float followAheadCm = 50 {"hint":"How far ahead of the user the button rests (cm).", "widget":"slider", "min":30, "max":100, "step":1}'
+    - '// @input float followBelowEyeCm = 35 {"hint":"How far below eye level the button rests (cm).", "widget":"slider", "min":0, "max":60, "step":1}'
+    - '// @input float followSpeed = 2 {"hint":"Lazy-follow speed: higher catches up faster.", "widget":"slider", "min":0.5, "max":8, "step":0.1}'
+    - '// @input string recallLabel = "Recall" {"hint":"Label while in Explore."}'
+    - '// @input string exploreLabel = "Explore" {"hint":"Label while in Recall."}'
+    - '// @ui {"widget":"group_end"}'
+    - '// @ui {"widget":"separator"}'
+    - '// @ui {"widget":"group_start", "label":"Panel"}'
+    - '// @input float panelWidthCm = 30 {"hint":"Panel width (cm).", "widget":"slider", "min":20, "max":45, "step":0.5}'
+    - '// @input float actionButtonWidthCm = 8.5 {"hint":"Reveal / Right / Wrong button width (cm). At least 6 cm.", "widget":"slider", "min":6, "max":12, "step":0.5}'
+    - '// @input float actionButtonHeightCm = 4.5 {"hint":"Reveal / Right / Wrong button height (cm).", "widget":"slider", "min":4, "max":8, "step":0.5}'
+    - '// @input float readingDistanceCm = 110 {"hint":"Panel is authored for this distance (cm); farther spots scale it up so it reads the same size everywhere.", "widget":"slider", "min":80, "max":200, "step":5}'
+    - '// @ui {"widget":"group_end"}'
+    - '// @ui {"widget":"separator"}'
+    - '// @ui {"widget":"group_start", "label":"Colours"}'
+    - '// @input vec4 glowColor = "{0.62, 0.86, 1.0, 0.95}" {"hint":"Button outline glow.", "widget":"color"}'
+    - '// @input vec4 glowHoverColor = "{1.0, 1.0, 1.0, 1.0}" {"hint":"Button outline glow when aimed at.", "widget":"color"}'
+    - '// @input vec4 textColor = "{0.97, 0.98, 1.0, 1.0}" {"hint":"Question and label text (light).", "widget":"color"}'
+    - '// @input vec4 answerColor = "{1.0, 0.9, 0.6, 1.0}" {"hint":"Answer text (warm light accent).", "widget":"color"}'
+    - '// @input vec4 rightColor = "{0.55, 0.95, 0.65, 1.0}" {"hint":"Right button glow.", "widget":"color"}'
+    - '// @input vec4 wrongColor = "{1.0, 0.6, 0.6, 1.0}" {"hint":"Wrong button glow.", "widget":"color"}'
+    - '// @ui {"widget":"group_end"}'

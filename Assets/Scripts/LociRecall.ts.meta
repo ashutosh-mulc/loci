@@ -1,0 +1,62 @@
+- !<AssetImportMetadata/126819a2-ff7c-49ce-833a-ba817fdb5f9d>
+  ImportedAssetIds:
+    TypeScriptAsset: !<reference> 4348d5ad-7d3f-4add-a40d-4abfdf7a7f42
+  ImporterName: TypeScriptAssetImporter
+  PrimaryAsset: !<reference> 4348d5ad-7d3f-4add-a40d-4abfdf7a7f42
+  PackageType: NotAPackage
+  LegacyPackagePolicy: ~
+  ExtraData:
+    {}
+  AssetDataMap:
+    TypeScriptAsset: !<own> 2fdefc8c-57e4-4c26-b54c-657200b9791d
+  DependentFiles:
+    []
+  ImporterSettings: !<AssetImporterSettings>
+    {}
+  CompressionSettings: !<own> 00000000-0000-0000-0000-000000000000
+- !<TypeScriptAssetData/2fdefc8c-57e4-4c26-b54c-657200b9791d>
+  SvgIcon: ""
+  SetupScript:
+    code: ""
+  Description: ""
+  VersionMajor: 0
+  VersionMinor: 0
+  VersionPatch: 0
+  VersionPrerelease: ""
+  UpdateOrder: 0
+  ComponentUid: 7c7c8e80-e606-40d3-8a6f-7678f55d828e
+  ExportUid: 00000000-0000-0000-0000-000000000000
+  PackagePolicy: CanBeUnpacked
+  ScriptInputsHidden:
+    allDoneMessage: false
+    controller: false
+    panelLiftCm: false
+    recallUI: false
+  ScriptTypesHidden:
+    {}
+  ReadMe: !<reference> 00000000-0000-0000-0000-000000000000
+  DeclarationFile: !<reference> 00000000-0000-0000-0000-000000000000
+  Tags:
+    []
+  Attachments:
+    []
+  DefaultScriptInputs:
+    - controller: !<MappingBased.AssignableType_1> 00000000-0000-0000-0000-000000000000
+      recallUI: !<MappingBased.AssignableType_2> 00000000-0000-0000-0000-000000000000
+      panelLiftCm: !<float> 27.000000
+      allDoneMessage: All recalled here
+  ScriptTypes:
+    -
+      {}
+  InputLines:
+    - '// @ui {"widget":"label", "label":"<span style=\"color: #60A5FA;\">LociRecall – Recall mode (criterion 5)</span>"}'
+    - '// @ui {"widget":"separator"}'
+    - '// @ui {"widget":"group_start", "label":"References"}'
+    - "// @input AssignableType_1 controller {\"hint\":\"The palace controller on 'Loci'.\"}"
+    - '// @input AssignableType_2 recallUI {"hint":"The Recall UI module."}'
+    - '// @ui {"widget":"group_end"}'
+    - '// @ui {"widget":"separator"}'
+    - '// @ui {"widget":"group_start", "label":"Settings"}'
+    - "// @input float panelLiftCm = 24 {\"hint\":\"Height of the question panel's centre above the cluster centre (cm).\", \"widget\":\"slider\", \"min\":10, \"max\":50, \"step\":1}"
+    - '// @input string allDoneMessage = "All recalled here" {"hint":"Message when every star at a spot is mastered."}'
+    - '// @ui {"widget":"group_end"}'

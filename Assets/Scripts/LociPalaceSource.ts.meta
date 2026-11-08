@@ -1,0 +1,56 @@
+- !<AssetImportMetadata/27d7fd59-5720-45b7-a461-3a5829d30fc0>
+  ImportedAssetIds:
+    TypeScriptAsset: !<reference> 4e312b99-53c8-4dfb-ab32-15386852a0db
+  ImporterName: TypeScriptAssetImporter
+  PrimaryAsset: !<reference> 4e312b99-53c8-4dfb-ab32-15386852a0db
+  PackageType: NotAPackage
+  LegacyPackagePolicy: ~
+  ExtraData:
+    {}
+  AssetDataMap:
+    TypeScriptAsset: !<own> 936545e1-23fd-4407-8eab-1eb9e35e67c4
+  DependentFiles:
+    []
+  ImporterSettings: !<AssetImporterSettings>
+    {}
+  CompressionSettings: !<own> 00000000-0000-0000-0000-000000000000
+- !<TypeScriptAssetData/936545e1-23fd-4407-8eab-1eb9e35e67c4>
+  SvgIcon: ""
+  SetupScript:
+    code: ""
+  Description: ""
+  VersionMajor: 0
+  VersionMinor: 0
+  VersionPatch: 0
+  VersionPrerelease: ""
+  UpdateOrder: 0
+  ComponentUid: 6fb5c70b-9885-4cfd-bee5-c643dd9e417d
+  ExportUid: 00000000-0000-0000-0000-000000000000
+  PackagePolicy: CanBeUnpacked
+  ScriptInputsHidden:
+    controller: false
+    palaceJson: false
+  ScriptTypesHidden:
+    {}
+  ReadMe: !<reference> 00000000-0000-0000-0000-000000000000
+  DeclarationFile: !<reference> 00000000-0000-0000-0000-000000000000
+  Tags:
+    []
+  Attachments:
+    []
+  DefaultScriptInputs:
+    - controller: !<MappingBased.AssignableType_1> 00000000-0000-0000-0000-000000000000
+      palaceJson: !<reference.JsonAsset> 00000000-0000-0000-0000-000000000000
+  ScriptTypes:
+    -
+      {}
+  InputLines:
+    - '// @ui {"widget":"label", "label":"<span style=\"color: #60A5FA;\">LociPalaceSource – whose palace to show</span>"}'
+    - '// @ui {"widget":"separator"}'
+    - '// @ui {"widget":"group_start", "label":"References"}'
+    - "// @input AssignableType_1 controller {\"hint\":\"The palace controller on 'Loci'.\"}"
+    - '// @ui {"widget":"group_end"}'
+    - '// @ui {"widget":"separator"}'
+    - '// @ui {"widget":"group_start", "label":"Data"}'
+    - "// @input Asset.JsonAsset palaceJson {\"hint\":\"A user's palace as JSON (same schema as PalaceData.ts). Empty = PalaceData.ts.\"}"
+    - '// @ui {"widget":"group_end"}'

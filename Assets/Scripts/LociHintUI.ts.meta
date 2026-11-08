@@ -1,0 +1,65 @@
+- !<AssetImportMetadata/a215e631-2b3b-4311-9b14-3753c735fae2>
+  ImportedAssetIds:
+    TypeScriptAsset: !<reference> 129a766b-a2d9-4b9c-9981-85b7490fcff9
+  ImporterName: TypeScriptAssetImporter
+  PrimaryAsset: !<reference> 129a766b-a2d9-4b9c-9981-85b7490fcff9
+  PackageType: NotAPackage
+  LegacyPackagePolicy: ~
+  ExtraData:
+    {}
+  AssetDataMap:
+    TypeScriptAsset: !<own> 214f2f8a-16c8-4d5e-8c7a-5ab7d7daa4e3
+  DependentFiles:
+    []
+  ImporterSettings: !<AssetImporterSettings>
+    {}
+  CompressionSettings: !<own> 00000000-0000-0000-0000-000000000000
+- !<TypeScriptAssetData/214f2f8a-16c8-4d5e-8c7a-5ab7d7daa4e3>
+  SvgIcon: ""
+  SetupScript:
+    code: ""
+  Description: ""
+  VersionMajor: 0
+  VersionMinor: 0
+  VersionPatch: 0
+  VersionPrerelease: ""
+  UpdateOrder: 0
+  ComponentUid: e4755286-5e82-4130-bd00-c0ef68544cda
+  ExportUid: 00000000-0000-0000-0000-000000000000
+  PackagePolicy: CanBeUnpacked
+  ScriptInputsHidden:
+    aboveEyeCm: false
+    aheadCm: false
+    controller: false
+    linger: false
+    textColor: false
+  ScriptTypesHidden:
+    {}
+  ReadMe: !<reference> 00000000-0000-0000-0000-000000000000
+  DeclarationFile: !<reference> 00000000-0000-0000-0000-000000000000
+  Tags:
+    []
+  Attachments:
+    []
+  DefaultScriptInputs:
+    - controller: !<MappingBased.AssignableType_1> 00000000-0000-0000-0000-000000000000
+      aheadCm: !<float> 75.000000
+      aboveEyeCm: !<float> 11.000000
+      linger: !<float> 6.000000
+      textColor: !<Vec4> {x: 0.920000, y: 0.960000, z: 1.000000, w: 0.900000}
+  ScriptTypes:
+    -
+      {}
+  InputLines:
+    - '// @ui {"widget":"label", "label":"<span style=\"color: #60A5FA;\">LociHintUI – one-line onboarding hint</span>"}'
+    - '// @ui {"widget":"separator"}'
+    - '// @ui {"widget":"group_start", "label":"References"}'
+    - "// @input AssignableType_1 controller {\"hint\":\"The palace controller on 'Loci'.\"}"
+    - '// @ui {"widget":"group_end"}'
+    - '// @ui {"widget":"separator"}'
+    - '// @ui {"widget":"group_start", "label":"Settings"}'
+    - '// @input float aheadCm = 75 {"hint":"How far ahead the hint floats (cm).", "widget":"slider", "min":40, "max":150, "step":1}'
+    - '// @input float aboveEyeCm = 11 {"hint":"Height above eye level (cm). Positive keeps it above the topic orbs.", "widget":"slider", "min":-30, "max":30, "step":1}'
+    - "// @input float linger = 6 {\"hint\":\"Seconds a 'done' hint (Recall nudge, refusals) stays before fading.\", \"widget\":\"slider\", \"min\":1, \"max\":15, \"step\":0.5}"
+    - '// @input vec4 textColor = "{0.92, 0.96, 1.0, 0.9}" {"hint":"Hint colour (light: the display is additive).", "widget":"color"}'
+    - '// @ui {"widget":"group_end"}'

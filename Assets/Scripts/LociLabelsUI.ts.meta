@@ -1,0 +1,53 @@
+- !<AssetImportMetadata/968e5edf-f3d6-4025-ba78-c62398ff321b>
+  ImportedAssetIds:
+    TypeScriptAsset: !<reference> 84fb9ad5-284e-4eba-830d-4a4e8d55f198
+  ImporterName: TypeScriptAssetImporter
+  PrimaryAsset: !<reference> 84fb9ad5-284e-4eba-830d-4a4e8d55f198
+  PackageType: NotAPackage
+  LegacyPackagePolicy: ~
+  ExtraData:
+    {}
+  AssetDataMap:
+    TypeScriptAsset: !<own> d40c3ce1-85f5-4a4d-8e19-b4e880be03e5
+  DependentFiles:
+    []
+  ImporterSettings: !<AssetImporterSettings>
+    {}
+  CompressionSettings: !<own> 00000000-0000-0000-0000-000000000000
+- !<TypeScriptAssetData/d40c3ce1-85f5-4a4d-8e19-b4e880be03e5>
+  SvgIcon: ""
+  SetupScript:
+    code: ""
+  Description: ""
+  VersionMajor: 0
+  VersionMinor: 0
+  VersionPatch: 0
+  VersionPrerelease: ""
+  UpdateOrder: 0
+  ComponentUid: 60093522-6fd7-4507-b1ad-3b38b2cc220c
+  ExportUid: 00000000-0000-0000-0000-000000000000
+  PackagePolicy: CanBeUnpacked
+  ScriptInputsHidden:
+    faceUser: false
+    textColor: false
+  ScriptTypesHidden:
+    {}
+  ReadMe: !<reference> 00000000-0000-0000-0000-000000000000
+  DeclarationFile: !<reference> 00000000-0000-0000-0000-000000000000
+  Tags:
+    []
+  Attachments:
+    []
+  DefaultScriptInputs:
+    - textColor: !<Vec4> {x: 0.950000, y: 0.970000, z: 1.000000, w: 1.000000}
+      faceUser: true
+  ScriptTypes:
+    -
+      {}
+  InputLines:
+    - '// @ui {"widget":"label", "label":"<span style=\"color: #60A5FA;\">LociLabelsUI – light in-world labels</span>"}'
+    - '// @ui {"widget":"separator"}'
+    - '// @ui {"widget":"group_start", "label":"Settings"}'
+    - '// @input vec4 textColor = "{0.95, 0.97, 1.0, 1.0}" {"hint":"Label colour. Light only: the display is additive, so dark text disappears.", "widget":"color"}'
+    - '// @input bool faceUser = true {"hint":"Turn labels to face the user each frame (yaw only)."}'
+    - '// @ui {"widget":"group_end"}'
