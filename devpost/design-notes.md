@@ -50,3 +50,4 @@ What we saw, what changed, and why.
 - **Reset and palace switch start where you are.** The orbs come back in front of where you're facing now, not where the Lens started.
 - **Threads start at their star.** A thread line now leaves from the exact star it belongs to.
 - **Same-spot drops.** If two topics are aimed at the same place, the second is refused straight away and flies home.
+- **Recall rounds.** One question per topic makes a round. When every topic has been asked, "Round done" shows the recalled count per topic with a **Go again** button; Go again starts the next round where you are (recalled stars stay dimmed). Pinching Explore any time ends Recall and shows the counts above the button.

@@ -2,7 +2,7 @@
 // and the debrief shows the recalled count per topic.
 // Drives the real UIKit buttons (Recall, Reveal, Right, Wrong) through SIK with LEAF's interactor,
 // and head gaze through the world camera. Covers both debrief triggers: pinching Recall again,
-// and every spot having been asked once.
+// and every spot having been asked once ("Round done" + Go again).
 
 import {Scenario} from "Leaf.lspkg/Scenarios/scenario/Scenario"
 import {expect} from "Leaf.lspkg/Utils/common/Expect"
@@ -119,13 +119,24 @@ export class LociRecallScenario extends Scenario {
       await press("RightButton")
       if (i < spots.length - 1) expect(recall.isDebriefShown()).toBe(false)
     }
+    // One round per topic (design decision, review #4): the round ends clearly, with "Round done",
+    // the counts, and a Go again button that starts the next round right here.
     expect(recall.isDebriefShown()).toBe(true)
-    expect(ui.getPanelMode()).toBe("debrief")
+    expect(ui.getPanelMode()).toBe("roundDone")
+    expect(ui.isGoAgainShown()).toBe(true)
     const full = ui.getDebriefText()
+    expect(full.indexOf("Round done")).toBe(0)
     for (const t of PALACE.topics) {
       const n = PALACE.thoughts.filter((x) => x.topic === t.id).length
       expect(full.includes(`${t.name}  1/${n}`)).toBe(true)
     }
+    // Go again: a new round, a fresh (not yet recalled) question at the open topic.
+    await press("GoAgainButton")
+    expect(recall.isActive()).toBe(true)
+    expect(recall.isDebriefShown()).toBe(false)
+    expect(ui.getPanelMode()).toBe("question")
+    const next = recall.getCurrentThoughtId()
+    expect(next !== null && !recall.isMastered(next!)).toBe(true)
 
     // Leave Recall so the palace is back in Explore for anything that runs after.
     await press("RecallButton")

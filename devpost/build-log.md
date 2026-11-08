@@ -96,3 +96,13 @@ Prompt: "run the suggested loop" over `loci-review-v2.md` (one item per round: L
 - Fix: the arc is 22° wide (`orbArcSpanDeg`, scene value too), at most 5° per gap. Orbs sit in staggered height rows 7 cm apart (2 rows for 4–5 topics, 3 for 6–8) so neighbouring labels don't collide. Orb halo is r×1.9 (was 2.6) and orb label cap is 0.9 cm.
 - verify-preview: three passes at true Specs scale. At 28° the edge labels were cut off, and at 20° "Open questions" touched "What Snap wants". At 22° with staggered rows, all five names are separate and inside the view.
 - LEAF: 1, 2, 3, 5, 6, 7, 8, 9 all **pass (8/8)**. The `loci-8-threads` tool call timed out once; the log showed the scenario had run (0.00 cm), and a re-run returned **succeeded**.
+
+### Round 5: #4, how Recall ends (your decision: one round per topic)
+- Test first: extended `loci-5-recall`. After one answer at every topic, the panel must be `roundDone` with text starting "Round done", the per-topic counts and a Go again button. Pressing the real `GoAgainButton` must start a new round with a not-yet-recalled question. Before: **failed** (`Expected "roundDone", received "debrief"`).
+- Fix:
+  - `LociRecallUI` has a `roundDone` panel mode: counts above, one "Go again" button in the action row.
+  - `LociRecall.goAgain()` clears the round and asks again at the open topic; recalled stars stay recalled. Topics opened after the round ends show the same Round done panel.
+  - Pinching Explore still ends Recall with the counts above the button.
+- Demo tour now answers at every topic so the video shows "Round done". `video-script.md` timings updated (about 2:40).
+- verify-preview: tour screenshot shows "Round done", five topics at 1/7, and the Go again button, all readable. The tour still finishes all four steps (guitar 4/4).
+- LEAF: 1, 2, 3, 5, 6, 7, 8, 9 all **pass (8/8)**. The `loci-5-recall` tool call times out because the scenario is long; the result was read from the log ("Scenario loci-5-recall completed successfully").

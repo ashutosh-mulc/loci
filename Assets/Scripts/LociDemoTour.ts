@@ -5,7 +5,7 @@
 // same controller / Recall / data APIs the real interactions use:
 //   1. Place: each topic flies from the arc in front of you to a spot in the room.
 //   2. Explore: look at a topic -> it blooms open; a star's card appears.
-//   3. Recall: glance down, pinch Recall; questions, Reveal, Right/Wrong; debrief.
+//   3. Recall: glance down, pinch Recall; questions, Reveal, Right/Wrong at every topic; "Round done"; debrief.
 //   4. Any user: switch to another user's palace (alternatePalaces[0]) and open one topic.
 // Off by default so it never moves your view during normal use or tests.
 
@@ -119,6 +119,18 @@ export class LociDemoTour extends BaseScriptComponent {
     await this.wait(2.4)
     this.recall.answer(true)
     await this.wait(1.2)
+    // Finish the round quickly at the other topics: "Round done" then shows with Go again.
+    for (const id of ids) {
+      if (id === first || id === second) continue
+      await this.look(c.getClusterCentreWorld(id)!.add(new vec3(0, 14, 0)), 1.0)
+      await this.untilAsked(id)
+      await this.wait(0.5)
+      this.recall.reveal()
+      await this.wait(0.9)
+      this.recall.answer(true)
+      await this.wait(0.5)
+    }
+    await this.wait(3.5) // read "Round done" and the counts
     await this.pressRecall() // "Explore": the debrief appears right above the button
     await this.look(this.recall.recallUI.getRecallButtonWorldPosition().add(new vec3(0, 14, 0)), 0.8)
     await this.wait(4.5)

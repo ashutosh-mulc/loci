@@ -34,7 +34,7 @@ function applyTextRole(t: Text, role: TextRole, distanceCm: number = 110): void 
 const CONTENT_Z = 0.6
 const BUTTON_LABEL_Z = 0.08
 
-type PanelMode = "hidden" | "question" | "answer" | "message" | "debrief"
+type PanelMode = "hidden" | "question" | "answer" | "message" | "debrief" | "roundDone"
 
 interface GlowButton {
   obj: SceneObject
@@ -114,10 +114,12 @@ export class LociRecallUI extends BaseScriptComponent {
   private _onReveal = new Event<void>()
   private _onRight = new Event<void>()
   private _onWrong = new Event<void>()
+  private _onGoAgain = new Event<void>()
   get onRecallPressed(): PublicApi<void> { return this._onRecallPressed.publicApi() }
   get onReveal(): PublicApi<void> { return this._onReveal.publicApi() }
   get onRight(): PublicApi<void> { return this._onRight.publicApi() }
   get onWrong(): PublicApi<void> { return this._onWrong.publicApi() }
+  get onGoAgain(): PublicApi<void> { return this._onGoAgain.publicApi() }
 
   private camT: Transform | null = null
   private buttonRoot!: SceneObject
@@ -132,6 +134,7 @@ export class LociRecallUI extends BaseScriptComponent {
   private revealBtn!: GlowButton
   private rightBtn!: GlowButton
   private wrongBtn!: GlowButton
+  private goAgainBtn!: GlowButton
   private flexReady = false
   private rowReady = false
   private initApplied = false
@@ -202,6 +205,17 @@ export class LociRecallUI extends BaseScriptComponent {
     this.apply()
   }
 
+  /** End of a round (one question per topic): the counts, and a Go again button under them. */
+  showRoundDone(text: string, anchor: vec3): void {
+    this.compact = false
+    this.debriefText.text = text
+    this.questionText.text = ""
+    this.answerText.text = ""
+    this.anchorWorld = anchor
+    this.mode = "roundDone"
+    this.apply()
+  }
+
   hidePanel(): void {
     this.mode = "hidden"
     this.apply()
@@ -215,6 +229,7 @@ export class LociRecallUI extends BaseScriptComponent {
   getDebriefText(): string { return this.debriefText.text }
   getPanelWorldPosition(): vec3 { return this.panelRoot.getTransform().getWorldPosition() }
   isRevealShown(): boolean { return this.initApplied && this.revealBtn.obj.isEnabledInHierarchy }
+  isGoAgainShown(): boolean { return this.initApplied && this.goAgainBtn.obj.isEnabledInHierarchy }
   isRightWrongShown(): boolean { return this.initApplied && this.rightBtn.obj.isEnabledInHierarchy && this.wrongBtn.obj.isEnabledInHierarchy }
 
   // =================== build ===================
@@ -265,6 +280,8 @@ export class LociRecallUI extends BaseScriptComponent {
     this.revealBtn = this.makeButton(row, "RevealButton", "Reveal", w, h, this.glowColor, "Button", true)
     this.rightBtn = this.makeButton(row, "RightButton", "Right", w, h, this.rightColor, "Button", true)
     this.wrongBtn = this.makeButton(row, "WrongButton", "Wrong", w, h, this.wrongColor, "Button", true)
+    this.goAgainBtn = this.makeButton(row, "GoAgainButton", "Go again", w * 1.3, h, this.glowColor, "Button", true)
+    this.goAgainBtn.button.onTriggerUp.add(() => { if (this.mode === "roundDone") this._onGoAgain.invoke() })
     this.revealBtn.button.onTriggerUp.add(() => { if (this.mode === "question") this._onReveal.invoke() })
     this.rightBtn.button.onTriggerUp.add(() => { if (this.mode === "answer") this._onRight.invoke() })
     this.wrongBtn.button.onTriggerUp.add(() => { if (this.mode === "answer") this._onWrong.invoke() })
@@ -354,7 +371,7 @@ export class LociRecallUI extends BaseScriptComponent {
   // =================== visibility + placement ===================
 
   private allInitialized(): boolean {
-    const btns = [this.recallBtn, this.revealBtn, this.rightBtn, this.wrongBtn]
+    const btns = [this.recallBtn, this.revealBtn, this.rightBtn, this.wrongBtn, this.goAgainBtn]
     for (const b of btns) if (!b.button.initialized || !b.outline.initialized) return false
     return this.flexReady && this.rowReady
   }
@@ -365,12 +382,16 @@ export class LociRecallUI extends BaseScriptComponent {
     this.buttonRoot.enabled = this.wantButton
     const m = this.mode
     this.panelRoot.enabled = m !== "hidden"
-    this.content.enabled = m === "question" || m === "answer" || m === "message"
-    this.debriefText.getSceneObject().enabled = m === "debrief"
+    this.content.enabled = m === "question" || m === "answer" || m === "message" || m === "roundDone"
+    const debriefObj = this.debriefText.getSceneObject()
+    debriefObj.enabled = m === "debrief" || m === "roundDone"
+    // Round done: the counts sit above the Go again row (the empty question rows), not over it.
+    debriefObj.getTransform().setLocalPosition(new vec3(0, m === "roundDone" ? 3.5 : 0, CONTENT_Z))
     this.answerText.getSceneObject().enabled = m === "answer"
     this.setSlot(this.revealBtn, m === "question")
     this.setSlot(this.rightBtn, m === "answer")
     this.setSlot(this.wrongBtn, m === "answer")
+    this.setSlot(this.goAgainBtn, m === "roundDone")
     if (m !== "hidden") this.placePanel()
   }
 

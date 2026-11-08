@@ -2,9 +2,10 @@
 // Owns: Recall mode (done criterion 5). Pinch Recall: star labels hide. At each spot you open,
 // one star's question (its `prompt`) shows above the cluster and that star is highlighted.
 // Reveal shows the answer (the card text). Right dims the star as mastered; Wrong leaves it
-// bright. Either way the next star at that spot is asked. Once every placed spot has been
-// answered at least once, or when Recall ("Explore") is pinched again, the debrief shows the
-// recalled count per topic at the current spot.
+// bright. Either way the next star at that spot is asked. A round is one answer per topic: once
+// every placed topic has been answered, "Round done" shows the recalled count per topic with a
+// Go again button (next round, here). Pinching Recall ("Explore") again ends Recall and shows the
+// counts right above the button.
 // Reads all content from the controller's palace data (PalaceData.ts or a per-user JSON). Drives LociPalaceController's Recall hooks and the
 // LociRecallUI view; owns no scene objects itself. No persistence between sessions.
 
@@ -142,9 +143,21 @@ export class LociRecall extends BaseScriptComponent {
     return true
   }
 
-  debriefText(): string {
+  debriefText(title: string = "Recalled"): string {
     const lines = this.controller.getPalace().topics.map((t) => `${t.name}  ${this.recalled.get(t.id) ?? 0}/${this.thoughtsOf(t.id).length}`)
-    return `Recalled\n${lines.join("\n")}`
+    return `${title}\n${lines.join("\n")}`
+  }
+
+  /** "Go again" after a round: a new round starts here; recalled stars stay recalled. */
+  goAgain(): boolean {
+    if (!this.active || !this.debriefShown) return false
+    this.debriefShown = false
+    this.askedSpots.clear()
+    const open = this.controller.getOpenSpot()
+    if (open) this.askAt(open)
+    else this.recallUI.hidePanel()
+    print("Loci: Recall, next round.")
+    return true
   }
 
   // =================== flow ===================
@@ -168,6 +181,7 @@ export class LociRecall extends BaseScriptComponent {
     this.recallUI.onReveal.add(() => this.reveal())
     this.recallUI.onRight.add(() => this.answer(true))
     this.recallUI.onWrong.add(() => this.answer(false))
+    this.recallUI.onGoAgain.add(() => this.goAgain())
   }
 
   private onOpened(spot: string): void {
@@ -179,7 +193,7 @@ export class LociRecall extends BaseScriptComponent {
     if (this.debriefShown) {
       this.panelSpot = spot
       this.controller.setSpotLabelVisible(spot, false)
-      this.recallUI.showDebrief(this.debriefText(), this.panelAnchor(spot))
+      this.recallUI.showRoundDone(this.debriefText("Round done"), this.panelAnchor(spot))
       return
     }
     this.askAt(spot)
@@ -240,7 +254,7 @@ export class LociRecall extends BaseScriptComponent {
       // Every topic asked: answer() only runs with a topic open, so `spot` is always set here.
       this.panelSpot = spot
       this.controller.setSpotLabelVisible(spot, false)
-      this.recallUI.showDebrief(text, this.panelAnchor(spot))
+      this.recallUI.showRoundDone(this.debriefText("Round done"), this.panelAnchor(spot))
     }
     print(`Loci: debrief ${text.replace(/\n/g, " | ")}`)
   }
