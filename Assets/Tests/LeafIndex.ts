@@ -1,4 +1,4 @@
-// LeafIndex.ts: registers the Loci LEAF scenarios (done criteria 1, 2, 3 and 5).
+// LeafIndex.ts: registers the Loci LEAF scenarios (done criteria 1, 2, 3, 5, any data, and review fixes).
 
 import {scenariosIndex} from "Leaf.lspkg/Scenarios/decorator/ScenarioIndexDecorator"
 import {ScenarioMetadata} from "Leaf.lspkg/Scenarios/scenario/ScenarioMetadata"
@@ -7,6 +7,7 @@ import {LociExploreScenario} from "./LociExploreScenario"
 import {LociCardScenario} from "./LociCardScenario"
 import {LociRecallScenario} from "./LociRecallScenario"
 import {LociDataScenario} from "./LociDataScenario"
+import {LociSameSpotScenario} from "./LociSameSpotScenario"
 
 @component
 export class LeafIndex extends BaseScriptComponent {
@@ -17,5 +18,6 @@ export class LeafIndex extends BaseScriptComponent {
     {id: "loci-3-star-card", typename: LociCardScenario.getTypeName()},
     {id: "loci-5-recall", typename: LociRecallScenario.getTypeName()},
     {id: "loci-6-any-data", typename: LociDataScenario.getTypeName()},
+    {id: "loci-7-same-spot", typename: LociSameSpotScenario.getTypeName()},
   ]
 }

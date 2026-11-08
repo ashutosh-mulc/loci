@@ -529,7 +529,8 @@ export class LociPalaceController extends BaseScriptComponent {
         this.flyHome(orb)
         return
       }
-      this.fly(orb, target, () => this.placeTopicAt(orb.topic.id, target))
+      // Another orb may have taken this place while we flew: never leave it hanging, send it home.
+      this.fly(orb, target, () => { if (!this.placeTopicAt(orb.topic.id, target)) this.flyHome(orb) })
     }
     if (!this.hitSession) { land(fallback); return }
     let answered = false
@@ -565,6 +566,12 @@ export class LociPalaceController extends BaseScriptComponent {
         reason = `Too close to ${t ? t.name : a.id}`
       }
     })
+    // Orbs still flying to a place count too, so two quick releases can't pick the same spot.
+    this.flights.forEach((f) => {
+      if (reason || f.orb.topic.id === topicId || f.to.distance(f.orb.home) < 0.01) return
+      const ang = Math.acos(Math.max(-1, Math.min(1, dir.dot(f.to.sub(cam).normalize())))) / DEG
+      if (ang < this.minSeparationDeg) reason = `Too close to ${f.orb.topic.name}`
+    })
     return reason
   }
 
@@ -587,6 +594,7 @@ export class LociPalaceController extends BaseScriptComponent {
   private updateFlights(dt: number): void {
     if (this.flights.length === 0) return
     const still: Flight[] = []
+    const landed: Flight[] = []
     for (const f of this.flights) {
       f.t += dt
       const k = Math.min(1, f.t / f.dur)
@@ -594,9 +602,11 @@ export class LociPalaceController extends BaseScriptComponent {
       const p = vec3.lerp(f.from, f.to, e).add(new vec3(0, Math.sin(Math.PI * k) * f.from.distance(f.to) * 0.12, 0))
       f.orb.obj.getTransform().setWorldPosition(p)
       if (k < 1) still.push(f)
-      else { f.orb.flying = false; f.done() }
+      else landed.push(f)
     }
     this.flights = still
+    // After the list is replaced, so a done() that starts a new flight (fly home) keeps it.
+    landed.forEach((f) => { f.orb.flying = false; f.done() })
   }
 
   private anchorVisuals(topicId: string, point: vec3): void {

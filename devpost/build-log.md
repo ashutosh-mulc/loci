@@ -62,3 +62,20 @@ Prompt: `/ls-clad:verify-preview`.
 - Fixed in `LociDemoTour`: it waits for the real state (anchored, open, question asked), up to 3 s, and logs if it gives up.
 - Re-ran: the tour placed 5/5, the debrief counted both answers (2 Right), and all 4 guitar topics placed. No "gave up" lines.
 - LEAF after the change: loci-1-place, loci-2-explore-gaze, loci-3-star-card, loci-5-recall and loci-6-any-data all pass (5/5).
+
+## Nov 9: review v2 loop
+
+Prompt: "run the suggested loop" over `loci-review-v2.md` (one item per round: LEAF test first, fix, all LEAF, verify-preview, log, commit).
+
+### Phase 0: perf baseline (specs-lens-perf-attribution)
+- Temporary harness `Assets/Scripts/Profiling/PerfSweepDriver.ts` (since removed). Three 10 s traces: 00 Loci off, 01 Place, 02 Explore with one topic held open.
+- The bundled `perfetto_sweep_summary.py` fails with the current `perfetto` Python package (`'Row' object is not iterable`), so I queried the traces directly.
+- Result: noisy. Preview frame pacing swings when Lens Studio isn't the focused app (71 to 371 frames per trace). Loci's own `Scene::Update` + `LateUpdate` + `RenderFrame` is about 1.5 ms/frame in Explore and up to about 7 ms/frame in the throttled Place trace. The Preview's simulated tracking (`Track`, 5 to 25 ms/frame) dominates and isn't ours. Treat as a rough baseline; Phase 3 will use A/B traces.
+
+### Round 1: item A, an orb refused on landing hung in mid-air
+- Test first: new `loci-7-same-spot` (`LociSameSpotScenario.ts`) releases two orbs at the same place in the same frame. Before the fix: **failed**, with the refused orb left 176.9 cm from home.
+- Fix (`LociPalaceController`):
+  - If `placeTopicAt` fails when the flight lands, the orb flies home.
+  - `rejectReason` also counts orbs still flying to a place.
+  - `updateFlights` runs `done()` after replacing the flight list. Before, a fly-home started inside `done()` was dropped.
+- LEAF: loci-1-place, 2-explore-gaze, 3-star-card, 5-recall, 6-any-data and 7-same-spot all **pass (6/6)**. The refused orb ends 0.0 cm from home.
