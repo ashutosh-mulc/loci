@@ -136,9 +136,12 @@ export class LociPalaceController extends BaseScriptComponent {
   @input @hint("Orb arc height below eye level at start (cm).")
   @widget(new SliderWidget(0, 60, 1))
   orbBelowEyeCm: number = 9
-  @input @hint("Total width of the orb arc in degrees.")
-  @widget(new SliderWidget(20, 120, 1))
-  orbArcSpanDeg: number = 48
+  @input @hint("Total width of the orb arc in degrees. Keep it (and the edge labels) inside the ~32 deg Specs view.")
+  @widget(new SliderWidget(10, 60, 1))
+  orbArcSpanDeg: number = 22
+  @input @hint("Every other orb sits this much lower, so neighbouring labels don't collide (cm).")
+  @widget(new SliderWidget(0, 20, 0.5))
+  orbZigzagCm: number = 7
   @input("vec4", "{0.7, 0.9, 1.0, 1.0}") @hint("Orb glow colour.")
   @widget(new ColorWidget())
   orbColor: vec4 = new vec4(0.7, 0.9, 1.0, 1.0)
@@ -189,7 +192,7 @@ export class LociPalaceController extends BaseScriptComponent {
   spotLabelCapCm: number = 2
   @input @hint("Topic name cap height on an orb (cm).")
   @widget(new SliderWidget(0.5, 4, 0.1))
-  orbLabelCapCm: number = 1
+  orbLabelCapCm: number = 0.9
   @input("vec4", "{1.0, 0.86, 0.5, 1.0}") @hint("Decision star colour (solid star).")
   @widget(new ColorWidget())
   decisionColor: vec4 = new vec4(1.0, 0.86, 0.5, 1.0)
@@ -486,17 +489,20 @@ export class LociPalaceController extends BaseScriptComponent {
   private buildOrbs(): void {
     const n = this.data.topics.length
     const r = this.orbDiameterCm / 2
-    const span = Math.min(this.orbArcSpanDeg, 12 * Math.max(1, n - 1))
+    const span = Math.min(this.orbArcSpanDeg, 5 * Math.max(1, n - 1))
     this.data.topics.forEach((topic, i) => {
       const a = n > 1 ? (-span / 2 + (i * span) / (n - 1)) * DEG : 0
       const obj = global.scene.createSceneObject(`Orb_${topic.id}`)
       obj.setParent(this.orbsRoot)
-      obj.getTransform().setLocalPosition(new vec3(Math.sin(a) * this.orbArcRadiusCm, 0, -Math.cos(a) * this.orbArcRadiusCm))
+      // Staggered rows keep neighbouring labels apart in the narrow arc (3 rows for 6–8 topics).
+      const rows = n > 5 ? 3 : n > 3 ? 2 : 1
+      const y = -(i % rows) * this.orbZigzagCm
+      obj.getTransform().setLocalPosition(new vec3(Math.sin(a) * this.orbArcRadiusCm, y, -Math.cos(a) * this.orbArcRadiusCm))
       const visual = global.scene.createSceneObject("Visual")
       visual.setParent(obj)
       const mat = this.makeMat(this.orbColor)
       this.addMesh(visual, sphereMesh(r * 0.5, 24, 16), mat)
-      const halo = this.makeHalo(obj, r * 2.6, this.orbColor)
+      const halo = this.makeHalo(obj, r * 1.9, this.orbColor)
       this.addSphereCollider(obj, r * 1.2)
       const interactable = obj.createComponent(Interactable.getTypeName()) as Interactable
       const manip = obj.createComponent(InteractableManipulation.getTypeName()) as InteractableManipulation

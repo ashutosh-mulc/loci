@@ -1167,6 +1167,7 @@
     minSeparationDeg: true
     minDragCm: true
     orbArcRadiusCm: true
+    orbZigzagCm: true
     orbColor: true
     openDwellSec: true
     closeAwaySec: true
@@ -1203,7 +1204,8 @@
       orbDiameterCm: !<float> 8.000000
       orbArcRadiusCm: !<float> 60.000000
       orbBelowEyeCm: !<float> 9.000000
-      orbArcSpanDeg: !<float> 48.000000
+      orbArcSpanDeg: !<float> 22.000000
+      orbZigzagCm: !<float> 7.000000
       orbColor: !<Vec4> {x: 0.700000, y: 0.900000, z: 1.000000, w: 0.900000}
       openDwellSec: 0.600000
       closeAwaySec: !<float> 2.000000
@@ -1218,7 +1220,7 @@
       starTargetRadiusCm: !<float> 3.000000
       starLabelCapCm: 1.800000
       spotLabelCapCm: !<float> 2.000000
-      orbLabelCapCm: !<float> 1.000000
+      orbLabelCapCm: 0.900000
       decisionColor: !<Vec4> {x: 1.000000, y: 0.880000, z: 0.550000, w: 1.000000}
       insightColor: !<Vec4> {x: 0.600000, y: 0.950000, z: 1.000000, w: 1.000000}
       questionColor: !<Vec4> {x: 0.850000, y: 0.750000, z: 1.000000, w: 1.000000}

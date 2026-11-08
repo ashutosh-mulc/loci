@@ -1,5 +1,5 @@
 // Review item #3: after a reset or a palace swap, the orbs come back in front of where the user
-// is looking now, not where the Lens started.
+// is looking now, not where the Lens started (#3), all inside the Specs view (#5).
 
 import {Scenario} from "Leaf.lspkg/Scenarios/scenario/Scenario"
 import {expect} from "Leaf.lspkg/Utils/common/Expect"
@@ -40,7 +40,7 @@ export class LociResetHereScenario extends Scenario {
     await nextFrame()
     const afterReset = worstAngle(right)
     print(`[LociResetHere] after reset, worst orb is ${afterReset.toFixed(1)} deg off the view direction`)
-    expect(afterReset).toBeLessThan(35)
+    expect(afterReset).toBeLessThan(15) // within the ~32 deg Specs view (review #5)
 
     // Turn 90 degrees to the left and swap palaces: same.
     const left = cam.getWorldPosition().add(new vec3(-200, 0, 0))
@@ -49,7 +49,7 @@ export class LociResetHereScenario extends Scenario {
     await nextFrame()
     const afterSwap = worstAngle(left)
     print(`[LociResetHere] after palace swap, worst orb is ${afterSwap.toFixed(1)} deg off`)
-    expect(afterSwap).toBeLessThan(35)
+    expect(afterSwap).toBeLessThan(15)
 
     // Back to facing forward for whatever runs next.
     gaze.lookAt(cam.getWorldPosition().add(new vec3(0, 0, -200)))

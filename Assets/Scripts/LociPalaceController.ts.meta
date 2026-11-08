@@ -54,6 +54,7 @@
     orbColor: false
     orbDiameterCm: false
     orbLabelCapCm: false
+    orbZigzagCm: false
     orbsRoot: false
     palaceRoot: false
     placeDistanceCm: false
@@ -93,6 +94,7 @@
       orbArcRadiusCm: !<float> 60.000000
       orbBelowEyeCm: !<float> 25.000000
       orbArcSpanDeg: !<float> 60.000000
+      orbZigzagCm: !<float> 7.000000
       orbColor: !<Vec4> {x: 0.700000, y: 0.900000, z: 1.000000, w: 0.900000}
       openDwellSec: 0.600000
       closeAwaySec: !<float> 2.000000
@@ -144,7 +146,8 @@
     - '// @input float orbDiameterCm = 8 {"hint":"Topic orb diameter (cm).", "widget":"slider", "min":4, "max":20, "step":0.5}'
     - '// @input float orbArcRadiusCm = 60 {"hint":"Distance of the orb arc in front of the user (cm).", "widget":"slider", "min":30, "max":100, "step":1}'
     - '// @input float orbBelowEyeCm = 9 {"hint":"Orb arc height below eye level at start (cm).", "widget":"slider", "min":0, "max":60, "step":1}'
-    - '// @input float orbArcSpanDeg = 48 {"hint":"Total width of the orb arc in degrees.", "widget":"slider", "min":20, "max":120, "step":1}'
+    - '// @input float orbArcSpanDeg = 22 {"hint":"Total width of the orb arc in degrees. Keep it (and the edge labels) inside the ~32 deg Specs view.", "widget":"slider", "min":10, "max":60, "step":1}'
+    - "// @input float orbZigzagCm = 7 {\"hint\":\"Every other orb sits this much lower, so neighbouring labels don't collide (cm).\", \"widget\":\"slider\", \"min\":0, \"max\":20, \"step\":0.5}"
     - '// @input vec4 orbColor = "{0.7, 0.9, 1.0, 1.0}" {"hint":"Orb glow colour.", "widget":"color"}'
     - '// @ui {"widget":"group_end"}'
     - '// @ui {"widget":"separator"}'
@@ -165,7 +168,7 @@
     - '// @input float starTargetRadiusCm = 3 {"hint":"Pinch target radius around each star (cm). Big and forgiving.", "widget":"slider", "min":1, "max":6, "step":0.1}'
     - '// @input float starLabelCapCm = 1.8 {"hint":"Star label cap height (cm) for a topic 2.5 m away; nearer topics get proportionally smaller labels.", "widget":"slider", "min":0.5, "max":6, "step":0.1}'
     - '// @input float spotLabelCapCm = 2 {"hint":"Topic name cap height above an anchor (cm).", "widget":"slider", "min":0.5, "max":6, "step":0.1}'
-    - '// @input float orbLabelCapCm = 1 {"hint":"Topic name cap height on an orb (cm).", "widget":"slider", "min":0.5, "max":4, "step":0.1}'
+    - '// @input float orbLabelCapCm = 0.9 {"hint":"Topic name cap height on an orb (cm).", "widget":"slider", "min":0.5, "max":4, "step":0.1}'
     - '// @input vec4 decisionColor = "{1.0, 0.86, 0.5, 1.0}" {"hint":"Decision star colour (solid star).", "widget":"color"}'
     - '// @input vec4 insightColor = "{0.55, 0.95, 1.0, 1.0}" {"hint":"Insight star colour (ring).", "widget":"color"}'
     - '// @input vec4 questionColor = "{0.85, 0.72, 1.0, 1.0}" {"hint":"Question star colour (slow pulse).", "widget":"color"}'

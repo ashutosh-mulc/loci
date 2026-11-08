@@ -90,3 +90,9 @@ Prompt: "run the suggested loop" over `loci-review-v2.md` (one item per round: L
 - Test first: new `loci-9-reset-here` turns the head 90° right and resets, then 90° left and swaps palaces, and measures the orbs' angle from the view direction. The first version passed falsely because preview tracking reset the head between frames, so it now applies the head turn in the same frame. Before the fix: **failed**, with an orb 114° off the view.
 - Fix: `resetPalace` re-anchors the palace to the user (as at start) and puts each orb back at its arc position under the moved root (new `homeLocal`), recomputing `home`. `setPalace` goes through `resetPalace`, so it gets the same.
 - LEAF: 1, 2, 3, 5, 6, 7, 8, 9 all **pass (8/8)**. After the fix the worst orb is 24° off, which is the arc's half-width.
+
+### Round 4: #5, the orb arc was 48° wide, wider than the ~32° Specs view
+- Test first: tightened `loci-9-reset-here` so every orb must be within 15° of the view direction. Before the fix: **failed** at 24°.
+- Fix: the arc is 22° wide (`orbArcSpanDeg`, scene value too), at most 5° per gap. Orbs sit in staggered height rows 7 cm apart (2 rows for 4–5 topics, 3 for 6–8) so neighbouring labels don't collide. Orb halo is r×1.9 (was 2.6) and orb label cap is 0.9 cm.
+- verify-preview: three passes at true Specs scale. At 28° the edge labels were cut off, and at 20° "Open questions" touched "What Snap wants". At 22° with staggered rows, all five names are separate and inside the view.
+- LEAF: 1, 2, 3, 5, 6, 7, 8, 9 all **pass (8/8)**. The `loci-8-threads` tool call timed out once; the log showed the scenario had run (0.00 cm), and a re-run returned **succeeded**.

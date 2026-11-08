@@ -44,3 +44,9 @@ What we saw, what changed, and why.
 - **Debrief moved:** pressing Recall/Explore means glancing ~35° down, which counts as looking away, so the open topic closed and took the debrief with it. After leaving Recall the debrief now appears just above the button, where you are looking, for 10 s or until you open another topic. The automatic debrief (every topic asked) still shows above the topic.
 - **Bigger Recall panel:** question, answer and buttons are 1.4x (Panel Scale on RecallUI).
 - **Quieter hints:** the "Pinch Recall below" nudge shows once; no hint during Recall (it sat under the buttons).
+
+## Nov 9: review v2 fixes
+- **Orb arc fits the Specs view.** The start arc is 22° wide (was 48°), with the topics in staggered height rows so each name stays readable and inside the ~32° display. Halos are smaller so neighbouring orbs don't merge.
+- **Reset and palace switch start where you are.** The orbs come back in front of where you're facing now, not where the Lens started.
+- **Threads start at their star.** A thread line now leaves from the exact star it belongs to.
+- **Same-spot drops.** If two topics are aimed at the same place, the second is refused straight away and flies home.
