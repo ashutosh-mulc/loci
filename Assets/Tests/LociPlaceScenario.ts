@@ -120,5 +120,32 @@ export class LociPlaceScenario extends Scenario {
     await sleep(3500)
     expect(loci.getMode()).toBe("explore")
     ids.forEach((id) => expect(loci.getSpotPointWorld(id)!.distance(placed.get(id)!)).toBeLessThan(0.01))
+
+    // Grab and throw: every topic can be grabbed; a thrown topic glides on and stops; a linked
+    // topic follows part of the way; an unlinked one stays put.
+    ids.forEach((id) => expect(loci.isTopicGrabbable(id)).toBe(true))
+    const wOf = (a: string, b: string) => weight.get(a < b ? `${a}|${b}` : `${b}|${a}`) ?? 0
+    let lead = ids[0], mate = ids[1], best = -1
+    for (const a of ids) for (const b of ids) if (a !== b && wOf(a, b) > best) { best = wOf(a, b); lead = a; mate = b }
+    const loner = ids.find((c) => c !== lead && c !== mate && wOf(lead, c) === 0) ?? null
+    const h0 = new Map<string, vec3>()
+    ids.forEach((id) => h0.set(id, loci.getTopicHome(id)!))
+    const right = WorldCameraFinderProvider.getInstance().getComponent().getTransform().getWorldRotation().multiplyVec3(new vec3(1, 0, 0))
+    expect(loci.throwTopic(lead, h0.get(lead)!.add(right.uniformScale(30)), right.uniformScale(80))).toBe(true)
+    await nextFrame()
+    expect(loci.isPalaceMoving()).toBe(true)
+    for (let i = 0; i < 600 && loci.isPalaceMoving(); i++) await nextFrame()
+    expect(loci.isPalaceMoving()).toBe(false)
+    const moved = (id: string) => loci.getTopicHome(id)!.distance(h0.get(id)!)
+    print(`[LociPlace] thrown ${lead} moved ${moved(lead).toFixed(1)} cm; linked ${mate} (${best} threads) ${moved(mate).toFixed(1)} cm` +
+      (loner ? `; unlinked ${loner} ${moved(loner).toFixed(2)} cm` : ""))
+    expect(moved(lead)).toBeGreaterThan(30) // the throw carried it past where it was let go
+    if (best > 0) {
+      expect(moved(mate)).toBeGreaterThan(1)
+      expect(moved(mate)).toBeLessThan(moved(lead))
+    }
+    if (loner) expect(moved(loner)).toBeLessThan(0.5)
+    // The topic really sits at its new home.
+    expect(loci.getSpotPointWorld(lead)!.distance(loci.getTopicHome(lead)!)).toBeLessThan(0.5)
   }
 }

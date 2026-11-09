@@ -20,6 +20,7 @@ import {LociCardUI} from "./LociCardUI"
 import {separate, simulate, topicLinks} from "./LociForceLayout"
 import {discMesh, linesMesh, ringMesh, sphereMesh, spriteMesh, starMesh} from "./LociMeshes"
 import {Interactable} from "SpectaclesInteractionKit.lspkg/Components/Interaction/Interactable/Interactable"
+import {InteractableManipulation} from "SpectaclesInteractionKit.lspkg/Components/Interaction/InteractableManipulation/InteractableManipulation"
 import WorldCameraFinderProvider from "SpectaclesInteractionKit.lspkg/Providers/CameraProvider/WorldCameraFinderProvider"
 import Event from "SpectaclesInteractionKit.lspkg/Utils/Event"
 
@@ -44,6 +45,11 @@ interface AnchorEntry {
   dotHalo: Halo
   cluster: SceneObject | null
   openT: number // bloom animation clock
+  home: vec3 // where it rests (world); moves when you throw it or a linked topic pulls it
+  startHome: vec3 // home when the current grab began (followers move by its change)
+  vel: vec3 // cm/s, for the throw glide and the follow springs
+  gliding: boolean // thrown: coasting to a stop
+  hover: boolean
 }
 
 interface StarEntry {
@@ -267,6 +273,17 @@ export class LociPalaceController extends BaseScriptComponent {
   @input @hint("Show the physics colliders (cyan wireframes) while orbs fly. For authoring.")
   layoutDebugDraw: boolean = false
   @ui.group_end
+  @ui.separator
+  @ui.group_start("Grab and throw")
+  @input @hint("Pinch a topic's dot to grab it, move it, and let go: it glides on and linked topics follow.")
+  grabTopics: boolean = true
+  @input @hint("How far a linked topic follows the one you move, per shared thread (0–1, capped at 0.45).")
+  @widget(new SliderWidget(0, 0.4, 0.01))
+  followPerThread: number = 0.15
+  @input @hint("How quickly a thrown topic slows down (1/s).")
+  @widget(new SliderWidget(0.5, 8, 0.1))
+  glideFriction: number = 2.6
+  @ui.group_end
 
   // ---- events (UI / Recall / hints / tests subscribe) ----
   readonly onTopicPlaced = new Event<{topicId: string; spot: string}>()
@@ -313,6 +330,12 @@ export class LociPalaceController extends BaseScriptComponent {
   private layoutWait = -1 // seconds until the layout starts; < 0 = not scheduled
   private layoutTicks = 0
   private layoutWorld: WorldComponent | null = null
+  private grabbed: string | null = null
+  private grabLast: vec3 | null = null
+  private grabVel = vec3.zero()
+  private leader: string | null = null // the topic being held or thrown; its links follow it
+  private linkW = new Map<string, number>() // "a|b" → threads between two topics
+  private motionQuiet = 1 // seconds since the palace last moved (gaze waits for it to settle)
 
   onAwake(): void {
     this.indexData()
@@ -373,6 +396,25 @@ export class LociPalaceController extends BaseScriptComponent {
   /** Whether the automatic layout is scheduled or playing. */
   isLayingOut(): boolean { return this.layout !== null || this.layoutWait >= 0 }
   /** Rigid bodies currently flying the layout (0 when settled). For tests. */
+  /** Whether a placed topic can be grabbed by hand (pinch its dot). */
+  isTopicGrabbable(topicId: string): boolean {
+    const a = this.anchors.get(topicId)
+    return a ? a.dot.getComponent(InteractableManipulation.getTypeName()) !== null : false
+  }
+  /** Whether any topic is held, gliding or still springing after a move. */
+  isPalaceMoving(): boolean { return this.motionQuiet < 0.15 }
+  /** Where a topic rests now (world). For tests. */
+  getTopicHome(topicId: string): vec3 | null { const a = this.anchors.get(topicId); return a ? a.home : null }
+  /** The same path as a hand grab: hold the topic at `worldPoint`, then let go at `velocity` (cm/s). */
+  throwTopic(topicId: string, worldPoint: vec3, velocity: vec3): boolean {
+    const a = this.anchors.get(topicId)
+    if (!a || this.state.mode === "place") return false
+    this.beginGrab(a)
+    a.obj.getTransform().setWorldPosition(worldPoint)
+    this.grabVel = velocity
+    this.endGrab(a)
+    return true
+  }
   /** Whether orbs fly in their own zero-gravity physics world (isolated from the root world). */
   hasLayoutWorld(): boolean { return this.layoutWorld !== null }
   getLayoutBodyCount(): number { return this.layout ? this.layout.bodies.filter((b) => b !== null).length : 0 }
@@ -519,6 +561,10 @@ export class LociPalaceController extends BaseScriptComponent {
   resetPalace(): void {
     if (!this.ready) return
     this.cancelLayout()
+    this.grabbed = null
+    this.leader = null
+    this.linkW.clear()
+    this.motionQuiet = 1
     this.closeCluster()
     this.anchors.forEach((a) => {
       this.labels.removeLabel(`spot:${a.id}`)
@@ -847,6 +893,112 @@ export class LociPalaceController extends BaseScriptComponent {
     })
   }
 
+  // =================== grab and throw ===================
+
+  /** Pinch a topic's dot to grab the whole topic (SIK manipulation of the anchor, not the dot). */
+  private makeGrabbable(a: AnchorEntry): void {
+    this.addSphereCollider(a.dot, 9)
+    const it = a.dot.createComponent(Interactable.getTypeName()) as Interactable
+    const manip = a.dot.createComponent(InteractableManipulation.getTypeName()) as InteractableManipulation
+    manip.setManipulateRoot(a.obj.getTransform())
+    manip.setCanRotate(false)
+    manip.setCanScale(false)
+    it.onHoverEnter.add(() => { a.hover = true })
+    it.onHoverExit.add(() => { a.hover = false })
+    manip.onManipulationStart.add(() => this.beginGrab(a))
+    manip.onManipulationEnd.add(() => this.endGrab(a))
+  }
+
+  private beginGrab(a: AnchorEntry): void {
+    if (this.state.openSpot === a.id) this.closeCluster()
+    this.dropThreadCache() // lines are rebuilt from the new places when a topic next opens
+    this.anchors.forEach((b) => { if (b.gliding) { b.gliding = false; this.commitMove(b) } })
+    this.grabbed = a.id
+    this.leader = a.id
+    a.startHome = a.home
+    a.vel = vec3.zero()
+    this.grabLast = a.obj.getTransform().getWorldPosition()
+    this.grabVel = vec3.zero()
+    this.motionQuiet = 0
+  }
+
+  private endGrab(a: AnchorEntry): void {
+    if (this.grabbed !== a.id) return
+    this.grabbed = null
+    let v = this.grabVel
+    if (v.length > 300) v = v.normalize().uniformScale(300)
+    a.vel = v
+    a.gliding = true
+  }
+
+  /** A thrown topic stops: it rests there, and linked topics keep the share of the move they followed. */
+  private commitMove(a: AnchorEntry): void {
+    const delta = a.obj.getTransform().getWorldPosition().sub(a.startHome)
+    a.home = a.obj.getTransform().getWorldPosition()
+    this.anchors.forEach((b) => {
+      if (b.id !== a.id) b.home = b.home.add(delta.uniformScale(this.followShare(a.id, b.id)))
+    })
+    a.startHome = a.home
+    if (this.leader === a.id) this.leader = null
+    this.dropThreadCache()
+  }
+
+  private followShare(a: string, b: string): number {
+    if (this.linkW.size === 0) {
+      const topicOf = new Map<string, string>()
+      this.data.thoughts.forEach((t) => topicOf.set(t.id, t.topic))
+      this.data.threads.forEach((th) => {
+        const x = topicOf.get(th.from), y = topicOf.get(th.to)
+        if (!x || !y || x === y) return
+        const k = x < y ? `${x}|${y}` : `${y}|${x}`
+        this.linkW.set(k, (this.linkW.get(k) ?? 0) + 1)
+      })
+      if (this.linkW.size === 0) this.linkW.set("|", 0) // computed: no links
+    }
+    const w = this.linkW.get(a < b ? `${a}|${b}` : `${b}|${a}`) ?? 0
+    return Math.min(0.45, w * this.followPerThread)
+  }
+
+  /** Held topic tracks the hand; a thrown one glides; linked topics follow on springs. */
+  private updateMotion(dt: number): void {
+    if (this.anchors.size === 0 || dt <= 0) return
+    const cam = this.camT!.getWorldPosition()
+    let moving = false
+    const L = this.leader ? this.anchors.get(this.leader) ?? null : null
+    const lead = L ? L.obj.getTransform().getWorldPosition().sub(L.startHome) : null
+    this.anchors.forEach((a) => {
+      const tr = a.obj.getTransform()
+      let pos = tr.getWorldPosition()
+      if (a.id === this.grabbed) {
+        if (this.grabLast) this.grabVel = vec3.lerp(this.grabVel, pos.sub(this.grabLast).uniformScale(1 / dt), 0.5)
+        this.grabLast = pos
+        moving = true
+      } else if (a.gliding) {
+        pos = pos.add(a.vel.uniformScale(dt))
+        a.vel = a.vel.uniformScale(Math.exp(-this.glideFriction * dt))
+        // Stay in the room: 60 cm to 3.5 m from you, above the floor, below the ceiling.
+        const flat = new vec3(pos.x - cam.x, 0, pos.z - cam.z)
+        const d = flat.length
+        if (d < 60 || d > 350) { pos = new vec3(cam.x, pos.y, cam.z).add(flat.uniformScale(Math.max(60, Math.min(350, d)) / Math.max(1, d))); a.vel = vec3.zero() }
+        pos = this.clampToRoom(pos)
+        tr.setWorldPosition(pos)
+        if (a.vel.length < 3) { a.gliding = false; this.commitMove(a) }
+        moving = true
+      } else {
+        const target = lead && L && L.id !== a.id ? a.home.add(lead.uniformScale(this.followShare(L.id, a.id))) : a.home
+        const off = target.sub(pos)
+        if (off.length < 0.02 && a.vel.length < 0.05) { a.vel = vec3.zero(); return }
+        // Slightly springy: the follower overshoots a touch, then settles.
+        a.vel = a.vel.add(off.uniformScale(38 * dt)).uniformScale(Math.exp(-8 * dt))
+        tr.setWorldPosition(pos.add(a.vel.uniformScale(dt)))
+        moving = true
+      }
+      const p = tr.getWorldPosition()
+      tr.setWorldRotation(quat.angleAxis(Math.atan2(cam.x - p.x, cam.z - p.z), vec3.up())) // keep facing you
+    })
+    this.motionQuiet = moving ? 0 : this.motionQuiet + dt
+  }
+
   private fly(orb: OrbEntry, to: vec3, done: () => void): void {
     orb.flying = true
     const from = orb.obj.getTransform().getWorldPosition()
@@ -894,8 +1046,10 @@ export class LociPalaceController extends BaseScriptComponent {
     this.addMesh(dot, this.cachedMesh(`sphere:${dr}:12:8`, () => sphereMesh(dr, 12, 8)), this.dotMat)
     const dotHalo = this.makeHalo(dot, this.dotDiameterCm * 4, this.dotColor)
 
-    const anchor: AnchorEntry = {id: topicId, obj, dot, dotHalo, cluster: null, openT: 1}
+    const anchor: AnchorEntry = {id: topicId, obj, dot, dotHalo, cluster: null, openT: 1,
+      home: point, startHome: point, vel: vec3.zero(), gliding: false, hover: false}
     this.anchors.set(topicId, anchor)
+    if (this.grabTopics) this.makeGrabbable(anchor)
     const topic = orb.topic
     this.labels.addLabel(`spot:${topicId}`, "spot", obj, topic.name, this.closedLabelOffset(), this.spotLabelCapCm)
     anchor.cluster = this.buildCluster(topic, anchor)
@@ -1031,9 +1185,11 @@ export class LociPalaceController extends BaseScriptComponent {
     const dt = getDeltaTime()
     this.updateLayout(dt)
     this.updateFlights(dt)
+    this.updateMotion(dt)
     this.animate(dt)
     this.updateAimedLabel(dt)
     if (this.state.mode === "place") return // gaze opens topics in Explore and Recall
+    if (this.isPalaceMoving()) { this.dwellSpot = null; this.dwellTime = 0; return } // let it settle first
     const cam = this.camT.getWorldPosition()
     const gaze = this.camT.getWorldRotation().multiplyVec3(new vec3(0, 0, -1))
 
@@ -1120,7 +1276,11 @@ export class LociPalaceController extends BaseScriptComponent {
     this.anchors.forEach((a) => {
       if (a.dot.enabled) {
         const dwell = this.dwellSpot === a.id ? Math.min(1, this.dwellTime / this.openDwellSec) : 0
-        this.faceHalo(a.dotHalo, cam, (1 + 0.15 * Math.sin(t * 1.2 + a.dotHalo.phase)) * (1 + dwell * 1.2))
+        const held = a.id === this.grabbed ? 1.8 : a.hover ? 1.4 : 1
+        this.faceHalo(a.dotHalo, cam, (1 + 0.15 * Math.sin(t * 1.2 + a.dotHalo.phase)) * (1 + dwell * 1.2) * held)
+        // Breathe: the closed dot drifts a little, so the room never looks frozen.
+        a.dot.getTransform().setLocalPosition(new vec3(Math.sin(t * 0.5 + a.dotHalo.phase) * 1.2,
+          this.clusterLiftCm + Math.sin(t * 0.8 + a.dotHalo.phase * 1.7) * 1.6, 0))
       }
       if (a.cluster && a.cluster.enabled && a.openT < 1) {
         a.openT = Math.min(1, a.openT + dt / this.bloomSec)

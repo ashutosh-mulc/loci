@@ -251,3 +251,16 @@ LEAF (preview): 10/10 passed — loci-1-place, loci-2-explore-gaze, loci-3-star-
   - MIT licence added; `main` fast-forwarded to the finished project; the repo made public after a secret scan of the full history.
 - verify-preview: the Evening Room was restored after a Lens Studio restart reset it to Sunlit Room. Five glowing topics settle in 3 s.
 - LEAF: 1, 2, 3, 5, 6, 7, 8, 9, 10, 11 all **pass (10/10)**, run one at a time, on the judged student palace.
+
+### Round 15: grab and throw ("the demo feels very rigid … like Iron Man, grab the orbs")
+- Prompt: "The demo feels very rigid man. The scenes are very static. I wanted it to be more flowy and easy to pick … he can just grab the orbs and interact with it."
+- Test first: extended `loci-1`. Every topic must be grabbable. A topic thrown 30 cm must glide past where it was let go, its most-linked topic must follow part of the way, and an unlinked topic must stay put.
+- Build:
+  - Each topic's dot has a SIK `Interactable` and an `InteractableManipulation` whose manipulate root is the whole topic.
+  - On release the topic keeps the hand's velocity and glides with friction, staying 0.6–3.5 m away and inside the room.
+  - Linked topics follow 15% per shared thread (capped at 45%) on slightly springy springs, then keep that share of the move.
+  - Gaze waits until the palace settles before opening anything. Threads are rebuilt from the new positions.
+  - Closed dots drift and breathe, and glow brighter on hover or while held.
+  - The demo tour now flicks one topic.
+- Result: the thrown topic moved 61 cm, its linked topic (3 threads) followed 28 cm, and the unlinked one moved 0.00 cm.
+- LEAF: 1, 2, 3, 5, 6, 7, 8, 9, 10, 11 all **pass (10/10)**. The last nine were sent in one batch rather than one per message.

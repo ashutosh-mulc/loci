@@ -42,9 +42,12 @@
     dotColor: false
     dotDiameterCm: false
     eyeHeightCm: false
+    followPerThread: false
     gazeHoldConeDeg: false
     gazeOpenConeDeg: false
+    glideFriction: false
     glowMaterial: false
+    grabTopics: false
     haloMaterial: false
     insightColor: false
     labels: false
@@ -141,6 +144,9 @@
       layoutDegPerUnit: 0.900000
       layoutSteerGain: !<float> 8.000000
       layoutDebugDraw: false
+      grabTopics: true
+      followPerThread: 0.150000
+      glideFriction: 2.600000
   ScriptTypes:
     -
       {}
@@ -218,4 +224,10 @@
     - '// @input float layoutDegPerUnit = 0.9 {"hint":"Most degrees one link-length of the simulation may span (keeps small palaces compact).", "widget":"slider", "min":0.3, "max":2, "step":0.05}'
     - "// @input float layoutSteerGain = 8 {\"hint\":\"How hard each orb's rigid body is steered toward its point on the path (1/s).\", \"widget\":\"slider\", \"min\":2, \"max\":20, \"step\":0.5}"
     - '// @input bool layoutDebugDraw {"hint":"Show the physics colliders (cyan wireframes) while orbs fly. For authoring."}'
+    - '// @ui {"widget":"group_end"}'
+    - '// @ui {"widget":"separator"}'
+    - '// @ui {"widget":"group_start", "label":"Grab and throw"}'
+    - "// @input bool grabTopics = true {\"hint\":\"Pinch a topic's dot to grab it, move it, and let go: it glides on and linked topics follow.\"}"
+    - '// @input float followPerThread = 0.15 {"hint":"How far a linked topic follows the one you move, per shared thread (0–1, capped at 0.45).", "widget":"slider", "min":0, "max":0.4, "step":0.01}'
+    - '// @input float glideFriction = 2.6 {"hint":"How quickly a thrown topic slows down (1/s).", "widget":"slider", "min":0.5, "max":8, "step":0.1}'
     - '// @ui {"widget":"group_end"}'

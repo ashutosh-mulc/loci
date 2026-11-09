@@ -15,6 +15,7 @@ Entry for Devpost's **Learn AR with SPECS**. Built with Claude Code and **CLAD**
 | Mode | You do | You see |
 |---|---|---|
 | **Arrange** | Nothing: just watch | The palace arranges itself. A force-directed simulation (a port of d3-force) lays the topics out by how their ideas link, and each orb flies there as a Lens Studio rigid body in its own zero-gravity physics world. Linked topics settle close; every topic stays at least 20° from the others so you can look at one alone |
+| **Grab and throw** | Pinch a topic's dot, move it, let go | It glides on with your throw's momentum and stops; topics linked to it follow part of the way on springs, so the palace feels connected. Closed topics also drift and breathe gently |
 | **Explore** | Just look at a placed topic | It blooms into 6 to 8 stars: gold stars are decisions, rings are insights, soft pulses are open questions. Threads of light link ideas to other topics. Only the spot you face opens |
 | **Card** | Pinch a star | A one-line card with where the idea came from and when |
 | **Recall** | Pinch Recall | Labels hide. Each spot asks one star's question. Reveal, then mark Right (the star fades as mastered) or Wrong (it stays bright). One answer per topic makes a round. "Round done" shows your score per topic, with **Go again** |
@@ -37,7 +38,7 @@ A memory palace works because ideas are tied to real places you move between; a 
 
 1. Open `Loci-Proj.esproj` in Lens Studio 5.22 or later.
 2. Set the Preview device to **SPECS 27** and the input to **Interactive**.
-3. Watch the palace arrange itself, then look around (right-drag) to open a topic; click to pinch a star.
+3. Watch the palace arrange itself, then look around (right-drag) to open a topic; click to pinch a star; drag a topic's dot to grab and throw it.
 4. Optional: select **DemoTour** and tick *Play On Start* for the scripted 2-minute tour.
 
 ## Honest limits

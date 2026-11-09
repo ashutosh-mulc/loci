@@ -91,6 +91,17 @@ export class LociDemoTour extends BaseScriptComponent {
     await this.wait(3.5)
     c.toggleCard(star.id)
     await this.wait(0.6)
+
+    // 2b. Grab and throw: flick a topic sideways; it glides on, and its linked topics follow.
+    print("LociDemoTour: 2b Throw")
+    await this.look(c.getClusterCentreWorld(second)!, 1.0)
+    const camR = this.camT.getWorldRotation().multiplyVec3(new vec3(1, 0, 0))
+    const home = c.getTopicHome(second)!
+    c.throwTopic(second, home.add(camR.uniformScale(6)), camR.uniformScale(-140))
+    await this.wait(0.4)
+    await this.look(home.add(camR.uniformScale(-25)).add(new vec3(0, 20, 0)), 1.2)
+    await this.until(() => !c.isPalaceMoving(), 5, "throw settled")
+    await this.wait(1.2)
     print("LociDemoTour: 3 Recall")
 
     // 3. Recall: glance down to the button, pinch it, answer at two topics, finish.

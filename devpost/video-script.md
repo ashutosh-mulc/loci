@@ -20,6 +20,7 @@ Record two or three takes; they come out the same, so pick the smoothest.
 
 ## Optional live shots (Interactive Preview, by hand)
 
+- **Grab it yourself (best shot):** with Play On Start off, after the palace settles, click and drag a topic's glowing dot with the mouse and let go mid-swing. It glides on, and linked topics follow. Do this once or twice; it's the most "alive" moment.
 - **Arrange again:** with Play On Start off, press the preview's reset: the orbs fly out and settle the same way every time. (WASD to move, right-drag to look, click = pinch.)
 - **Walk around:** after placing, walk (WASD) so the palace stays fixed in the room while you move. This sells "it lives in your room".
 
@@ -32,6 +33,7 @@ Rules from the hackathon: under 3 minutes, a screen recording of the Lens runnin
 | 0:00–0:12 | Title card: **Loci**, "too much on your mind? put it in your room", on Specs | Line 1 |
 | 0:12–0:30 | Tour start: five glowing topic orbs, hint "Arranging your palace by how your ideas connect". They fly out and settle by themselves | Lines 2–3 |
 | 0:30–0:45 | Head turns to a topic: it blooms into stars; thread lines reach to linked topics; a card opens | Line 4 |
+| 0:45–0:55 | A topic is flicked sideways: it glides on, and its linked topic swings after it on a spring | Line 4b |
 | 0:45–1:20 | Glance down, pinch Recall. Labels vanish, a star brightens, question, Reveal, Right fades it, Wrong moves on, one answer at every topic | Line 5 |
 | 1:20–1:30 | "Round done" with counts per topic and Go again; pinch Explore to finish | Line 6 |
 | 1:30–1:50 | Palace switches to someone else's (guitar learner); it re-arranges itself; a card opens | Line 7 |
@@ -44,6 +46,7 @@ Rules from the hackathon: under 3 minutes, a screen recording of the Lens runnin
 2. "These are the thoughts a student worked through in late-night AI chats: five topics, about thirty-five thoughts."
 3. "I don't place anything. The palace arranges itself: a physics simulation pulls together topics whose ideas are linked and pushes the rest apart. Sleep sits next to exams and money, because they really do pull on each other."
 4. "To explore, I just look. The topic I face blooms into stars: gold for decisions, rings for realisations, soft pulses for questions I haven't answered yet. A pinch opens the card. Threads show where a thought connects to another part of my life."
+4b. "And it's all alive. I can grab any topic, move it or throw it, and the topics linked to it follow, like pulling on a thread."
 5. "Then Recall. Labels hide, and each place asks me one question. I answer in my head, reveal, and mark it right, and it fades, or wrong, and it stays bright for next time. That's the method of loci: thoughts tied to places I can walk between."
 6. "One question per topic makes a round. I can go again, or stop."
 7. "It isn't just one person's palace. This is someone learning guitar: same Lens, their thoughts, and it arranges itself around their links."
