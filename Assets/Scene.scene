@@ -2798,7 +2798,7 @@
       controller: !<MappingBased.AssignableType_1> 59e1237d-c191-43c9-a0dc-106b6c35468d
       recall: !<MappingBased.AssignableType_2> 7d981101-c138-43a3-ab44-65672ea99d2c
       source: !<MappingBased.AssignableType_3> 8e2b277a-f715-4ba5-941f-a6e3438c3630
-      playOnStart: true
+      playOnStart: false
       speed: !<float> 1.000000
       showAnyUser: true
   ScriptTypes:
