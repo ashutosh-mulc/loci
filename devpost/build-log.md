@@ -264,3 +264,9 @@ LEAF (preview): 10/10 passed — loci-1-place, loci-2-explore-gaze, loci-3-star-
   - The demo tour now flicks one topic.
 - Result: the thrown topic moved 61 cm, its linked topic (3 threads) followed 28 cm, and the unlinked one moved 0.00 cm.
 - LEAF: 1, 2, 3, 5, 6, 7, 8, 9, 10, 11 all **pass (10/10)**. The last nine were sent in one batch rather than one per message.
+
+### Round 16: performance trace of the final build
+- Prompt: "Can you run the perf-trace and attach the results somewhere in the docs itself?"
+- Skill: `specs-capture-perf-trace`, with two scheduled captures through the Lens Studio MCP: A, Arrange (9 s, the physics flight), and B, Explore (10 s, settled). Analysed with `perfetto-trace-analysis` Phase 1.
+- Result: 0 frames over 16.7 ms in either capture (p50 about 4.9 ms, worst 13.8 ms). Lens scripts take about 0.7 ms per frame and rendering about 0.6 ms. The physics flight costs the same as steady Explore. Most of each frame is the Preview's own simulated tracking (about 4.8 ms).
+- Report: `devpost/perf-report.md`. Traces and summaries: `devpost/perf/`.

@@ -33,6 +33,7 @@ A memory palace works because ideas are tied to real places you move between; a 
 - Planned with `plan-lens` (`devpost/design-brief.md`); built through CLAD skills (`specs-build-ui`, `specs-world-query`, `specs-interaction-recipes`, `build-sfx`, `verify-preview`) driving the Lens Studio MCP.
 - One loop per change: a failing LEAF test, the fix, every LEAF test, `verify-preview` screenshots, then a log entry in `devpost/build-log.md`. Two code reviews were worked through this way.
 - **10 LEAF scenarios, all passing in preview** (`Assets/Tests/`): auto layout (physics, deterministic, linked topics closer), gaze explore, card, recall rounds, any user's data, same-spot drops, threads, reset, aimed label, render cost.
+- **Performance traced** with `specs-capture-perf-trace` (`devpost/perf-report.md`): 0 frames over the 16.7 ms budget; all of Loci's scripts take about 0.7 ms per frame, including during the physics flight.
 
 ## Run it
 
