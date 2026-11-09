@@ -230,3 +230,24 @@ Prompt: "Find for sure fixes that are gonna help without needing to baseline." O
 Skill choice: ls-clad `specs-lens-perf-attribution` → `specs-lens-perf-optimize` is the measured route; skipped for the deadline.
 
 LEAF (preview): 10/10 passed — loci-1-place, loci-2-explore-gaze, loci-3-star-card, loci-5-recall, loci-6-any-data, loci-7-same-spot, loci-8-threads, loci-9-reset-here, loci-10-aimed-label, loci-11-render-cost. TypeScript recompile clean; no runtime errors.
+
+### Round 14: a more relatable palace, and submission prep (Nov 10)
+- Prompts:
+  - "We should change the database to a more apt case … people troubled with lots of thoughts"
+  - The pasted Devpost submission requirements
+  - "Lets focus on the submission"
+- Data:
+  - New fictional demo palace, `tools/palace-builder/student-palace.json`: a final-year student with too much on their mind.
+  - Topics: Exams, Job hunt, Money, Sleep and body, Home and family. 7 thoughts each, no names, all within limits.
+  - `seed_cloud.mjs --replace` backed up the old cloud graph, wiped it and seeded the new palace.
+- Links:
+  - `judge_cloud.mjs --local` runs the same Groq judging from this machine, because the function secret wasn't set.
+  - 60 candidate links were rebuilt. Groq judged the 36 cross-topic pairs and kept 11, for example "Fear is uncertainty —answers→ Write worries down" and "Avoiding it costs more —supports→ Tired makes worries louder".
+  - `sync_cloud.mjs --pull-only` brought them into `PalaceData.ts`.
+- Test: `loci-1` checks for a negative link-to-distance correlation, since the exact value depends on the data.
+- Submission:
+  - `devpost/submission.md`: the paste-ready description.
+  - README and video script rewritten for the self-arranging palace; the script runs about 2:45, under the 3:00 limit.
+  - MIT licence added; `main` fast-forwarded to the finished project; the repo made public after a secret scan of the full history.
+- verify-preview: the Evening Room was restored after a Lens Studio restart reset it to Sunlit Room. Five glowing topics settle in 3 s.
+- LEAF: 1, 2, 3, 5, 6, 7, 8, 9, 10, 11 all **pass (10/10)**, run one at a time, on the judged student palace.

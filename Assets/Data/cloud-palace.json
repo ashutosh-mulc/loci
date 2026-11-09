@@ -557,107 +557,68 @@
     {
       "from": "mn6",
       "to": "sl2",
-      "why": ""
-    },
-    {
-      "from": "hm1",
-      "to": "mn5",
-      "why": ""
-    },
-    {
-      "from": "hm6",
-      "to": "jb7",
-      "why": ""
-    },
-    {
-      "from": "ex3",
-      "to": "sl2",
-      "why": ""
-    },
-    {
-      "from": "ex2",
-      "to": "jb6",
-      "why": ""
+      "why": "Avoidance and fatigue both amplify anxiety",
+      "relation": "supports"
     },
     {
       "from": "mn3",
       "to": "sl6",
-      "why": ""
-    },
-    {
-      "from": "ex3",
-      "to": "mn6",
-      "why": ""
+      "why": "Coffee cut mirrors small expense habit",
+      "relation": "example of"
     },
     {
       "from": "hm6",
       "to": "mn1",
-      "why": ""
-    },
-    {
-      "from": "mn3",
-      "to": "sl1",
-      "why": ""
-    },
-    {
-      "from": "ex7",
-      "to": "jb2",
-      "why": ""
-    },
-    {
-      "from": "hm4",
-      "to": "mn4",
-      "why": ""
+      "why": "Rent timing helps manage finances when moving",
+      "relation": "supports"
     },
     {
       "from": "ex3",
-      "to": "hm3",
-      "why": ""
-    },
-    {
-      "from": "hm3",
       "to": "mn6",
-      "why": ""
+      "why": "Avoidance heightens anxiety, matching uncertainty insight",
+      "relation": "supports"
     },
     {
       "from": "ex3",
       "to": "sl5",
-      "why": ""
-    },
-    {
-      "from": "hm3",
-      "to": "sl2",
-      "why": ""
-    },
-    {
-      "from": "hm6",
-      "to": "jb3",
-      "why": ""
+      "why": "Writing worries addresses fear of unknown",
+      "relation": "answers"
     },
     {
       "from": "ex1",
-      "to": "sl7",
-      "why": ""
+      "to": "jb4",
+      "why": "Both prioritize exam study before job tasks",
+      "relation": "supports"
     },
     {
-      "from": "hm7",
-      "to": "mn7",
-      "why": ""
-    },
-    {
-      "from": "jb3",
-      "to": "mn1",
-      "why": ""
-    },
-    {
-      "from": "jb1",
-      "to": "sl7",
-      "why": ""
+      "from": "mn3",
+      "to": "sl1",
+      "why": "Phone limit exemplifies small leak reduction",
+      "relation": "example of"
     },
     {
       "from": "ex7",
       "to": "hm7",
-      "why": ""
+      "why": "Early outreach reduces stress in both contexts",
+      "relation": "supports"
+    },
+    {
+      "from": "ex4",
+      "to": "sl3",
+      "why": "Walk is break complementing 90‑minute blocks",
+      "relation": "example of"
+    },
+    {
+      "from": "hm5",
+      "to": "sl1",
+      "why": "Home reset and phone limit both reduce distractions",
+      "relation": "supports"
+    },
+    {
+      "from": "hm7",
+      "to": "sl5",
+      "why": "Writing worries and early sharing both relieve stress",
+      "relation": "supports"
     }
   ]
 }
