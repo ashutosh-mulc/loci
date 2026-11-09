@@ -1,6 +1,6 @@
 // LociHintUI.ts
 // Owns: the one-line onboarding hint that tells the user the next step, then gets out of the way.
-//   Place:   "Drag a topic toward any spot in your room · N left" (and "Too close to X" on a refusal)
+//   Place:   "Arranging your palace by how your ideas connect" while the physics layout plays
 //   Explore: "Look at a topic to open it" -> "Pinch a star to read it" -> "Pinch Recall below to test yourself"
 //   Recall:  quiet (the Recall panel and the "Explore" button explain themselves)
 // Lazily follows the user near the top of the view, fades in and out. Light text only.
@@ -39,6 +39,7 @@ export class LociHintUI extends BaseScriptComponent {
   private text!: Text
   private camT: Transform | null = null
   private alpha = 0
+  private shownAlpha = 0 // the alpha last written to the text
   private placed = false
   private message = ""
   private expireAt = -1
@@ -94,8 +95,7 @@ export class LociHintUI extends BaseScriptComponent {
     this.expireAt = -1
     const mode = c.getMode()
     if (mode === "place") {
-      const left = c.getTopicIds().length - c.placedCount()
-      this.message = `Drag a topic toward any spot in your room  ·  ${left} left`
+      this.message = "Arranging your palace by how your ideas connect"
     } else if (mode === "recall") {
       this.message = "" // the Recall panel explains itself; a hint here would sit under its buttons
     } else if (!this.seenOpen) {
@@ -131,8 +131,13 @@ export class LociHintUI extends BaseScriptComponent {
     }
     const want = target !== "" && target === this.text.text ? 1 : 0
     this.alpha += (want - this.alpha) * Math.min(1, getDeltaTime() * 5)
-    const c = this.textColor
-    this.text.textFill.color = new vec4(c.x, c.y, c.z, c.w * this.alpha)
+    if (Math.abs(want - this.alpha) < 0.002) this.alpha = want
+    // Only touch the text when the fade moved: a colour write makes the text re-render.
+    if (this.alpha !== this.shownAlpha) {
+      this.shownAlpha = this.alpha
+      const c = this.textColor
+      this.text.textFill.color = new vec4(c.x, c.y, c.z, c.w * this.alpha)
+    }
 
     // Lazy follow near the top of the view (flat heading), facing the user.
     const cam = this.camT.getWorldPosition()

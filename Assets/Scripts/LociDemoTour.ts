@@ -70,16 +70,11 @@ export class LociDemoTour extends BaseScriptComponent {
     await this.wait(1)
     print("LociDemoTour: 1 Place")
 
-    // 1. Place: look where each topic should go, release it there, watch it fly.
-    await this.look(eye.add(this.flatForward().uniformScale(60)).add(new vec3(0, -12, 0)), 1.2) // the orbs
-    await this.wait(2.5)
-    for (const id of c.getTopicIds()) {
-      const p = c.suggestedPoint(id).add(new vec3(0, 12, 0))
-      await this.look(p, 1.1)
-      c.aimAndRelease(id, p)
-      await this.wait(1.4)
-      await this.until(() => c.isAnchored(id), 3, `${id} anchored`)
-    }
+    // 1. Place: the palace arranges itself (physics); watch the topics fly out and settle.
+    await this.look(eye.add(this.flatForward().uniformScale(60)).add(new vec3(0, -12, 0)), 0.6) // the orbs
+    await this.look(ahead, 1.2)
+    await this.until(() => c.getMode() === "explore", 8, "auto layout settled")
+    await this.wait(1.5)
     print("LociDemoTour: 2 Explore")
 
     // 2. Explore: look at a topic, it blooms; read a star.
@@ -138,15 +133,9 @@ export class LociDemoTour extends BaseScriptComponent {
     // 4. Any user: the same Lens, another person's palace.
     if (this.showAnyUser && this.source && this.source.loadAlternate(0)) {
       print("LociDemoTour: 4 Any user")
-      await this.look(eye.add(this.flatForward().uniformScale(60)).add(new vec3(0, -12, 0)), 1.4)
-      await this.wait(2.5)
-      for (const id of c.getTopicIds()) {
-        const p = c.suggestedPoint(id).add(new vec3(0, 12, 0))
-        await this.look(p, 0.8)
-        c.aimAndRelease(id, p)
-        await this.wait(1)
-        await this.until(() => c.isAnchored(id), 3, `${id} anchored`)
-      }
+      await this.look(ahead, 1.0)
+      await this.until(() => c.getMode() === "explore", 8, "auto layout settled")
+      await this.wait(1)
       const g = c.getTopicIds()[0]
       await this.look(c.getClusterCentreWorld(g)!, 1.4)
       await this.wait(2)

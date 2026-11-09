@@ -170,3 +170,47 @@ Prompt: "run the suggested loop" over `loci-review-v2.md` (one item per round: L
   - Removed the SnapCloudExamples scene object and the 5 packages it brought in (never committed). `Plugins/` is git-ignored.
 - verify-preview: screenshots of Place (glowing orbs, no stray panels), Explore (soft star glows, single thread lines, card) and Recall (question, Reveal, highlighted star), all from the demo tour.
 - LEAF: 1, 2, 3, 5, 6, 7, 8, 9, 10, 11 all **pass (10/10)**, run one at a time.
+
+### Round 13: cloud graph, LLM-judged links, auto layout with physics (Nov 9–10)
+- Prompts:
+  - "we need a graph db and some intelligence for making edges … look for existing projects"
+  - "use Groq instead of gemini"
+  - "Build this in a start.sh"
+  - "A … sync with the cloud (back and forth both directions)"
+  - "Use some physics based renderers which initialize the graphs based on the connections … connected nodes are generally closer"
+  - "/ls-clad:physics: use this to handle the physics aspects"
+- Research:
+  - Surveyed existing graph builders: create-context-graph, llmchat-knowledge-converter, Graphiti, Cognee, Mem0, post-graph-rag and LightRAG.
+  - Kept our Supabase graph and borrowed their shared method: similarity proposes candidate links, and an LLM confirms each one.
+- Cloud (`supabase/`):
+  - Migration `judged_edges`: each link has a relation from a fixed list (supports, contradicts, depends on, answers, refines, example of) and a short reason.
+  - The `ingest` function asks Groq (`openai/gpt-oss-120b`) about each candidate link between topics, in batches.
+  - Rejected pairs are stored as `none` and hidden. With no key, links fall back to similarity only.
+  - Dry run on the 13 existing links: 4 kept, 9 noise links dropped, in 3.3 s.
+- Tools:
+  - `start.sh`: one command to link the project, migrate, set secrets, deploy, seed if empty, and judge.
+  - `judge_cloud.mjs`: has Groq judge the existing links.
+  - `sync_cloud.mjs`: two-way sync. Push sends new local thoughts to the cloud. Pull writes `Assets/Data/cloud-palace.json` and regenerates `PalaceData.ts`, keeping each star's position.
+- Auto layout (`LociForceLayout.ts`):
+  - A port of d3-force: link springs, many-body repulsion, positioning and alpha cooling, over 300 ticks.
+  - It runs on the topic graph, where each link's weight is the number of threads between two topics.
+  - The settled layout is mapped into the view box (±40°, −14° to +8°), spread so topics are at least 20° apart, and placed with linked hubs nearer.
+  - **Dragging removed.** Orbs fly out on their own after 0.8 s.
+- Physics (CLAD physics skill):
+  - Each orb flies as a dynamic `BodyComponent` with a sphere collider, steered along the simulation path by velocity.
+  - The bodies run in their own zero-gravity `WorldComponent`, so they never meet the room's colliders or the y = 0 floor.
+  - Colliders grow to half the closest final gap, so orbs push off each other in flight.
+  - The bodies are removed once all topics have landed.
+- Tuning:
+  - d3's default link strength (1/min degree) left this dense palace with linked pairs *farther* apart than unlinked ones (31° vs 24°).
+  - Changed link strength to 0.4 + 0.15 × threads. With the narrower view box, the correlation is −0.24, and the strongest link sits at 20° against a 25.5° average.
+- Test first: rewrote `loci-1` as the auto-layout scenario. It checks that:
+  - the layout settles with no hands and enters Explore;
+  - it uses physics bodies in their own world, all removed afterwards;
+  - topics are at least 20° apart;
+  - distance shrinks as links strengthen;
+  - two layouts land in the same place (0.00 cm drift);
+  - placing by code cancels the layout.
+  - **Failed** before the controller change.
+- Environment: Lens Studio had run for 2 days at about 260% CPU and 12 GB. The preview stalled (a 53 s "settle"). After a restart it settles in 3.9 s.
+- LEAF: 1, 2, 3, 5, 6, 7, 8, 9, 10, 11 all **pass (10/10)**, run one at a time.

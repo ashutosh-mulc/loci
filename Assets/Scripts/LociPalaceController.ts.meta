@@ -31,6 +31,7 @@
     aimConeDeg: false
     aimedLabelCapCm: false
     anchorToCameraAtStart: false
+    autoLayout: false
     bloomSec: false
     card: false
     chimeTrack: false
@@ -47,6 +48,14 @@
     haloMaterial: false
     insightColor: false
     labels: false
+    layoutDebugDraw: false
+    layoutDegPerUnit: false
+    layoutDelaySec: false
+    layoutDistanceCm: false
+    layoutElevationDeg: false
+    layoutHalfWidthDeg: false
+    layoutSeconds: false
+    layoutSteerGain: false
     maxHitCm: false
     minDragCm: false
     minSeparationDeg: false
@@ -123,6 +132,15 @@
       threadColor: !<Vec4> {x: 0.700000, y: 0.850000, z: 1.000000, w: 0.350000}
       showThreads: true
       chimeVolume: 0.500000
+      autoLayout: true
+      layoutDelaySec: 0.800000
+      layoutSeconds: !<float> 3.000000
+      layoutHalfWidthDeg: !<float> 40.000000
+      layoutElevationDeg: !<Vec2> {x: -14.000000, y: 8.000000}
+      layoutDistanceCm: !<Vec2> {x: 150.000000, y: 210.000000}
+      layoutDegPerUnit: 0.900000
+      layoutSteerGain: !<float> 8.000000
+      layoutDebugDraw: false
   ScriptTypes:
     -
       {}
@@ -188,4 +206,16 @@
     - '// @ui {"widget":"separator"}'
     - '// @ui {"widget":"group_start", "label":"Audio"}'
     - '// @input float chimeVolume = 0.5 {"hint":"Chime volume.", "widget":"slider", "min":0, "max":1, "step":0.05}'
+    - '// @ui {"widget":"group_end"}'
+    - '// @ui {"widget":"separator"}'
+    - '// @ui {"widget":"group_start", "label":"Auto layout (physics)"}'
+    - '// @input bool autoLayout = true {"hint":"Arrange topics automatically by their links (force-directed). Off = place by code only."}'
+    - '// @input float layoutDelaySec = 0.8 {"hint":"Seconds the orbs rest in front of you before they fly out.", "widget":"slider", "min":0, "max":3, "step":0.1}'
+    - '// @input float layoutSeconds = 3 {"hint":"Seconds the simulation takes to play out as motion.", "widget":"slider", "min":1, "max":6, "step":0.1}'
+    - '// @input float layoutHalfWidthDeg = 40 {"hint":"Widest a topic may sit left or right of straight ahead (deg).", "widget":"slider", "min":20, "max":80, "step":1}'
+    - "// @input vec2 layoutElevationDeg = {-14,8} {\"hint\":\"Lowest and highest a topic's cluster may sit, as seen from the eye (deg; negative = below).\"}"
+    - '// @input vec2 layoutDistanceCm = {150,210} {"hint":"Distance (cm) of the most linked topic (nearest) and of an unlinked one (farthest)."}'
+    - '// @input float layoutDegPerUnit = 0.9 {"hint":"Most degrees one link-length of the simulation may span (keeps small palaces compact).", "widget":"slider", "min":0.3, "max":2, "step":0.05}'
+    - "// @input float layoutSteerGain = 8 {\"hint\":\"How hard each orb's rigid body is steered toward its point on the path (1/s).\", \"widget\":\"slider\", \"min\":2, \"max\":20, \"step\":0.5}"
+    - '// @input bool layoutDebugDraw {"hint":"Show the physics colliders (cyan wireframes) while orbs fly. For authoring."}'
     - '// @ui {"widget":"group_end"}'

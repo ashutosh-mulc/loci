@@ -1,9 +1,10 @@
 // LociPalaceController.ts
 // Owns: the Loci flow in ANY room.
-//  Place:   drag a topic orb toward any place in your room and let go. It flies along your
-//           line of sight and anchors there. On Specs, World Query snaps it onto the real
-//           surface you aimed at; where no surface is found (or in Lens Studio's preview, whose
-//           rooms World Query can't see) it anchors `placeDistanceCm` out along that line.
+//  Place:   automatic. A force-directed simulation (LociForceLayout, a d3-force port) arranges
+//           the topics in front of you by how their ideas connect: topics joined by threads pull
+//           together, the rest push apart. The orbs fly along the simulation and anchor where it
+//           settles; then Explore starts. No dragging. (placeTopicAt / aimAndRelease remain for
+//           tests and scripted flows; any of them cancels the layout.)
 //  Explore: head-gaze dwell opens one topic's cluster at a time (0.6 s in, 2 s out).
 //  Cards:   pinch a star to show its one-line card.
 // A "spot" is now simply a topic's own anchor, so spot ids are topic ids.
@@ -16,9 +17,9 @@ import {PALACE, Thought, Topic, Thread} from "./PalaceData"
 import {LociState, PalaceMode, StarState} from "./LociState"
 import {LociLabelsUI} from "./LociLabelsUI"
 import {LociCardUI} from "./LociCardUI"
+import {separate, simulate, topicLinks} from "./LociForceLayout"
 import {discMesh, linesMesh, ringMesh, sphereMesh, spriteMesh, starMesh} from "./LociMeshes"
 import {Interactable} from "SpectaclesInteractionKit.lspkg/Components/Interaction/Interactable/Interactable"
-import {InteractableManipulation} from "SpectaclesInteractionKit.lspkg/Components/Interaction/InteractableManipulation/InteractableManipulation"
 import WorldCameraFinderProvider from "SpectaclesInteractionKit.lspkg/Providers/CameraProvider/WorldCameraFinderProvider"
 import Event from "SpectaclesInteractionKit.lspkg/Utils/Event"
 
@@ -64,6 +65,17 @@ interface OrbEntry {
   home: vec3
   homeLocal: vec3 // its place on the arc, under orbsRoot
   flying: boolean
+}
+
+interface Layout {
+  ids: string[]
+  from: vec3[] // orb positions when it started
+  tracks: vec3[][] // tracks[tick][node]: world anchor points along the simulation
+  t: number
+  bodies: (BodyComponent | null)[] // one dynamic rigid body per orb while it flies (Lens physics)
+  shapes: SphereShape[]
+  radius: number // final collider radius: half the closest settled gap, so bodies never fight the targets
+  overtime: number // seconds since the path ended, waiting for the bodies to arrive
 }
 
 interface Flight {
@@ -229,6 +241,33 @@ export class LociPalaceController extends BaseScriptComponent {
   chimeVolume: number = 0.5
   @ui.group_end
 
+  @ui.separator
+  @ui.group_start("Auto layout (physics)")
+  @input @hint("Arrange topics automatically by their links (force-directed). Off = place by code only.")
+  autoLayout: boolean = true
+  @input @hint("Seconds the orbs rest in front of you before they fly out.")
+  @widget(new SliderWidget(0, 3, 0.1))
+  layoutDelaySec: number = 0.8
+  @input @hint("Seconds the simulation takes to play out as motion.")
+  @widget(new SliderWidget(1, 6, 0.1))
+  layoutSeconds: number = 3
+  @input @hint("Widest a topic may sit left or right of straight ahead (deg).")
+  @widget(new SliderWidget(20, 80, 1))
+  layoutHalfWidthDeg: number = 40
+  @input @hint("Lowest and highest a topic's cluster may sit, as seen from the eye (deg; negative = below).")
+  layoutElevationDeg: vec2 = new vec2(-14, 8)
+  @input @hint("Distance (cm) of the most linked topic (nearest) and of an unlinked one (farthest).")
+  layoutDistanceCm: vec2 = new vec2(150, 210)
+  @input @hint("Most degrees one link-length of the simulation may span (keeps small palaces compact).")
+  @widget(new SliderWidget(0.3, 2, 0.05))
+  layoutDegPerUnit: number = 0.9
+  @input @hint("How hard each orb's rigid body is steered toward its point on the path (1/s).")
+  @widget(new SliderWidget(2, 20, 0.5))
+  layoutSteerGain: number = 8
+  @input @hint("Show the physics colliders (cyan wireframes) while orbs fly. For authoring.")
+  layoutDebugDraw: boolean = false
+  @ui.group_end
+
   // ---- events (UI / Recall / hints / tests subscribe) ----
   readonly onTopicPlaced = new Event<{topicId: string; spot: string}>()
   readonly onPlaceRejected = new Event<{topicId: string; reason: string}>()
@@ -241,6 +280,11 @@ export class LociPalaceController extends BaseScriptComponent {
   private data: PalaceDataShape = PALACE
   private topicById = new Map<string, Topic>()
   private thoughtById = new Map<string, Thought>()
+  private thoughtsByTopic = new Map<string, Thought[]>() // built once per palace; read-only
+  private meshCache = new Map<string, RenderMesh>() // shared meshes, one per shape and size
+  private dotMat: Material | null = null
+  private orbMat: Material | null = null // every dot looks the same and never changes
+  private starLabelScale = new Map<string, number>() // mirrors each star label's scale, no engine read
   private state!: LociState
   private anchors = new Map<string, AnchorEntry>()
   private orbs = new Map<string, OrbEntry>()
@@ -265,6 +309,10 @@ export class LociPalaceController extends BaseScriptComponent {
   private awayTime = 0
   private ready = false
   private started = false
+  private layout: Layout | null = null
+  private layoutWait = -1 // seconds until the layout starts; < 0 = not scheduled
+  private layoutTicks = 0
+  private layoutWorld: WorldComponent | null = null
 
   onAwake(): void {
     this.indexData()
@@ -303,7 +351,7 @@ export class LociPalaceController extends BaseScriptComponent {
   getDotObject(spot: string): SceneObject | null { const a = this.anchors.get(spot); return a ? a.dot : null }
   thoughtsAt(spot: string): Thought[] {
     const topic = this.state.topicAt(spot)
-    return topic ? this.data.thoughts.filter((t) => t.topic === topic) : []
+    return topic ? (this.thoughtsByTopic.get(topic) ?? []) : []
   }
   getThreadLineCount(): number { return this.threadsObj ? this.threadCountShown : 0 }
   /** The drawn thread segments (world start at a star, end at the other topic). For tests. */
@@ -322,6 +370,19 @@ export class LociPalaceController extends BaseScriptComponent {
   getAimedStar(): string | null { return this.aimedStar }
   getStarLabelScale(thoughtId: string): number { return this.labels.getScale(`star:${thoughtId}`) }
   getThreadSegments(): [vec3, vec3][] { return this.threadsObj ? this.threadSegs.slice() : [] }
+  /** Whether the automatic layout is scheduled or playing. */
+  isLayingOut(): boolean { return this.layout !== null || this.layoutWait >= 0 }
+  /** Rigid bodies currently flying the layout (0 when settled). For tests. */
+  /** Whether orbs fly in their own zero-gravity physics world (isolated from the root world). */
+  hasLayoutWorld(): boolean { return this.layoutWorld !== null }
+  getLayoutBodyCount(): number { return this.layout ? this.layout.bodies.filter((b) => b !== null).length : 0 }
+  /** Physics ticks of the last automatic layout. For tests. */
+  getLayoutTicks(): number { return this.layoutTicks }
+  /** Whether a topic orb can be grabbed by hand (no: placement is automatic). */
+  isOrbGrabbable(topicId: string): boolean {
+    const o = this.orbs.get(topicId)
+    return o ? o.obj.getComponent(Interactable.getTypeName()) !== null : false
+  }
 
   /** World point of a topic's anchor (where its dot sits). */
   getSpotPointWorld(spot: string): vec3 | null {
@@ -353,6 +414,7 @@ export class LociPalaceController extends BaseScriptComponent {
   /** Anchor a topic at a world point now (no flight, no surface snap). */
   placeTopicAt(topicId: string, worldPoint: vec3): boolean {
     if (!this.ready || this.state.mode !== "place") return false
+    this.cancelLayout()
     const reason = this.rejectReason(topicId, worldPoint)
     if (reason) { this.onPlaceRejected.invoke({topicId, reason}); return false }
     if (!this.state.place(topicId, topicId)) return false
@@ -367,6 +429,7 @@ export class LociPalaceController extends BaseScriptComponent {
 
   /** Simulate the user's aim-and-release: the orb flies along the line of sight to `aimPoint`'s direction. */
   aimAndRelease(topicId: string, aimPoint: vec3): void {
+    this.cancelLayout()
     const orb = this.orbs.get(topicId)
     if (orb) this.releaseOrb(orb, aimPoint)
   }
@@ -455,6 +518,7 @@ export class LociPalaceController extends BaseScriptComponent {
   /** Back to Place: orbs home, anchors removed, clusters closed. */
   resetPalace(): void {
     if (!this.ready) return
+    this.cancelLayout()
     this.closeCluster()
     this.anchors.forEach((a) => {
       this.labels.removeLabel(`spot:${a.id}`)
@@ -465,6 +529,7 @@ export class LociPalaceController extends BaseScriptComponent {
     this.stars.forEach((_, id) => this.labels.removeLabel(`star:${id}`)) // their objects are gone
     this.stars.clear()
     this.labelAlpha.clear()
+    this.starLabelScale.clear()
     this.flights = []
     // Start over in front of where the user is now, not where the Lens started.
     if (this.anchorToCameraAtStart && this.camT) this.anchorPalaceToUser()
@@ -480,6 +545,7 @@ export class LociPalaceController extends BaseScriptComponent {
     this.dwellSpot = null
     this.dwellTime = 0
     if (wasMode !== "place") this.onModeChanged.invoke("place")
+    this.scheduleLayout()
   }
 
   /** Swap in another user's palace (same schema). Rebuilds orbs and returns to Place. */
@@ -513,8 +579,10 @@ export class LociPalaceController extends BaseScriptComponent {
       }
     }
     this.state = new LociState(this.getTopicIds(), this.getTopicIds())
+    this.makeLayoutWorld()
     this.buildOrbs()
     this.ready = true
+    this.scheduleLayout()
     print(`Loci ready: ${this.orbs.size} topics, ${this.data.thoughts.length} thoughts, world query ${this.hitSession ? "on" : "off"}.`)
     this.onPalaceLoaded.invoke()
   }
@@ -545,31 +613,18 @@ export class LociPalaceController extends BaseScriptComponent {
       visual.setParent(obj)
       // A small near-white core inside a wide blue glow reads as light, not as a flat disc.
       const core = this.coreColor(this.orbColor)
-      const mat = this.makeMat(core)
-      this.addMesh(visual, sphereMesh(r * 0.3, 24, 16), mat)
+      if (!this.orbMat) this.orbMat = this.makeMat(core) // all orbs share one look, never changed
+      const mat = this.orbMat
+      this.addMesh(visual, this.cachedMesh(`sphere:${r * 0.3}:24:16`, () => sphereMesh(r * 0.3, 24, 16)), mat)
       const halo = this.makeHalo(obj, r * 2.2, this.orbColor)
-      this.addSphereCollider(obj, r * 1.2)
-      const interactable = obj.createComponent(Interactable.getTypeName()) as Interactable
-      const manip = obj.createComponent(InteractableManipulation.getTypeName()) as InteractableManipulation
-      manip.setCanRotate(false)
-      manip.setCanScale(false)
+      // No collider or grab: the physics layout places every orb.
       const entry: OrbEntry = {topic, obj, visual, mat, halo, home: obj.getTransform().getWorldPosition(), homeLocal: obj.getTransform().getLocalPosition(), flying: false}
       this.orbs.set(topic.id, entry)
       this.labels.addLabel(`orb:${topic.id}`, "orb", obj, topic.name, new vec3(0, r + 1.2, 0), this.orbLabelCapCm)
-      interactable.onHoverEnter.add(() => this.setHover(visual, mat, core, true))
-      interactable.onHoverExit.add(() => this.setHover(visual, mat, core, false))
-      manip.onManipulationEnd.add(() => this.onOrbDropped(entry))
     })
   }
 
   // =================== Place ===================
-
-  private onOrbDropped(orb: OrbEntry): void {
-    if (this.state.mode !== "place" || this.state.spotOf(orb.topic.id) || orb.flying) return
-    const p = orb.obj.getTransform().getWorldPosition()
-    if (p.distance(orb.home) < this.minDragCm) { this.flyHome(orb); return }
-    this.releaseOrb(orb, p)
-  }
 
   /** Aim-and-release: find where the line of sight through `through` meets the room, then fly there. */
   private releaseOrb(orb: OrbEntry, through: vec3): void {
@@ -640,6 +695,158 @@ export class LociPalaceController extends BaseScriptComponent {
     return new vec3(p.x, Math.max(floor + 30, Math.min(floor + 220, p.y)), p.z)
   }
 
+  // =================== automatic layout (physics) ===================
+
+  private scheduleLayout(): void {
+    if (this.autoLayout && this.state.mode === "place") this.layoutWait = this.layoutDelaySec
+  }
+
+  /** Stop a scheduled or running layout; orbs not yet anchored go back to their arc. */
+  private cancelLayout(): void {
+    if (this.layout) {
+      this.removeLayoutBodies(this.layout)
+      this.layout.ids.forEach((id) => {
+        const o = this.orbs.get(id)
+        if (o && !this.state.spotOf(id)) { o.obj.getTransform().setWorldPosition(o.home); o.flying = false }
+      })
+    }
+    this.layout = null
+    this.layoutWait = -1
+  }
+
+  /**
+   * Run the force simulation over the topic graph and turn every tick into world anchor points.
+   * Simulation x → yaw, y → elevation (scaled to fit the view, never more than layoutDegPerUnit
+   * per unit), then the settled layout is spread so each topic is minSeparationDeg + 2 from the
+   * others; that correction is blended in over the playback. Linked hubs sit nearer.
+   */
+  private startLayout(): void {
+    const ids = this.getTopicIds().filter((id) => !this.state.spotOf(id))
+    if (ids.length === 0 || !this.camT) return
+    const topicOf = new Map<string, string>()
+    this.data.thoughts.forEach((t) => topicOf.set(t.id, t.topic))
+    const sim = simulate(ids.length, topicLinks(ids, topicOf, this.data.threads))
+    const last = sim.frames[sim.frames.length - 1]
+    let minX = 1e9, maxX = -1e9, minY = 1e9, maxY = -1e9
+    last.forEach(([x, y]) => { minX = Math.min(minX, x); maxX = Math.max(maxX, x); minY = Math.min(minY, y); maxY = Math.max(maxY, y) })
+    const [lo, hi] = [this.layoutElevationDeg.x, this.layoutElevationDeg.y]
+    const k = Math.min(this.layoutDegPerUnit, (2 * this.layoutHalfWidthDeg) / Math.max(1, maxX - minX), (hi - lo) / Math.max(1, maxY - minY))
+    const cx = (minX + maxX) / 2, cy = (minY + maxY) / 2, midElev = (lo + hi) / 2
+    const toDeg = (f: [number, number][]) => f.map(([x, y]) => [(x - cx) * k, midElev - (y - cy) * k] as [number, number])
+    const settled = toDeg(last)
+    const spread = separate(settled, this.minSeparationDeg + 2, this.layoutHalfWidthDeg, lo, hi)
+    const maxDeg = Math.max(1, ...sim.degree)
+    const dist = sim.degree.map((d) => this.layoutDistanceCm.y - (this.layoutDistanceCm.y - this.layoutDistanceCm.x) * (d / maxDeg))
+    const root = this.palaceRoot.getTransform().getWorldTransform()
+    const n = sim.frames.length - 1
+    const tracks = sim.frames.map((f, tick) => {
+      const w = tick / n
+      return toDeg(f).map(([yaw, elev], i) => {
+        const yw = (yaw + (spread[i][0] - settled[i][0]) * w) * DEG
+        const el = (elev + (spread[i][1] - settled[i][1]) * w) * DEG
+        const d = dist[i]
+        // The cluster centre sits at this direction; the anchor is clusterLiftCm below it.
+        const local = new vec3(Math.sin(yw) * d, this.eyeHeightCm + Math.tan(el) * d - this.clusterLiftCm, -Math.cos(yw) * d)
+        return this.clampToRoom(root.multiplyPoint(local))
+      })
+    })
+    const from = ids.map((id) => { const o = this.orbs.get(id)!; o.flying = true; return o.obj.getTransform().getWorldPosition() })
+    // Each orb flies as a dynamic rigid body with a sphere collider, so orbs push off each other
+    // in flight instead of passing through. Colliders start orb-sized and grow to half the closest
+    // settled gap; the bodies are removed once every topic has arrived.
+    const end = tracks[n]
+    let minGap = 1e9
+    for (let i = 0; i < end.length; i++) for (let j = i + 1; j < end.length; j++) minGap = Math.min(minGap, end[i].distance(end[j]))
+    const radius = Math.max(this.orbDiameterCm / 2, Math.min(30, (minGap / 2) * 0.9))
+    const bodies: (BodyComponent | null)[] = []
+    const shapes: SphereShape[] = []
+    ids.forEach((id) => {
+      const o = this.orbs.get(id)!
+      const shape = Shape.createSphereShape()
+      shape.radius = this.orbDiameterCm / 2
+      const body = o.obj.createComponent("Physics.BodyComponent") as BodyComponent
+      body.shape = shape
+      body.dynamic = true
+      body.mass = 1
+      body.damping = 0
+      body.angularDamping = 1
+      body.debugDrawEnabled = this.layoutDebugDraw
+      bodies.push(body)
+      shapes.push(shape)
+    })
+    this.layout = {ids, from, tracks, t: 0, bodies, shapes, radius, overtime: 0}
+    this.layoutTicks = n
+    print(`Loci: auto layout of ${ids.length} topics, ${n} simulation ticks, ${bodies.length} rigid bodies (collider ${radius.toFixed(0)} cm), yaw ±${this.layoutHalfWidthDeg}, elev ${this.layoutElevationDeg.x}..${this.layoutElevationDeg.y}.`)
+  }
+
+  /**
+   * A separate physics world on orbsRoot for the flying orbs: no gravity, and none of the root
+   * world's Ground Is Zero floor, star colliders or UI colliders. Orbs are children of orbsRoot,
+   * so their bodies simulate here. Without it (an editor that can't create one) the bodies use the
+   * root world; the per-frame velocity steering then also cancels gravity.
+   */
+  private makeLayoutWorld(): void {
+    if (this.layoutWorld) return
+    try {
+      const ws = Physics.WorldSettingsAsset.create()
+      ws.gravity = vec3.zero()
+      const w = this.orbsRoot.createComponent("Physics.WorldComponent") as WorldComponent
+      w.worldSettings = ws
+      this.layoutWorld = w
+    } catch (e) {
+      print(`Loci: no separate physics world for the layout (${e}); using the root world.`)
+    }
+  }
+
+  private removeLayoutBodies(L: Layout): void {
+    L.bodies.forEach((b, i) => { if (b) { b.destroy(); L.bodies[i] = null } })
+  }
+
+  private updateLayout(dt: number): void {
+    if (this.layoutWait >= 0) {
+      this.layoutWait -= dt
+      if (this.layoutWait < 0) this.startLayout()
+      return
+    }
+    const L = this.layout
+    if (!L) return
+    L.t += dt
+    const k = Math.min(1, L.t / this.layoutSeconds)
+    const f = k * (L.tracks.length - 1)
+    const i0 = Math.floor(f), i1 = Math.min(L.tracks.length - 1, i0 + 1), u = f - i0
+    const leave = 1 - Math.pow(1 - Math.min(1, k / 0.3), 3) // ease out of the arc over the first 30%
+    const lift = new vec3(0, this.clusterLiftCm, 0)
+    const r = this.orbDiameterCm / 2 + (L.radius - this.orbDiameterCm / 2) * leave
+    let worst = 0
+    L.ids.forEach((id, i) => {
+      const o = this.orbs.get(id)
+      const body = L.bodies[i]
+      if (!o || !body) return
+      // Where the simulation says this topic is now; the body is steered there by velocity, and
+      // the engine resolves contacts and inertia. Setting velocity each frame also cancels gravity.
+      const goal = vec3.lerp(L.from[i], vec3.lerp(L.tracks[i0][i], L.tracks[i1][i], u).add(lift), leave)
+      const pos = o.obj.getTransform().getWorldPosition()
+      let v = goal.sub(pos).uniformScale(this.layoutSteerGain)
+      if (v.length > 400) v = v.normalize().uniformScale(400)
+      body.velocity = v
+      body.angularVelocity = vec3.zero() // keep the name label upright
+      if (Math.abs(L.shapes[i].radius - r) > 0.5) { L.shapes[i].radius = r; body.shape = L.shapes[i] }
+      worst = Math.max(worst, pos.distance(L.tracks[L.tracks.length - 1][i].add(lift)))
+    })
+    if (k < 1) return
+    // Path finished: let the bodies arrive (or give up after 1.5 s), then anchor at the settled layout.
+    L.overtime += dt
+    if (worst > 3 && L.overtime < 1.5) return
+    this.removeLayoutBodies(L)
+    this.layout = null
+    const last = L.tracks[L.tracks.length - 1]
+    L.ids.forEach((id, i) => {
+      if (this.state.spotOf(id) || !this.orbs.get(id)) return
+      this.orbs.get(id)!.flying = false
+      if (this.state.place(id, id)) this.anchorVisuals(id, last[i])
+    })
+  }
+
   private fly(orb: OrbEntry, to: vec3, done: () => void): void {
     orb.flying = true
     const from = orb.obj.getTransform().getWorldPosition()
@@ -682,7 +889,9 @@ export class LociPalaceController extends BaseScriptComponent {
     const dot = global.scene.createSceneObject(`Dot_${topicId}`)
     dot.setParent(obj)
     dot.getTransform().setLocalPosition(new vec3(0, this.clusterLiftCm, 0))
-    this.addMesh(dot, sphereMesh(this.dotDiameterCm / 2, 12, 8), this.makeMat(this.dotColor))
+    if (!this.dotMat) this.dotMat = this.makeMat(this.dotColor)
+    const dr = this.dotDiameterCm / 2
+    this.addMesh(dot, this.cachedMesh(`sphere:${dr}:12:8`, () => sphereMesh(dr, 12, 8)), this.dotMat)
     const dotHalo = this.makeHalo(dot, this.dotDiameterCm * 4, this.dotColor)
 
     const anchor: AnchorEntry = {id: topicId, obj, dot, dotHalo, cluster: null, openT: 1}
@@ -711,7 +920,7 @@ export class LociPalaceController extends BaseScriptComponent {
     const cam = this.camT ? this.camT.getWorldPosition() : vec3.zero()
     const distM = a.obj.getTransform().getWorldPosition().distance(cam) / 100
     const labelCap = this.starLabelCapCm * Math.min(1, distM / 2.5)
-    for (const thought of this.data.thoughts.filter((t) => t.topic === topic.id)) {
+    for (const thought of this.thoughtsByTopic.get(topic.id) ?? []) {
       const obj = global.scene.createSceneObject(`Star_${thought.id}`)
       obj.setParent(cluster)
       obj.getTransform().setLocalPosition(new vec3(thought.offset[0], thought.offset[1], thought.offset[2]))
@@ -719,9 +928,9 @@ export class LociPalaceController extends BaseScriptComponent {
       visual.setParent(obj)
       const color = this.kindColor(thought.kind)
       const mat = this.makeMat(color)
-      const mesh = thought.kind === "decision" ? starMesh(r, 0.6)
-        : thought.kind === "insight" ? ringMesh(r, r * 0.6, 0.5)
-          : sphereMesh(r * 0.7, 14, 10)
+      const mesh = thought.kind === "decision" ? this.cachedMesh(`star:${r}`, () => starMesh(r, 0.6))
+        : thought.kind === "insight" ? this.cachedMesh(`ring:${r}`, () => ringMesh(r, r * 0.6, 0.5))
+          : this.cachedMesh(`sphere:${r * 0.7}:14:10`, () => sphereMesh(r * 0.7, 14, 10))
       this.addMesh(visual, mesh, mat)
       const halo = this.makeHalo(obj, this.starHaloCm, color)
       this.addSphereCollider(obj, this.starTargetRadiusCm)
@@ -729,6 +938,7 @@ export class LociPalaceController extends BaseScriptComponent {
       const star: StarEntry = {thought, obj, visual, mat, halo, baseColor: color, hovered: false}
       this.stars.set(thought.id, star)
       this.labelAlpha.delete(thought.id) // a new label starts at full colour
+      this.starLabelScale.delete(thought.id) // and at normal size
       const side = thought.offset[0] > 3 ? "left" : thought.offset[0] < -3 ? "right" : "center"
       const labelPos = side === "left" ? new vec3(r + 1.2, 0, 0) : side === "right" ? new vec3(-(r + 1.2), 0, 0) : new vec3(0, r + 1, 0)
       this.labels.addLabel(`star:${thought.id}`, "star", obj, thought.label, labelPos, labelCap, side === "center", side)
@@ -819,6 +1029,7 @@ export class LociPalaceController extends BaseScriptComponent {
   private update(): void {
     if (!this.ready || !this.camT) return
     const dt = getDeltaTime()
+    this.updateLayout(dt)
     this.updateFlights(dt)
     this.animate(dt)
     this.updateAimedLabel(dt)
@@ -830,7 +1041,8 @@ export class LociPalaceController extends BaseScriptComponent {
     let candAngle = Number.MAX_VALUE
     let openAngle = Number.MAX_VALUE
     this.anchors.forEach((a) => {
-      const c = this.getClusterCentreWorld(a.id)!
+      const c = a.obj.getTransform().getWorldPosition()
+      c.y += this.clusterLiftCm // cluster centre, without the lookup and extra vec3
       const ang = Math.acos(Math.max(-1, Math.min(1, gaze.dot(c.sub(cam).normalize())))) / DEG
       if (a.id === this.state.openSpot) openAngle = ang
       if (ang < this.gazeOpenConeDeg && ang < candAngle) { candAngle = ang; candidate = a.id }
@@ -883,13 +1095,16 @@ export class LociPalaceController extends BaseScriptComponent {
     const big = this.aimedLabelCapCm / Math.max(0.1, this.starLabelCapCm)
     const k = Math.min(1, dt * 12)
     this.stars.forEach((st, id) => {
-      const key = `star:${id}`
-      const cur = this.labels.getScale(key)
+      const cur = this.starLabelScale.get(id) ?? 1
       const target = id === aimed ? big : 1
-      if (Math.abs(cur - target) > 0.001) this.labels.setScale(key, cur + (target - cur) * k)
+      if (Math.abs(cur - target) > 0.001) {
+        const next = cur + (target - cur) * k
+        this.starLabelScale.set(id, next)
+        this.labels.setScale(`star:${id}`, next)
+      }
       // While one star is aimed at, the others' labels fade so the big one reads cleanly.
       const alpha = aimed === null || id === aimed ? 1 : 0.3
-      if (this.labelAlpha.get(id) !== alpha) { this.labels.setAlpha(key, alpha); this.labelAlpha.set(id, alpha) }
+      if (this.labelAlpha.get(id) !== alpha) { this.labels.setAlpha(`star:${id}`, alpha); this.labelAlpha.set(id, alpha) }
     })
   }
 
@@ -911,22 +1126,25 @@ export class LociPalaceController extends BaseScriptComponent {
         a.openT = Math.min(1, a.openT + dt / this.bloomSec)
         const k = a.openT
         const s = 1 + 2.2 * Math.pow(k - 1, 3) + 1.2 * Math.pow(k - 1, 2) // ease-out-back
-        a.cluster.getTransform().setLocalScale(vec3.one().uniformScale(Math.max(0.01, s)))
+        const q = Math.max(0.01, s)
+        a.cluster.getTransform().setLocalScale(new vec3(q, q, q))
       }
     })
     const open = this.state.openSpot
     if (!open) return
-    this.stars.forEach((star) => {
-      if (this.state.spotOf(star.thought.topic) !== open) return
+    for (const thought of this.thoughtsAt(open)) {
+      const star = this.stars.get(thought.id)
+      if (!star) continue
       const st = this.state.starState(star.thought.id)
       const tw = 1 + 0.12 * Math.sin(t * 2.3 + star.halo.phase) + 0.05 * Math.sin(t * 5.1 + star.halo.phase * 2)
       const hk = st === "highlight" ? 1.8 : st === "dim" ? 0.55 : 1
       this.faceHalo(star.halo, cam, tw * hk * (star.hovered ? 1.3 : 1))
       if (star.thought.kind === "question") {
         const s = 1 + 0.25 * Math.sin((2 * Math.PI * t) / this.pulsePeriodSec)
-        star.visual.getTransform().setLocalScale(vec3.one().uniformScale(s * (star.hovered ? 1.3 : 1) * this.highlightScale(star)))
+        const q = s * (star.hovered ? 1.3 : 1) * this.highlightScale(star)
+        star.visual.getTransform().setLocalScale(new vec3(q, q, q))
       }
-    })
+    }
   }
 
   private faceHalo(h: Halo, cam: vec3, scale: number): void {
@@ -935,7 +1153,7 @@ export class LociPalaceController extends BaseScriptComponent {
     const to = cam.sub(p)
     if (to.length < 0.001) return
     tr.setWorldRotation(quat.lookAt(to.normalize(), vec3.up()))
-    tr.setLocalScale(vec3.one().uniformScale(scale))
+    tr.setLocalScale(new vec3(scale, scale, scale))
   }
 
   // =================== looks ===================
@@ -984,6 +1202,19 @@ export class LociPalaceController extends BaseScriptComponent {
   private indexData(): void {
     this.topicById = new Map(this.data.topics.map((t) => [t.id, t] as [string, Topic]))
     this.thoughtById = new Map(this.data.thoughts.map((t) => [t.id, t] as [string, Thought]))
+    this.thoughtsByTopic = new Map<string, Thought[]>()
+    for (const t of this.data.thoughts) {
+      const list = this.thoughtsByTopic.get(t.topic)
+      if (list) list.push(t)
+      else this.thoughtsByTopic.set(t.topic, [t])
+    }
+  }
+
+  /** One shared mesh per shape and size: building them is the slow part, drawing shares them. */
+  private cachedMesh(key: string, make: () => RenderMesh): RenderMesh {
+    let m = this.meshCache.get(key)
+    if (!m) { m = make(); this.meshCache.set(key, m) }
+    return m
   }
 
   private setWorldQuery(on: boolean): void {

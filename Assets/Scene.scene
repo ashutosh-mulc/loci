@@ -1235,6 +1235,15 @@
     pulsePeriodSec: true
     showThreads: true
     chimeVolume: true
+    autoLayout: true
+    layoutDelaySec: true
+    layoutSeconds: true
+    layoutHalfWidthDeg: true
+    layoutElevationDeg: true
+    layoutDistanceCm: true
+    layoutDegPerUnit: true
+    layoutSteerGain: true
+    layoutDebugDraw: true
   ScriptTypesDefault:
     {}
   ScriptInputs:
@@ -1282,6 +1291,15 @@
       threadColor: !<Vec4> {x: 0.700000, y: 0.850000, z: 1.000000, w: 0.220000}
       showThreads: true
       chimeVolume: 0.500000
+      autoLayout: true
+      layoutDelaySec: 0.800000
+      layoutSeconds: !<float> 3.000000
+      layoutHalfWidthDeg: !<float> 40.000000
+      layoutElevationDeg: !<Vec2> {x: -14.000000, y: 8.000000}
+      layoutDistanceCm: !<Vec2> {x: 150.000000, y: 210.000000}
+      layoutDegPerUnit: 0.900000
+      layoutSteerGain: !<float> 8.000000
+      layoutDebugDraw: false
   ScriptTypes:
     "":
       {}
