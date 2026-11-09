@@ -244,5 +244,10 @@ Assets/**/*.worldUnderstandingModule !filter !diff !merge text eol=lf linguist-l
 Packages/**/*.worldUnderstandingModule !filter !diff !merge text eol=lf linguist-language=yaml merge=lens-studio-yaml-merge
 Assets/**/*.worldmesh !filter !diff !merge text eol=lf linguist-language=yaml merge=lens-studio-yaml-merge
 Packages/**/*.worldmesh !filter !diff !merge text eol=lf linguist-language=yaml merge=lens-studio-yaml-merge
-Assets/** !text !filter !merge !diff
-Packages/** !text !filter !merge !diff
+
+# Shipped by Lens Studio
+
+# Loci: no Git LFS in this repo (all assets are small; the GitHub account has no LFS budget).
+# Store everything as normal git files; text/eol rules above still apply.
+Assets/**/* !filter !diff !merge
+Packages/**/* !filter !diff !merge
