@@ -16,7 +16,7 @@ import {PALACE, Thought, Topic, Thread} from "./PalaceData"
 import {LociState, PalaceMode, StarState} from "./LociState"
 import {LociLabelsUI} from "./LociLabelsUI"
 import {LociCardUI} from "./LociCardUI"
-import {discMesh, linesMesh, ringMesh, sphereMesh, starMesh} from "./LociMeshes"
+import {discMesh, linesMesh, ringMesh, sphereMesh, spriteMesh, starMesh} from "./LociMeshes"
 import {Interactable} from "SpectaclesInteractionKit.lspkg/Components/Interaction/Interactable/Interactable"
 import {InteractableManipulation} from "SpectaclesInteractionKit.lspkg/Components/Interaction/InteractableManipulation/InteractableManipulation"
 import WorldCameraFinderProvider from "SpectaclesInteractionKit.lspkg/Providers/CameraProvider/WorldCameraFinderProvider"
@@ -76,7 +76,8 @@ interface Flight {
 }
 
 const DEG = Math.PI / 180
-const HALO_ALPHA = 0.1 // per layer; five layers overlap toward the centre
+const HALO_ALPHA = 0.1 // per disc layer; five layers overlap toward the centre
+const SPRITE_HALO_ALPHA = 1 // one soft-gradient sprite
 const HALO_DISC_SEGMENTS = 32 // triangles per halo layer (a camera-facing disc)
 const WQ = (() => {
   try { return require("LensStudio:WorldQueryModule") as WorldQueryModule } catch (e) { return null }
@@ -100,7 +101,7 @@ export class LociPalaceController extends BaseScriptComponent {
   card: LociCardUI
   @input @hint("Unlit material cloned for orb, dot and star cores.")
   glowMaterial: Material
-  @input @hint("Optional: unused since halos moved to nested spheres; kept so the scene wiring stays valid.")
+  @input @hint("Soft radial-glow material (LociHalo) for halos: one sprite each. Empty = stacked discs.")
   @allowUndefined
   haloMaterial: Material
   @input @hint("Soft chime played when a cluster opens. Leave empty for silence.")
@@ -238,6 +239,8 @@ export class LociPalaceController extends BaseScriptComponent {
   readonly onPalaceLoaded = new Event<void>()
 
   private data: PalaceDataShape = PALACE
+  private topicById = new Map<string, Topic>()
+  private thoughtById = new Map<string, Thought>()
   private state!: LociState
   private anchors = new Map<string, AnchorEntry>()
   private orbs = new Map<string, OrbEntry>()
@@ -245,10 +248,13 @@ export class LociPalaceController extends BaseScriptComponent {
   private flights: Flight[] = []
   private threadsObj: SceneObject | null = null
   private threadSegs: [vec3, vec3][] = []
+  private threadCache = new Map<string, {obj: SceneObject | null, segs: [vec3, vec3][]}>()
+  private threadMat: Material | null = null
   private aimedStar: string | null = null
   private labelAlpha = new Map<string, number>()
   private haloTris = 0
   private haloDisc: RenderMesh | null = null
+  private haloSprite: RenderMesh | null = null
   private haloCount = 0
   private camT: Transform | null = null
   private audio: AudioComponent | null = null
@@ -261,6 +267,7 @@ export class LociPalaceController extends BaseScriptComponent {
   private started = false
 
   onAwake(): void {
+    this.indexData()
     if (!this.palaceRoot || !this.orbsRoot || !this.labels || !this.card || !this.glowMaterial) {
       print("LociPalaceController: a required @input is not wired (palaceRoot, orbsRoot, labels, card, glowMaterial).")
       return
@@ -280,7 +287,7 @@ export class LociPalaceController extends BaseScriptComponent {
   getMode(): PalaceMode { return this.state ? this.state.mode : "place" }
   isReady(): boolean { return this.ready }
   getTopicIds(): string[] { return this.data.topics.map((t) => t.id) }
-  getTopic(topicId: string): Topic | null { return this.data.topics.filter((t) => t.id === topicId)[0] ?? null }
+  getTopic(topicId: string): Topic | null { return this.topicById.get(topicId) ?? null }
   /** Ids of every possible anchor (one per topic). */
   getSpotIds(): string[] { return this.getTopicIds() }
   getPlacedSpot(topicId: string): string | null { return this.state.spotOf(topicId) }
@@ -453,7 +460,9 @@ export class LociPalaceController extends BaseScriptComponent {
       this.labels.removeLabel(`spot:${a.id}`)
       a.obj.destroy()
     })
+    this.dropThreadCache()
     this.anchors.clear()
+    this.stars.forEach((_, id) => this.labels.removeLabel(`star:${id}`)) // their objects are gone
     this.stars.clear()
     this.labelAlpha.clear()
     this.flights = []
@@ -476,6 +485,7 @@ export class LociPalaceController extends BaseScriptComponent {
   /** Swap in another user's palace (same schema). Rebuilds orbs and returns to Place. */
   setPalace(data: PalaceDataShape): void {
     this.data = data
+    this.indexData()
     if (!this.started) return
     this.resetPalace()
     this.orbs.forEach((o) => { this.labels.removeLabel(`orb:${o.topic.id}`); o.obj.destroy() })
@@ -488,6 +498,7 @@ export class LociPalaceController extends BaseScriptComponent {
   // =================== setup ===================
 
   private start(): void {
+    this.indexData()
     this.started = true
     this.camT = WorldCameraFinderProvider.getInstance().getComponent().getTransform()
     if (this.anchorToCameraAtStart) this.anchorPalaceToUser()
@@ -532,9 +543,11 @@ export class LociPalaceController extends BaseScriptComponent {
       obj.getTransform().setLocalPosition(new vec3(Math.sin(a) * this.orbArcRadiusCm, y, -Math.cos(a) * this.orbArcRadiusCm))
       const visual = global.scene.createSceneObject("Visual")
       visual.setParent(obj)
-      const mat = this.makeMat(this.orbColor)
-      this.addMesh(visual, sphereMesh(r * 0.5, 24, 16), mat)
-      const halo = this.makeHalo(obj, r * 1.9, this.orbColor)
+      // A small near-white core inside a wide blue glow reads as light, not as a flat disc.
+      const core = this.coreColor(this.orbColor)
+      const mat = this.makeMat(core)
+      this.addMesh(visual, sphereMesh(r * 0.3, 24, 16), mat)
+      const halo = this.makeHalo(obj, r * 2.2, this.orbColor)
       this.addSphereCollider(obj, r * 1.2)
       const interactable = obj.createComponent(Interactable.getTypeName()) as Interactable
       const manip = obj.createComponent(InteractableManipulation.getTypeName()) as InteractableManipulation
@@ -543,8 +556,8 @@ export class LociPalaceController extends BaseScriptComponent {
       const entry: OrbEntry = {topic, obj, visual, mat, halo, home: obj.getTransform().getWorldPosition(), homeLocal: obj.getTransform().getLocalPosition(), flying: false}
       this.orbs.set(topic.id, entry)
       this.labels.addLabel(`orb:${topic.id}`, "orb", obj, topic.name, new vec3(0, r + 1.2, 0), this.orbLabelCapCm)
-      interactable.onHoverEnter.add(() => this.setHover(visual, mat, this.orbColor, true))
-      interactable.onHoverExit.add(() => this.setHover(visual, mat, this.orbColor, false))
+      interactable.onHoverEnter.add(() => this.setHover(visual, mat, core, true))
+      interactable.onHoverExit.add(() => this.setHover(visual, mat, core, false))
       manip.onManipulationEnd.add(() => this.onOrbDropped(entry))
     })
   }
@@ -581,17 +594,18 @@ export class LociPalaceController extends BaseScriptComponent {
     let answered = false
     // World Query answers at ~5 Hz and may not answer at all; never leave the orb hanging.
     const timeout = this.createEvent("DelayedCallbackEvent")
-    timeout.bind(() => {
-      if (answered) return
+    const finish = (): boolean => {
+      if (answered) return false
       answered = true
-      land(fallback)
-    })
+      this.removeEvent(timeout) // one short-lived timer per release, removed once used
+      return true
+    }
+    timeout.bind(() => { if (finish()) land(fallback) })
     timeout.reset(0.4)
     this.hitSession.hitTest(cam, cam.add(dir.uniformScale(this.maxHitCm)), (r) => {
-      if (answered) return
-      answered = true
+      if (!finish()) return
       const d = r ? r.position.distance(cam) : 0
-      // A real surface 50–400 cm away: sit just in front of it. Otherwise use the fallback distance.
+      // A real surface 50 cm to maxHitCm away: sit just in front of it. Otherwise use the fallback distance.
       land(r && d > 50 && d < this.maxHitCm ? this.clampToRoom(r.position.add(r.normal.uniformScale(3))) : fallback)
     })
   }
@@ -730,9 +744,18 @@ export class LociPalaceController extends BaseScriptComponent {
   private threadCountShown = 0
 
   /** Faint glowing lines from the open topic's stars to the related topics' anchors. */
+  /** Show this topic's thread lines. Built once per topic (everything is placed by then), then reused. */
   private buildThreads(spot: string): void {
     this.clearThreads()
     if (!this.showThreads) return
+    const cached = this.threadCache.get(spot)
+    if (cached) {
+      if (cached.obj && !isNull(cached.obj)) cached.obj.enabled = true
+      this.threadsObj = cached.obj
+      this.threadSegs = cached.segs
+      this.threadCountShown = cached.segs.length
+      return
+    }
     const topic = this.state.topicAt(spot)
     const segs: [vec3, vec3][] = []
     // The cluster is still tiny (it blooms from 1%), so read star positions at full size.
@@ -741,8 +764,8 @@ export class LociPalaceController extends BaseScriptComponent {
     const bloomScale = ct ? ct.getLocalScale() : null
     if (ct) ct.setLocalScale(vec3.one())
     for (const th of this.data.threads) {
-      const from = this.data.thoughts.filter((t) => t.id === th.from)[0]
-      const to = this.data.thoughts.filter((t) => t.id === th.to)[0]
+      const from = this.thoughtById.get(th.from)
+      const to = this.thoughtById.get(th.to)
       if (!from || !to) continue
       let mine: Thought | null = null
       let other: Thought | null = null
@@ -756,27 +779,39 @@ export class LociPalaceController extends BaseScriptComponent {
     if (ct && bloomScale) ct.setLocalScale(bloomScale)
     this.threadCountShown = segs.length
     this.threadSegs = segs
-    if (segs.length === 0) return
-    const obj = global.scene.createSceneObject("Threads")
+    if (segs.length === 0) { this.threadCache.set(spot, {obj: null, segs}); return }
+    const obj = global.scene.createSceneObject(`Threads_${spot}`)
     obj.setParent(this.palaceRoot)
     // Lines are built in world space under a root with identity world transform.
     obj.getTransform().setWorldPosition(vec3.zero())
     obj.getTransform().setWorldRotation(quat.quatIdentity())
     obj.getTransform().setWorldScale(vec3.one())
-    const mat = this.glowMaterial.clone()
-    // Normal alpha blend (not Add): the preview composites by alpha, and Add writes none.
-    mat.mainPass.baseColor = this.threadColor
-    mat.mainPass.blendMode = BlendMode.Normal
-    mat.mainPass.depthWrite = false
-    mat.mainPass.twoSided = true
-    this.addMesh(obj, linesMesh(segs, 0.1), mat)
+    if (!this.threadMat) {
+      const mat = this.glowMaterial.clone()
+      // Normal alpha blend (not Add): the preview composites by alpha, and Add writes none.
+      mat.mainPass.baseColor = this.threadColor
+      mat.mainPass.blendMode = BlendMode.Normal
+      mat.mainPass.depthWrite = false
+      mat.mainPass.twoSided = true
+      this.threadMat = mat
+    }
+    this.addMesh(obj, linesMesh(segs, 0.07), this.threadMat)
     this.threadsObj = obj
+    this.threadCache.set(spot, {obj, segs})
   }
 
+  /** Hide the shown threads (kept for the next time that topic opens). */
   private clearThreads(): void {
-    if (this.threadsObj && !isNull(this.threadsObj)) this.threadsObj.destroy()
+    if (this.threadsObj && !isNull(this.threadsObj)) this.threadsObj.enabled = false
     this.threadsObj = null
     this.threadCountShown = 0
+  }
+
+  /** Drop every cached thread mesh (the palace changed). */
+  private dropThreadCache(): void {
+    this.clearThreads()
+    this.threadCache.forEach((c) => { if (c.obj && !isNull(c.obj)) c.obj.destroy() })
+    this.threadCache.clear()
   }
 
   // =================== per frame ===================
@@ -907,13 +942,14 @@ export class LociPalaceController extends BaseScriptComponent {
 
   private applyStarLook(star: StarEntry): void {
     const st = this.state.starState(star.thought.id)
-    const k = st === "dim" ? 0.35 : st === "highlight" ? 1.25 : 1
+    // Dim fades the star (alpha), never darkens it: dark colours read as dark blobs, not "less light".
+    const k = st === "dim" ? 0.9 : st === "highlight" ? 1.25 : 1
     const hover = star.hovered ? 1.2 : 1
     const c = star.baseColor
-    star.mat.mainPass.baseColor = new vec4(Math.min(1, c.x * k * hover), Math.min(1, c.y * k * hover), Math.min(1, c.z * k * hover), c.w * (st === "dim" ? 0.6 : 1))
+    star.mat.mainPass.baseColor = new vec4(Math.min(1, c.x * k * hover), Math.min(1, c.y * k * hover), Math.min(1, c.z * k * hover), c.w * (st === "dim" ? 0.3 : 1))
     const hc = star.halo.color
     const ha = st === "dim" ? 0.3 : st === "highlight" ? 1 : 0.75
-    star.halo.mat.mainPass.baseColor = new vec4(hc.x, hc.y, hc.z, HALO_ALPHA * ha / 0.75)
+    star.halo.mat.mainPass.baseColor = new vec4(hc.x, hc.y, hc.z, this.haloAlpha() * ha / 0.75)
     if (star.thought.kind !== "question") star.visual.getTransform().setLocalScale(vec3.one().uniformScale((star.hovered ? 1.3 : 1) * this.highlightScale(star)))
   }
 
@@ -928,6 +964,11 @@ export class LociPalaceController extends BaseScriptComponent {
     mat.mainPass.baseColor = new vec4(Math.min(1, base.x * k), Math.min(1, base.y * k), Math.min(1, base.z * k), base.w)
   }
 
+  /** Halfway from `c` to white: the hot centre of a glow. */
+  private coreColor(c: vec4): vec4 {
+    return new vec4(0.5 + c.x * 0.5, 0.5 + c.y * 0.5, 0.5 + c.z * 0.5, c.w)
+  }
+
   private kindColor(kind: string): vec4 {
     return kind === "decision" ? this.decisionColor : kind === "insight" ? this.insightColor : this.questionColor
   }
@@ -940,11 +981,11 @@ export class LociPalaceController extends BaseScriptComponent {
     return m
   }
 
-  /**
-   * A soft glow around `parent`: five nested translucent spheres sharing one material, so the
-   * overlap fades from a bright centre to a faint edge. Alpha-blended (not additive), so it shows
-   * in Lens Studio's preview, which composites by alpha, as well as on Specs.
-   */
+  private indexData(): void {
+    this.topicById = new Map(this.data.topics.map((t) => [t.id, t] as [string, Topic]))
+    this.thoughtById = new Map(this.data.thoughts.map((t) => [t.id, t] as [string, Thought]))
+  }
+
   private setWorldQuery(on: boolean): void {
     if (!this.hitSession || this.wqRunning === on) return
     try {
@@ -956,15 +997,33 @@ export class LociPalaceController extends BaseScriptComponent {
     }
   }
 
+  private haloAlpha(): number { return this.haloMaterial ? SPRITE_HALO_ALPHA : HALO_ALPHA }
+
+  /**
+   * A soft glow around `parent`, always turned to face the user (faceHalo). With haloMaterial set it
+   * is one sprite (2 triangles) with a radial-gradient texture: a smooth fade, no rings. Without it,
+   * five stacked translucent discs sharing one mesh.
+   */
   private makeHalo(parent: SceneObject, size: number, color: vec4): Halo {
     const obj = global.scene.createSceneObject("Halo")
     obj.setParent(parent)
+    if (this.haloMaterial) {
+      const mat = this.haloMaterial.clone()
+      mat.mainPass.baseColor = new vec4(color.x, color.y, color.z, SPRITE_HALO_ALPHA)
+      mat.mainPass.depthWrite = false
+      if (!this.haloSprite) this.haloSprite = spriteMesh(1)
+      const layer = global.scene.createSceneObject("HaloSprite")
+      layer.setParent(obj)
+      layer.getTransform().setLocalScale(vec3.one().uniformScale(size * 2.4))
+      this.addMesh(layer, this.haloSprite, mat)
+      this.haloTris += 2
+      this.haloCount++
+      return {obj, mat, size, color, phase: Math.random() * Math.PI * 2}
+    }
     const mat = this.glowMaterial.clone()
     mat.mainPass.baseColor = new vec4(color.x, color.y, color.z, HALO_ALPHA)
     mat.mainPass.blendMode = BlendMode.Normal
     mat.mainPass.depthWrite = false
-    // The halo always faces the user (faceHalo), so flat discs look like nested spheres at a
-    // fraction of the cost: one shared 32-triangle disc, scaled per layer.
     if (!this.haloDisc) this.haloDisc = discMesh(1, HALO_DISC_SEGMENTS)
     mat.mainPass.twoSided = true // a single flat face; nothing is drawn twice
     for (const k of [0.13, 0.19, 0.27, 0.37, 0.5]) {

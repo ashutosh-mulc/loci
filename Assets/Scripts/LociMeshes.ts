@@ -3,7 +3,6 @@
 // Pure functions that return RenderMesh. No scene access, no state.
 // Every mesh is built at its real size in cm; callers never scale to fix size.
 
-type Seg = [vec3, vec3]
 
 class MeshAccumulator {
   positions: number[] = []
@@ -161,80 +160,8 @@ function addStrut(acc: MeshAccumulator, a: vec3, b: vec3, thickness: number): vo
   }
   for (let i = 0; i < 4; i++) {
     const j = (i + 1) % 4
-    acc.quad(ia[i], ia[j], ib[j], ib[i])
-    acc.quad(ia[i], ib[i], ib[j], ia[j])
+    acc.quad(ia[i], ia[j], ib[j], ib[i]) // one winding: thread materials are two-sided
   }
-}
-
-/** Wireframe made of thin struts, one per segment. */
-export function wireframeMesh(segments: Seg[], thickness: number): RenderMesh {
-  const acc = new MeshAccumulator()
-  for (const s of segments) addStrut(acc, s[0], s[1], thickness)
-  return acc.build()
-}
-
-// ---------- segment helpers for the stand-in shapes ----------
-
-export function boxEdges(min: vec3, max: vec3): Seg[] {
-  const c = (x: number, y: number, z: number) => new vec3(x ? max.x : min.x, y ? max.y : min.y, z ? max.z : min.z)
-  return [
-    [c(0, 0, 0), c(1, 0, 0)], [c(0, 1, 0), c(1, 1, 0)], [c(0, 0, 1), c(1, 0, 1)], [c(0, 1, 1), c(1, 1, 1)],
-    [c(0, 0, 0), c(0, 1, 0)], [c(1, 0, 0), c(1, 1, 0)], [c(0, 0, 1), c(0, 1, 1)], [c(1, 0, 1), c(1, 1, 1)],
-    [c(0, 0, 0), c(0, 0, 1)], [c(1, 0, 0), c(1, 0, 1)], [c(0, 1, 0), c(0, 1, 1)], [c(1, 1, 0), c(1, 1, 1)],
-  ]
-}
-
-export function rectEdges(minX: number, maxX: number, minY: number, maxY: number, z: number): Seg[] {
-  const p = (x: number, y: number) => new vec3(x, y, z)
-  return [
-    [p(minX, minY), p(maxX, minY)], [p(maxX, minY), p(maxX, maxY)],
-    [p(maxX, maxY), p(minX, maxY)], [p(minX, maxY), p(minX, minY)],
-  ]
-}
-
-export function horizontalRectEdges(minX: number, maxX: number, minZ: number, maxZ: number, y: number): Seg[] {
-  const p = (x: number, z: number) => new vec3(x, y, z)
-  return [
-    [p(minX, minZ), p(maxX, minZ)], [p(maxX, minZ), p(maxX, maxZ)],
-    [p(maxX, maxZ), p(minX, maxZ)], [p(minX, maxZ), p(minX, minZ)],
-  ]
-}
-
-/** Ellipse loop. plane: "xy" | "zy" | "xz". */
-export function ellipseEdges(centre: vec3, ra: number, rb: number, plane: string, segments: number = 20): Seg[] {
-  const pts: vec3[] = []
-  for (let i = 0; i < segments; i++) {
-    const a = (2 * Math.PI * i) / segments
-    const ca = Math.cos(a) * ra
-    const sb = Math.sin(a) * rb
-    if (plane === "xy") pts.push(centre.add(new vec3(ca, sb, 0)))
-    else if (plane === "zy") pts.push(centre.add(new vec3(0, sb, ca)))
-    else pts.push(centre.add(new vec3(ca, 0, sb)))
-  }
-  const segs: Seg[] = []
-  for (let i = 0; i < segments; i++) segs.push([pts[i], pts[(i + 1) % segments]])
-  return segs
-}
-
-/** Flat square facing +Z, centred at the origin, with UVs (for glow sprites). */
-export function quadMesh(size: number): RenderMesh {
-  const h = size / 2
-  const mb = new MeshBuilder([
-    {name: "position", components: 3},
-    {name: "normal", components: 3, normalized: true},
-    {name: "texture0", components: 2},
-  ])
-  mb.topology = MeshTopology.Triangles
-  mb.indexType = MeshIndexType.UInt16
-  mb.appendVerticesInterleaved([
-    -h, -h, 0, 0, 0, 1, 0, 0,
-    h, -h, 0, 0, 0, 1, 1, 0,
-    h, h, 0, 0, 0, 1, 1, 1,
-    -h, h, 0, 0, 0, 1, 0, 1,
-  ])
-  mb.appendIndices([0, 1, 2, 0, 2, 3])
-  mb.updateMesh()
-  return mb.getMesh()
 }
 
 /** Flat disc in the XY plane facing +Z (counter-clockwise from the front). */
@@ -250,7 +177,30 @@ export function discMesh(radius: number, segments: number = 32): RenderMesh {
   return acc.build()
 }
 
+/** A unit square in the XY plane (side `size`, facing +Z) with UVs, for textured sprites. */
+export function spriteMesh(size: number): RenderMesh {
+  const mb = new MeshBuilder([
+    {name: "position", components: 3},
+    {name: "normal", components: 3, normalized: true},
+    {name: "texture0", components: 2},
+  ])
+  mb.topology = MeshTopology.Triangles
+  mb.indexType = MeshIndexType.UInt16
+  const h = size / 2
+  mb.appendVerticesInterleaved([
+    -h, -h, 0, 0, 0, 1, 0, 0,
+    h, -h, 0, 0, 0, 1, 1, 0,
+    h, h, 0, 0, 0, 1, 1, 1,
+    -h, h, 0, 0, 0, 1, 0, 1,
+  ])
+  mb.appendIndices([0, 1, 2, 0, 2, 3])
+  mb.updateMesh()
+  return mb.getMesh()
+}
+
 /** Thin straight lines (one strut each), e.g. thread lines between stars. */
 export function linesMesh(segments: [vec3, vec3][], thickness: number): RenderMesh {
-  return wireframeMesh(segments, thickness)
+  const acc = new MeshAccumulator()
+  for (const s of segments) addStrut(acc, s[0], s[1], thickness)
+  return acc.build()
 }

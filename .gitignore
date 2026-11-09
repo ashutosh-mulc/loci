@@ -38,3 +38,4 @@ leaf_plugin_settings.json
 
 # Lens Studio tool snapshot (VirtualScene)
 .virtual-scene.json
+Plugins/

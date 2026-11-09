@@ -109,5 +109,28 @@ export class LociDataScenario extends Scenario {
     loci.setPalace(PALACE)
     await nextFrame()
     expect(loci.getTopicIds().length).toBe(PALACE.topics.length)
+
+    // Review #12: labels of destroyed stars don't pile up across palace swaps.
+    const placeAll = () => PALACE.topics.forEach((t) => loci.placeTopic(t.id))
+    placeAll()
+    gaze.lookAt(loci.getClusterCentreWorld(PALACE.topics[0].id))
+    await sleep(900)
+    const before = loci.labels.count()
+    for (const pal of [data!, PALACE]) { // to the cooking palace and back: different star ids
+      gaze.lookAway()
+      loci.setPalace(pal)
+      await nextFrame()
+      pal.topics.forEach((t) => loci.placeTopic(t.id))
+      gaze.lookAt(loci.getClusterCentreWorld(pal.topics[0].id))
+      await sleep(900)
+    }
+    print(`[LociData] labels before ${before}, after a swap there and back ${loci.labels.count()}`)
+    // One label per orb, per spot and per star of the palace shown now; none left from the others.
+    expect(loci.labels.count()).toBe(PALACE.topics.length * 2 + PALACE.thoughts.length)
+    gaze.lookAway()
+    await sleep(2400)
+    gaze.lookAt(null)
+    loci.setPalace(PALACE)
+    await nextFrame()
   }
 }

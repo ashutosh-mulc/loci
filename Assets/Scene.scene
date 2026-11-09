@@ -13,6 +13,54 @@
       - id: 1
         name: Layer 1
         color: 0
+      - id: 2
+        name: Layer 2
+        color: 1
+      - id: 3
+        name: Layer 3
+        color: 2
+      - id: 4
+        name: Layer 4
+        color: 3
+      - id: 5
+        name: Layer 5
+        color: 4
+      - id: 6
+        name: Layer 6
+        color: 5
+      - id: 7
+        name: Layer 7
+        color: 6
+      - id: 8
+        name: Layer 8
+        color: 7
+      - id: 9
+        name: Layer 9
+        color: 8
+      - id: 10
+        name: Layer 10
+        color: 9
+      - id: 11
+        name: Layer 11
+        color: 10
+      - id: 12
+        name: Layer 12
+        color: 11
+      - id: 13
+        name: Layer 13
+        color: 12
+      - id: 14
+        name: Layer 14
+        color: 13
+      - id: 15
+        name: Layer 15
+        color: 14
+      - id: 16
+        name: Layer 16
+        color: 15
+      - id: 17
+        name: Layer 17
+        color: 16
   RenderOutput: !<reference> 923415f5-4245-4675-ade1-6d69d6d23e71
   RenderPreviewOutput: !<reference> 923415f5-4245-4675-ade1-6d69d6d23e71
   RenderOverlayOutput: !<reference> 00000000-0000-0000-0000-000000000000
@@ -1164,6 +1212,7 @@
     eyeHeightCm: true
     placeDistanceCm: true
     useWorldQuery: true
+    maxHitCm: true
     minSeparationDeg: true
     minDragCm: true
     orbArcRadiusCm: true
@@ -1177,6 +1226,8 @@
     dotColor: true
     bloomSec: true
     starTargetRadiusCm: true
+    aimedLabelCapCm: true
+    aimConeDeg: true
     spotLabelCapCm: true
     decisionColor: true
     insightColor: true
@@ -1199,6 +1250,7 @@
       eyeHeightCm: !<float> 160.000000
       placeDistanceCm: !<float> 160.000000
       useWorldQuery: true
+      maxHitCm: !<float> 250.000000
       minSeparationDeg: !<float> 18.000000
       minDragCm: !<float> 6.000000
       orbDiameterCm: !<float> 8.000000
@@ -1219,6 +1271,8 @@
       starHaloCm: !<float> 12.000000
       starTargetRadiusCm: !<float> 3.000000
       starLabelCapCm: 1.800000
+      aimedLabelCapCm: !<float> 4.000000
+      aimConeDeg: !<float> 4.000000
       spotLabelCapCm: !<float> 2.000000
       orbLabelCapCm: 0.900000
       decisionColor: !<Vec4> {x: 1.000000, y: 0.880000, z: 0.550000, w: 1.000000}

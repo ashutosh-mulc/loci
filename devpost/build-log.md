@@ -143,3 +143,30 @@ Prompt: "run the suggested loop" over `loci-review-v2.md` (one item per round: L
   - Stars closer than 6 cm within a topic are pushed apart, staying inside ±20 cm, with a warning. A file mixing explicit and default offsets can't stack stars any more.
 - No visual change; the validator is pure logic.
 - LEAF: 1, 2, 3, 5, 6, 7, 8, 9, 10, 11 all **pass (10/10)**, run one at a time.
+
+### Round 11: #12, B and dead code (cleanup)
+- Test first: extended `loci-6-any-data`. After a swap to the cooking palace and back, the label count must be exactly topics×2 + thoughts (45). Before: **failed**, because old star labels piled up.
+- Fix:
+  - `resetPalace` removes star labels.
+  - Topic and thought lookups use maps.
+  - Thread meshes are cached per spot and hidden, not rebuilt.
+  - The World Query timeout event is removed after it fires (B).
+  - Removed unused mesh helpers and the stale `haloMaterial` comment.
+- LEAF: see Round 12. Both rounds are committed together.
+
+### Round 12: "not presentable", visual pass before the freeze
+- Prompt: "We are close to deadline and its not presentable at all."
+- verify-preview found:
+  1. Halos showed as stepped **dark grey rings**: five flat alpha discs.
+  2. Orb cores were big flat pale discs.
+  3. Thread lines showed as doubled outlines.
+  4. Dimmed (mastered) stars turned into dark blobs.
+  5. A **SnapCloudExamples** package, which Lens Studio installed without being asked, was running in the scene. Its three demo panels floated in the room, and it included an image-capture uploader, which breaks the no-camera rule.
+- Fixes:
+  - Each halo is now one camera-facing sprite (2 triangles) with the radial-gradient `LociHalo` texture, so the fade is smooth with no rings. The disc version stays as a fallback when no material is set.
+  - Orb cores are 40% smaller and near-white inside a wider blue glow.
+  - Threads use one winding per face (the material is two-sided) at 0.07 cm.
+  - Dim fades a star's alpha instead of darkening its colour.
+  - Removed the SnapCloudExamples scene object and the 5 packages it brought in (never committed). `Plugins/` is git-ignored.
+- verify-preview: screenshots of Place (glowing orbs, no stray panels), Explore (soft star glows, single thread lines, card) and Recall (question, Reveal, highlighted star), all from the demo tour.
+- LEAF: 1, 2, 3, 5, 6, 7, 8, 9, 10, 11 all **pass (10/10)**, run one at a time.

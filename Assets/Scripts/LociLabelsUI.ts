@@ -99,6 +99,9 @@ export class LociLabelsUI extends BaseScriptComponent {
     if (e) e.root.getTransform().setLocalPosition(localOffset)
   }
 
+  /** How many labels exist (tests: they must not pile up across palace swaps). */
+  count(): number { return this.labels.size }
+
   /** Uniform scale of one label (1 = its normal size). */
   setScale(key: string, scale: number): void {
     const e = this.labels.get(key)

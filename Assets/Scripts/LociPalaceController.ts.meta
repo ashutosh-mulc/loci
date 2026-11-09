@@ -47,6 +47,7 @@
     haloMaterial: false
     insightColor: false
     labels: false
+    maxHitCm: false
     minDragCm: false
     minSeparationDeg: false
     openDwellSec: false
@@ -90,6 +91,7 @@
       eyeHeightCm: !<float> 160.000000
       placeDistanceCm: !<float> 160.000000
       useWorldQuery: true
+      maxHitCm: !<float> 250.000000
       minSeparationDeg: !<float> 18.000000
       minDragCm: !<float> 6.000000
       orbDiameterCm: !<float> 10.000000
@@ -133,7 +135,7 @@
     - '// @input AssignableType_1 labels {"hint":"Labels UI module (orb, spot and star labels)."}'
     - '// @input AssignableType_2 card {"hint":"Card UI module (the one-line thought card)."}'
     - '// @input Asset.Material glowMaterial {"hint":"Unlit material cloned for orb, dot and star cores."}'
-    - '// @input Asset.Material haloMaterial {"hint":"Optional: unused since halos moved to nested spheres; kept so the scene wiring stays valid."}'
+    - '// @input Asset.Material haloMaterial {"hint":"Soft radial-glow material (LociHalo) for halos: one sprite each. Empty = stacked discs."}'
     - '// @input Asset.AudioTrackAsset chimeTrack {"hint":"Soft chime played when a cluster opens. Leave empty for silence."}'
     - '// @ui {"widget":"group_end"}'
     - '// @ui {"widget":"separator"}'
@@ -145,6 +147,7 @@
     - '// @ui {"widget":"group_start", "label":"Place"}'
     - '// @input float placeDistanceCm = 160 {"hint":"How far an aimed orb flies when no real surface is found (cm). In preview it always uses this.", "widget":"slider", "min":80, "max":300, "step":5}'
     - '// @input bool useWorldQuery = true {"hint":"Use World Query to snap onto the real surface you aimed at (Specs)."}'
+    - '// @input float maxHitCm = 250 {"hint":"Only trust a surface hit up to this far away (cm); further, use the default distance.", "widget":"slider", "min":100, "max":400, "step":10}'
     - '// @input float minSeparationDeg = 18 {"hint":"Topics must be at least this far apart (degrees, as seen from you) so each can be looked at alone.", "widget":"slider", "min":8, "max":40, "step":1}'
     - '// @input float minDragCm = 6 {"hint":"An orb must be dragged at least this far (cm) before release counts as a placement.", "widget":"slider", "min":2, "max":30, "step":1}'
     - '// @input float orbDiameterCm = 8 {"hint":"Topic orb diameter (cm).", "widget":"slider", "min":4, "max":20, "step":0.5}'
