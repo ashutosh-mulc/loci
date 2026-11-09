@@ -39,3 +39,6 @@ leaf_plugin_settings.json
 # Lens Studio tool snapshot (VirtualScene)
 .virtual-scene.json
 Plugins/
+
+# Claude Code conversation exports
+2026-*-local-command-*.txt

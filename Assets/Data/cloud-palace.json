@@ -1,0 +1,663 @@
+{
+  "topics": [
+    {
+      "id": "exams",
+      "name": "Exams",
+      "spot": "wall"
+    },
+    {
+      "id": "job-hunt",
+      "name": "Job hunt",
+      "spot": "wall"
+    },
+    {
+      "id": "money",
+      "name": "Money",
+      "spot": "wall"
+    },
+    {
+      "id": "sleep-body",
+      "name": "Sleep and body",
+      "spot": "wall"
+    },
+    {
+      "id": "home",
+      "name": "Home and family",
+      "spot": "wall"
+    }
+  ],
+  "thoughts": [
+    {
+      "id": "ex1",
+      "topic": "exams",
+      "label": "Start with Statistics",
+      "text": "Statistics is the exam I fear most, so it gets the first two weeks.",
+      "kind": "decision",
+      "date": "2026-11-09",
+      "source": "Study planning chat",
+      "prompt": "Which exam do you start with, and why?",
+      "offset": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "id": "ex2",
+      "topic": "exams",
+      "label": "Past papers first",
+      "text": "Do three past papers before rereading notes; the gaps show up faster that way.",
+      "kind": "decision",
+      "date": "2026-11-09",
+      "source": "Study planning chat",
+      "prompt": "What comes before rereading notes?",
+      "offset": [
+        13,
+        0,
+        5
+      ]
+    },
+    {
+      "id": "ex3",
+      "topic": "exams",
+      "label": "Fear is uncertainty",
+      "text": "The dread isn't the exam itself; it's not knowing what I don't know yet.",
+      "kind": "insight",
+      "date": "2026-11-09",
+      "source": "Late-night chat",
+      "prompt": "What is the exam dread really about?",
+      "offset": [
+        8.1,
+        7.8,
+        -5
+      ]
+    },
+    {
+      "id": "ex4",
+      "topic": "exams",
+      "label": "Ninety-minute blocks",
+      "text": "Study in 90-minute blocks with a real break, not endless half-focused hours.",
+      "kind": "decision",
+      "date": "2026-11-09",
+      "source": "Study planning chat",
+      "prompt": "How long is one study block?",
+      "offset": [
+        -2.9,
+        9.7,
+        5
+      ]
+    },
+    {
+      "id": "ex5",
+      "topic": "exams",
+      "label": "Drop the elective?",
+      "text": "Is the extra elective worth the stress, or should I drop it this term?",
+      "kind": "question",
+      "date": "2026-11-09",
+      "source": "Late-night chat",
+      "prompt": "What were you unsure about with the elective?",
+      "offset": [
+        -11.7,
+        4.3,
+        -5
+      ]
+    },
+    {
+      "id": "ex6",
+      "topic": "exams",
+      "label": "Teach it back",
+      "text": "Explaining a topic out loud shows what I actually understand.",
+      "kind": "insight",
+      "date": "2026-11-09",
+      "source": "Study planning chat",
+      "prompt": "How do you check you really understand something?",
+      "offset": [
+        -11.7,
+        -4.3,
+        5
+      ]
+    },
+    {
+      "id": "ex7",
+      "topic": "exams",
+      "label": "Ask for an extension",
+      "text": "Email about the project deadline now, not the night before it is due.",
+      "kind": "decision",
+      "date": "2026-11-09",
+      "source": "Late-night chat",
+      "prompt": "What will you ask for, and when?",
+      "offset": [
+        -2.9,
+        -9.7,
+        -5
+      ]
+    },
+    {
+      "id": "hm1",
+      "topic": "home",
+      "label": "Call home Sundays",
+      "text": "A fixed Sunday call means fewer guilty calls in between.",
+      "kind": "decision",
+      "date": "2026-11-09",
+      "source": "Family chat",
+      "prompt": "When do you call home?",
+      "offset": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "id": "hm2",
+      "topic": "home",
+      "label": "Skip the wedding trip?",
+      "text": "Can I say no to the family wedding trip during exams without upsetting everyone?",
+      "kind": "question",
+      "date": "2026-11-09",
+      "source": "Family chat",
+      "prompt": "What were you unsure about saying no to?",
+      "offset": [
+        13,
+        0,
+        5
+      ]
+    },
+    {
+      "id": "hm3",
+      "topic": "home",
+      "label": "They worry too",
+      "text": "Family asks about jobs because they worry, not to judge me.",
+      "kind": "insight",
+      "date": "2026-11-09",
+      "source": "Family chat",
+      "prompt": "Why does family keep asking about jobs?",
+      "offset": [
+        8.1,
+        7.8,
+        -5
+      ]
+    },
+    {
+      "id": "hm4",
+      "topic": "home",
+      "label": "Share the plan once",
+      "text": "Tell them the exam and job plan once, clearly, so the questions calm down.",
+      "kind": "decision",
+      "date": "2026-11-09",
+      "source": "Family chat",
+      "prompt": "How will you calm the family's questions?",
+      "offset": [
+        -2.9,
+        9.7,
+        5
+      ]
+    },
+    {
+      "id": "hm5",
+      "topic": "home",
+      "label": "Home is a reset",
+      "text": "A weekend at home resets me more than another weekend of cramming.",
+      "kind": "insight",
+      "date": "2026-11-09",
+      "source": "Late-night chat",
+      "prompt": "What resets you best?",
+      "offset": [
+        -11.7,
+        4.3,
+        -5
+      ]
+    },
+    {
+      "id": "hm6",
+      "topic": "home",
+      "label": "Move back home?",
+      "text": "Should I move back home after graduating to save on rent?",
+      "kind": "question",
+      "date": "2026-11-09",
+      "source": "Budget chat",
+      "prompt": "Which housing choice is still open?",
+      "offset": [
+        -11.7,
+        -4.3,
+        5
+      ]
+    },
+    {
+      "id": "hm7",
+      "topic": "home",
+      "label": "Say it early",
+      "text": "Tell one person at home when it's getting too much, before it builds up.",
+      "kind": "decision",
+      "date": "2026-11-09",
+      "source": "Late-night chat",
+      "prompt": "What will you do when it gets too much?",
+      "offset": [
+        -2.9,
+        -9.7,
+        -5
+      ]
+    },
+    {
+      "id": "jb1",
+      "topic": "job-hunt",
+      "label": "Three applications weekly",
+      "text": "Three good applications a week beats twenty rushed ones.",
+      "kind": "decision",
+      "date": "2026-11-09",
+      "source": "Career chat",
+      "prompt": "How many applications a week?",
+      "offset": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "id": "jb2",
+      "topic": "job-hunt",
+      "label": "Projects beat grades",
+      "text": "Recruiters asked about my projects, never about my grades.",
+      "kind": "insight",
+      "date": "2026-11-09",
+      "source": "Career chat",
+      "prompt": "What did recruiters actually ask about?",
+      "offset": [
+        13,
+        0,
+        5
+      ]
+    },
+    {
+      "id": "jb3",
+      "topic": "job-hunt",
+      "label": "Gap year okay?",
+      "text": "Would a gap year look like drifting, or like a choice I can explain?",
+      "kind": "question",
+      "date": "2026-11-09",
+      "source": "Late-night chat",
+      "prompt": "What was the gap-year worry?",
+      "offset": [
+        8.1,
+        7.8,
+        -5
+      ]
+    },
+    {
+      "id": "jb4",
+      "topic": "job-hunt",
+      "label": "Apply after exams",
+      "text": "Keep applications light until exams end, then go all in.",
+      "kind": "decision",
+      "date": "2026-11-09",
+      "source": "Career chat",
+      "prompt": "When does the big job push start?",
+      "offset": [
+        -2.9,
+        9.7,
+        5
+      ]
+    },
+    {
+      "id": "jb5",
+      "topic": "job-hunt",
+      "label": "Silence isn't rejection",
+      "text": "Most applications get no reply; silence is not a verdict on me.",
+      "kind": "insight",
+      "date": "2026-11-09",
+      "source": "Late-night chat",
+      "prompt": "What does no reply really mean?",
+      "offset": [
+        -11.7,
+        4.3,
+        -5
+      ]
+    },
+    {
+      "id": "jb6",
+      "topic": "job-hunt",
+      "label": "One page CV",
+      "text": "Cut the CV to one page with three project bullets.",
+      "kind": "decision",
+      "date": "2026-11-09",
+      "source": "Career chat",
+      "prompt": "What shape is the CV now?",
+      "offset": [
+        -11.7,
+        -4.3,
+        5
+      ]
+    },
+    {
+      "id": "jb7",
+      "topic": "job-hunt",
+      "label": "Masters or work?",
+      "text": "Is a master's worth the debt, or should I work first and decide later?",
+      "kind": "question",
+      "date": "2026-11-09",
+      "source": "Career chat",
+      "prompt": "Which choice is still open after graduation?",
+      "offset": [
+        -2.9,
+        -9.7,
+        -5
+      ]
+    },
+    {
+      "id": "mn1",
+      "topic": "money",
+      "label": "Rent due the 5th",
+      "text": "Rent leaves on the 5th; move it across the day the stipend lands.",
+      "kind": "decision",
+      "date": "2026-11-09",
+      "source": "Budget chat",
+      "prompt": "When does rent go out, and what do you do first?",
+      "offset": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "id": "mn2",
+      "topic": "money",
+      "label": "Cancel two subscriptions",
+      "text": "Cancel the two streaming subscriptions I haven't opened in a month.",
+      "kind": "decision",
+      "date": "2026-11-09",
+      "source": "Budget chat",
+      "prompt": "What will you cancel?",
+      "offset": [
+        13,
+        0,
+        5
+      ]
+    },
+    {
+      "id": "mn3",
+      "topic": "money",
+      "label": "Small leaks add up",
+      "text": "Takeaway coffee and snacks cost more each month than my phone bill.",
+      "kind": "insight",
+      "date": "2026-11-09",
+      "source": "Budget chat",
+      "prompt": "Where is money quietly leaking?",
+      "offset": [
+        8.1,
+        7.8,
+        -5
+      ]
+    },
+    {
+      "id": "mn4",
+      "topic": "money",
+      "label": "Part-time job now?",
+      "text": "Can I take weekend shifts without hurting exam prep?",
+      "kind": "question",
+      "date": "2026-11-09",
+      "source": "Late-night chat",
+      "prompt": "What were you weighing about part-time work?",
+      "offset": [
+        -2.9,
+        9.7,
+        5
+      ]
+    },
+    {
+      "id": "mn5",
+      "topic": "money",
+      "label": "Sunday money check",
+      "text": "Ten minutes every Sunday looking at the account, instead of avoiding it.",
+      "kind": "decision",
+      "date": "2026-11-09",
+      "source": "Budget chat",
+      "prompt": "When do you check your money?",
+      "offset": [
+        -11.7,
+        4.3,
+        -5
+      ]
+    },
+    {
+      "id": "mn6",
+      "topic": "money",
+      "label": "Avoiding it costs more",
+      "text": "Not looking at the balance made the worry bigger, not smaller.",
+      "kind": "insight",
+      "date": "2026-11-09",
+      "source": "Late-night chat",
+      "prompt": "What made the money worry worse?",
+      "offset": [
+        -11.7,
+        -4.3,
+        5
+      ]
+    },
+    {
+      "id": "mn7",
+      "topic": "money",
+      "label": "Small buffer first",
+      "text": "Save a small emergency buffer before anything else, even a little each month.",
+      "kind": "decision",
+      "date": "2026-11-09",
+      "source": "Budget chat",
+      "prompt": "What do you save for first?",
+      "offset": [
+        -2.9,
+        -9.7,
+        -5
+      ]
+    },
+    {
+      "id": "sl1",
+      "topic": "sleep-body",
+      "label": "Phone out by 11",
+      "text": "The phone charges outside the room at 11 so I stop scrolling in bed.",
+      "kind": "decision",
+      "date": "2026-11-09",
+      "source": "Late-night chat",
+      "prompt": "What happens at 11 every night?",
+      "offset": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "id": "sl2",
+      "topic": "sleep-body",
+      "label": "Tired makes worries louder",
+      "text": "On short sleep every worry feels twice as big.",
+      "kind": "insight",
+      "date": "2026-11-09",
+      "source": "Late-night chat",
+      "prompt": "What does short sleep do to your worries?",
+      "offset": [
+        13,
+        0,
+        5
+      ]
+    },
+    {
+      "id": "sl3",
+      "topic": "sleep-body",
+      "label": "Walk after lunch",
+      "text": "A twenty-minute walk after lunch clears the afternoon slump.",
+      "kind": "decision",
+      "date": "2026-11-09",
+      "source": "Habits chat",
+      "prompt": "What clears the afternoon slump?",
+      "offset": [
+        8.1,
+        7.8,
+        -5
+      ]
+    },
+    {
+      "id": "sl4",
+      "topic": "sleep-body",
+      "label": "Why wake at 4?",
+      "text": "Why do I keep waking at 4 a.m. with my mind racing?",
+      "kind": "question",
+      "date": "2026-11-09",
+      "source": "Late-night chat",
+      "prompt": "What keeps waking you up?",
+      "offset": [
+        -2.9,
+        9.7,
+        5
+      ]
+    },
+    {
+      "id": "sl5",
+      "topic": "sleep-body",
+      "label": "Write worries down",
+      "text": "Before bed, put every open thought on paper so my head can let go.",
+      "kind": "decision",
+      "date": "2026-11-09",
+      "source": "Late-night chat",
+      "prompt": "What do you do before bed?",
+      "offset": [
+        -11.7,
+        4.3,
+        -5
+      ]
+    },
+    {
+      "id": "sl6",
+      "topic": "sleep-body",
+      "label": "No coffee after 3",
+      "text": "Coffee after 3 p.m. shows up later as a bad night.",
+      "kind": "insight",
+      "date": "2026-11-09",
+      "source": "Habits chat",
+      "prompt": "When does coffee start hurting your sleep?",
+      "offset": [
+        -11.7,
+        -4.3,
+        5
+      ]
+    },
+    {
+      "id": "sl7",
+      "topic": "sleep-body",
+      "label": "Cook twice a week",
+      "text": "Cook two big meals a week instead of skipping dinner on study days.",
+      "kind": "decision",
+      "date": "2026-11-09",
+      "source": "Habits chat",
+      "prompt": "How will you eat better during exams?",
+      "offset": [
+        -2.9,
+        -9.7,
+        -5
+      ]
+    }
+  ],
+  "threads": [
+    {
+      "from": "mn6",
+      "to": "sl2",
+      "why": ""
+    },
+    {
+      "from": "hm1",
+      "to": "mn5",
+      "why": ""
+    },
+    {
+      "from": "hm6",
+      "to": "jb7",
+      "why": ""
+    },
+    {
+      "from": "ex3",
+      "to": "sl2",
+      "why": ""
+    },
+    {
+      "from": "ex2",
+      "to": "jb6",
+      "why": ""
+    },
+    {
+      "from": "mn3",
+      "to": "sl6",
+      "why": ""
+    },
+    {
+      "from": "ex3",
+      "to": "mn6",
+      "why": ""
+    },
+    {
+      "from": "hm6",
+      "to": "mn1",
+      "why": ""
+    },
+    {
+      "from": "mn3",
+      "to": "sl1",
+      "why": ""
+    },
+    {
+      "from": "ex7",
+      "to": "jb2",
+      "why": ""
+    },
+    {
+      "from": "hm4",
+      "to": "mn4",
+      "why": ""
+    },
+    {
+      "from": "ex3",
+      "to": "hm3",
+      "why": ""
+    },
+    {
+      "from": "hm3",
+      "to": "mn6",
+      "why": ""
+    },
+    {
+      "from": "ex3",
+      "to": "sl5",
+      "why": ""
+    },
+    {
+      "from": "hm3",
+      "to": "sl2",
+      "why": ""
+    },
+    {
+      "from": "hm6",
+      "to": "jb3",
+      "why": ""
+    },
+    {
+      "from": "ex1",
+      "to": "sl7",
+      "why": ""
+    },
+    {
+      "from": "hm7",
+      "to": "mn7",
+      "why": ""
+    },
+    {
+      "from": "jb3",
+      "to": "mn1",
+      "why": ""
+    },
+    {
+      "from": "jb1",
+      "to": "sl7",
+      "why": ""
+    },
+    {
+      "from": "ex7",
+      "to": "hm7",
+      "why": ""
+    }
+  ]
+}

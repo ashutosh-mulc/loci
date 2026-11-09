@@ -1,19 +1,46 @@
-// Seed the Loci cloud graph with the 35 curated thoughts from Assets/Scripts/PalaceData.ts.
-// Topics are kept as curated (topic_id); edges are generated automatically by the cloud.
-// Usage (from the repo root):  node --env-file=.env tools/palace-builder/seed_cloud.mjs
+// Seed the Loci cloud graph from a palace file.
+//   node --env-file=.env tools/palace-builder/seed_cloud.mjs                      → the curated PalaceData.ts
+//   node --env-file=.env tools/palace-builder/seed_cloud.mjs student-palace.json  → a palace JSON (topics + thoughts)
+//   add --replace to wipe the cloud graph first (needs SUPABASE_SERVICE_ROLE_KEY; prints a backup path).
+// Topics are kept as given (topic_id); links are found and judged by the cloud.
 // Needs SUPABASE_URL and SUPABASE_ANON_KEY in .env. Prints a summary, never the keys.
-import { readFileSync } from "node:fs"
+import { readFileSync, writeFileSync } from "node:fs"
+import { tmpdir } from "node:os"
+import { join } from "node:path"
 
 const url = process.env.SUPABASE_URL
 const key = process.env.SUPABASE_ANON_KEY
 if (!url || !key) { console.error("Set SUPABASE_URL and SUPABASE_ANON_KEY in .env"); process.exit(1) }
-const fn = `${url.replace(/\/$/, "")}/functions/v1/ingest`
+const base = url.replace(/\/$/, "")
+const fn = `${base}/functions/v1/ingest`
 const headers = { "Content-Type": "application/json", Authorization: `Bearer ${key}`, apikey: key }
+const args = process.argv.slice(2)
+const replace = args.includes("--replace")
+const file = args.find((a) => !a.startsWith("--"))
 
-// PalaceData.ts is our own generated file: take the object literal after "= " and evaluate it.
-const src = readFileSync(new URL("../../Assets/Scripts/PalaceData.ts", import.meta.url), "utf8")
-const literal = src.slice(src.indexOf("= {", src.indexOf("export const PALACE")) + 2).replace(/;\s*$/, "")
-const PALACE = Function(`"use strict"; return (${literal})`)()
+let PALACE
+if (file) {
+  PALACE = JSON.parse(readFileSync(new URL(file, new URL(".", import.meta.url)), "utf8"))
+} else {
+  // PalaceData.ts is our own generated file: take the object literal after "= " and evaluate it.
+  const src = readFileSync(new URL("../../Assets/Scripts/PalaceData.ts", import.meta.url), "utf8")
+  const literal = src.slice(src.indexOf("= {", src.indexOf("export const PALACE")) + 2).replace(/;\s*$/, "")
+  PALACE = Function(`"use strict"; return (${literal})`)()
+}
+
+if (replace) {
+  const service = process.env.SUPABASE_SERVICE_ROLE_KEY
+  if (!service) { console.error("--replace needs SUPABASE_SERVICE_ROLE_KEY in .env"); process.exit(1) }
+  const backup = join(tmpdir(), `loci-cloud-backup-${Date.now()}.json`)
+  writeFileSync(backup, JSON.stringify(await (await fetch(fn, { headers })).json(), null, 2))
+  console.log(`Backed up the current cloud palace to ${backup}`)
+  const admin = { apikey: service, Authorization: `Bearer ${service}`, Prefer: "return=minimal" }
+  for (const [table, col] of [["edges", "src"], ["nodes", "id"], ["topics", "id"]]) {
+    const r = await fetch(`${base}/rest/v1/${table}?${col}=not.is.null`, { method: "DELETE", headers: admin })
+    if (!r.ok) { console.error(`Wiping ${table} failed:`, r.status, await r.text()); process.exit(1) }
+  }
+  console.log("Wiped the cloud graph.")
+}
 
 const topicName = Object.fromEntries(PALACE.topics.map((t) => [t.id, t.name]))
 const items = PALACE.thoughts.map((t) => ({

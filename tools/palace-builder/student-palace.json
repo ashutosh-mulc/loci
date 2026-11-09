@@ -1,0 +1,51 @@
+{
+  "about": "Demo palace: a final-year student with too much on their mind, offloaded from late-night AI chats. Fictional, no names. Seeded to the cloud with seed_cloud.mjs; links between topics are found and judged by the cloud.",
+  "topics": [
+    { "id": "exams", "name": "Exams", "spot": "desk" },
+    { "id": "job-hunt", "name": "Job hunt", "spot": "shelf" },
+    { "id": "money", "name": "Money", "spot": "window" },
+    { "id": "sleep-body", "name": "Sleep and body", "spot": "door" },
+    { "id": "home", "name": "Home and family", "spot": "plant" }
+  ],
+  "thoughts": [
+    { "id": "ex1", "topic": "exams", "kind": "decision", "label": "Start with Statistics", "text": "Statistics is the exam I fear most, so it gets the first two weeks.", "prompt": "Which exam do you start with, and why?", "source": "Study planning chat", "date": "2026-10-27" },
+    { "id": "ex2", "topic": "exams", "kind": "decision", "label": "Past papers first", "text": "Do three past papers before rereading notes; the gaps show up faster that way.", "prompt": "What comes before rereading notes?", "source": "Study planning chat", "date": "2026-10-27" },
+    { "id": "ex3", "topic": "exams", "kind": "insight", "label": "Fear is uncertainty", "text": "The dread isn't the exam itself; it's not knowing what I don't know yet.", "prompt": "What is the exam dread really about?", "source": "Late-night chat", "date": "2026-10-30" },
+    { "id": "ex4", "topic": "exams", "kind": "decision", "label": "Ninety-minute blocks", "text": "Study in 90-minute blocks with a real break, not endless half-focused hours.", "prompt": "How long is one study block?", "source": "Study planning chat", "date": "2026-10-27" },
+    { "id": "ex5", "topic": "exams", "kind": "question", "label": "Drop the elective?", "text": "Is the extra elective worth the stress, or should I drop it this term?", "prompt": "What were you unsure about with the elective?", "source": "Late-night chat", "date": "2026-11-02" },
+    { "id": "ex6", "topic": "exams", "kind": "insight", "label": "Teach it back", "text": "Explaining a topic out loud shows what I actually understand.", "prompt": "How do you check you really understand something?", "source": "Study planning chat", "date": "2026-11-01" },
+    { "id": "ex7", "topic": "exams", "kind": "decision", "label": "Ask for an extension", "text": "Email about the project deadline now, not the night before it is due.", "prompt": "What will you ask for, and when?", "source": "Late-night chat", "date": "2026-11-04" },
+
+    { "id": "jb1", "topic": "job-hunt", "kind": "decision", "label": "Three applications weekly", "text": "Three good applications a week beats twenty rushed ones.", "prompt": "How many applications a week?", "source": "Career chat", "date": "2026-10-29" },
+    { "id": "jb2", "topic": "job-hunt", "kind": "insight", "label": "Projects beat grades", "text": "Recruiters asked about my projects, never about my grades.", "prompt": "What did recruiters actually ask about?", "source": "Career chat", "date": "2026-10-29" },
+    { "id": "jb3", "topic": "job-hunt", "kind": "question", "label": "Gap year okay?", "text": "Would a gap year look like drifting, or like a choice I can explain?", "prompt": "What was the gap-year worry?", "source": "Late-night chat", "date": "2026-11-03" },
+    { "id": "jb4", "topic": "job-hunt", "kind": "decision", "label": "Apply after exams", "text": "Keep applications light until exams end, then go all in.", "prompt": "When does the big job push start?", "source": "Career chat", "date": "2026-11-01" },
+    { "id": "jb5", "topic": "job-hunt", "kind": "insight", "label": "Silence isn't rejection", "text": "Most applications get no reply; silence is not a verdict on me.", "prompt": "What does no reply really mean?", "source": "Late-night chat", "date": "2026-11-05" },
+    { "id": "jb6", "topic": "job-hunt", "kind": "decision", "label": "One page CV", "text": "Cut the CV to one page with three project bullets.", "prompt": "What shape is the CV now?", "source": "Career chat", "date": "2026-10-29" },
+    { "id": "jb7", "topic": "job-hunt", "kind": "question", "label": "Masters or work?", "text": "Is a master's worth the debt, or should I work first and decide later?", "prompt": "Which choice is still open after graduation?", "source": "Career chat", "date": "2026-11-06" },
+
+    { "id": "mn1", "topic": "money", "kind": "decision", "label": "Rent due the 5th", "text": "Rent leaves on the 5th; move it across the day the stipend lands.", "prompt": "When does rent go out, and what do you do first?", "source": "Budget chat", "date": "2026-10-31" },
+    { "id": "mn2", "topic": "money", "kind": "decision", "label": "Cancel two subscriptions", "text": "Cancel the two streaming subscriptions I haven't opened in a month.", "prompt": "What will you cancel?", "source": "Budget chat", "date": "2026-10-31" },
+    { "id": "mn3", "topic": "money", "kind": "insight", "label": "Small leaks add up", "text": "Takeaway coffee and snacks cost more each month than my phone bill.", "prompt": "Where is money quietly leaking?", "source": "Budget chat", "date": "2026-10-31" },
+    { "id": "mn4", "topic": "money", "kind": "question", "label": "Part-time job now?", "text": "Can I take weekend shifts without hurting exam prep?", "prompt": "What were you weighing about part-time work?", "source": "Late-night chat", "date": "2026-11-02" },
+    { "id": "mn5", "topic": "money", "kind": "decision", "label": "Sunday money check", "text": "Ten minutes every Sunday looking at the account, instead of avoiding it.", "prompt": "When do you check your money?", "source": "Budget chat", "date": "2026-11-01" },
+    { "id": "mn6", "topic": "money", "kind": "insight", "label": "Avoiding it costs more", "text": "Not looking at the balance made the worry bigger, not smaller.", "prompt": "What made the money worry worse?", "source": "Late-night chat", "date": "2026-11-04" },
+    { "id": "mn7", "topic": "money", "kind": "decision", "label": "Small buffer first", "text": "Save a small emergency buffer before anything else, even a little each month.", "prompt": "What do you save for first?", "source": "Budget chat", "date": "2026-11-01" },
+
+    { "id": "sl1", "topic": "sleep-body", "kind": "decision", "label": "Phone out by 11", "text": "The phone charges outside the room at 11 so I stop scrolling in bed.", "prompt": "What happens at 11 every night?", "source": "Late-night chat", "date": "2026-10-28" },
+    { "id": "sl2", "topic": "sleep-body", "kind": "insight", "label": "Tired makes worries louder", "text": "On short sleep every worry feels twice as big.", "prompt": "What does short sleep do to your worries?", "source": "Late-night chat", "date": "2026-10-30" },
+    { "id": "sl3", "topic": "sleep-body", "kind": "decision", "label": "Walk after lunch", "text": "A twenty-minute walk after lunch clears the afternoon slump.", "prompt": "What clears the afternoon slump?", "source": "Habits chat", "date": "2026-11-01" },
+    { "id": "sl4", "topic": "sleep-body", "kind": "question", "label": "Why wake at 4?", "text": "Why do I keep waking at 4 a.m. with my mind racing?", "prompt": "What keeps waking you up?", "source": "Late-night chat", "date": "2026-11-03" },
+    { "id": "sl5", "topic": "sleep-body", "kind": "decision", "label": "Write worries down", "text": "Before bed, put every open thought on paper so my head can let go.", "prompt": "What do you do before bed?", "source": "Late-night chat", "date": "2026-11-03" },
+    { "id": "sl6", "topic": "sleep-body", "kind": "insight", "label": "No coffee after 3", "text": "Coffee after 3 p.m. shows up later as a bad night.", "prompt": "When does coffee start hurting your sleep?", "source": "Habits chat", "date": "2026-11-02" },
+    { "id": "sl7", "topic": "sleep-body", "kind": "decision", "label": "Cook twice a week", "text": "Cook two big meals a week instead of skipping dinner on study days.", "prompt": "How will you eat better during exams?", "source": "Habits chat", "date": "2026-11-05" },
+
+    { "id": "hm1", "topic": "home", "kind": "decision", "label": "Call home Sundays", "text": "A fixed Sunday call means fewer guilty calls in between.", "prompt": "When do you call home?", "source": "Family chat", "date": "2026-10-30" },
+    { "id": "hm2", "topic": "home", "kind": "question", "label": "Skip the wedding trip?", "text": "Can I say no to the family wedding trip during exams without upsetting everyone?", "prompt": "What were you unsure about saying no to?", "source": "Family chat", "date": "2026-11-02" },
+    { "id": "hm3", "topic": "home", "kind": "insight", "label": "They worry too", "text": "Family asks about jobs because they worry, not to judge me.", "prompt": "Why does family keep asking about jobs?", "source": "Family chat", "date": "2026-11-02" },
+    { "id": "hm4", "topic": "home", "kind": "decision", "label": "Share the plan once", "text": "Tell them the exam and job plan once, clearly, so the questions calm down.", "prompt": "How will you calm the family's questions?", "source": "Family chat", "date": "2026-11-04" },
+    { "id": "hm5", "topic": "home", "kind": "insight", "label": "Home is a reset", "text": "A weekend at home resets me more than another weekend of cramming.", "prompt": "What resets you best?", "source": "Late-night chat", "date": "2026-11-05" },
+    { "id": "hm6", "topic": "home", "kind": "question", "label": "Move back home?", "text": "Should I move back home after graduating to save on rent?", "prompt": "Which housing choice is still open?", "source": "Budget chat", "date": "2026-11-06" },
+    { "id": "hm7", "topic": "home", "kind": "decision", "label": "Say it early", "text": "Tell one person at home when it's getting too much, before it builds up.", "prompt": "What will you do when it gets too much?", "source": "Late-night chat", "date": "2026-11-06" }
+  ]
+}

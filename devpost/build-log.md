@@ -214,3 +214,19 @@ Prompt: "run the suggested loop" over `loci-review-v2.md` (one item per round: L
   - **Failed** before the controller change.
 - Environment: Lens Studio had run for 2 days at about 260% CPU and 12 GB. The preview stalled (a 53 s "settle"). After a restart it settles in 3.9 s.
 - LEAF: 1, 2, 3, 5, 6, 7, 8, 9, 10, 11 all **pass (10/10)**, run one at a time.
+
+## 2026-11-10: Performance pass (safe, no-baseline fixes)
+
+Prompt: "Find for sure fixes that are gonna help without needing to baseline." Only changes that do the same work with fewer engine calls or allocations; no visual or behaviour change.
+
+- Per-topic thought lists built once in indexData; `thoughtsAt()` no longer filters every thought into a new array each call (it ran every frame).
+- Meshes shared via a cache: one mesh per shape and size instead of one per star, orb and dot.
+- Dots share one material, orbs share one material (neither is ever changed after creation).
+- Star label scale kept in a script map; settled labels are no longer read or written every frame.
+- The twinkle loop visits only the open topic's stars, not every star.
+- Fewer per-frame `vec3` allocations (halo facing, bloom, gaze cluster centre).
+- Hint text colour is written only while it fades, not every frame.
+
+Skill choice: ls-clad `specs-lens-perf-attribution` → `specs-lens-perf-optimize` is the measured route; skipped for the deadline.
+
+LEAF (preview): 10/10 passed — loci-1-place, loci-2-explore-gaze, loci-3-star-card, loci-5-recall, loci-6-any-data, loci-7-same-spot, loci-8-threads, loci-9-reset-here, loci-10-aimed-label, loci-11-render-cost. TypeScript recompile clean; no runtime errors.
