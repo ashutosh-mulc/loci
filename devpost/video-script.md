@@ -36,7 +36,7 @@ Record two or three takes; they come out the same, so pick the smoothest.
 | 1:25–1:35 | "Round done" with counts per topic and a Go again button; pinch Explore to finish | Line 6 |
 | 1:35–1:55 | Palace switches to another person's guitar palace; topics fly out; a card opens | Line 7 |
 | 1:55–2:15 | Optional live shot: walk around the placed palace (WASD) | Line 8 |
-| 2:15–2:40 | Close: screen of LEAF results (8/8 pass) or the repo, then title again | Line 9 |
+| 2:15–2:40 | Close: screen of LEAF results (10/10 pass) or the repo, then title again | Line 9 |
 
 ## Voiceover script (about 330 words, 2:20 at a calm pace)
 
@@ -48,7 +48,7 @@ Record two or three takes; they come out the same, so pick the smoothest.
 6. "One question per topic makes a round. Round done shows what I recalled in each topic, and I can go again or stop."
 7. "And it isn't just mine. The palace is a data file. Here's someone else's — they're learning guitar. Same Lens, their topics, their room."
 8. "Everything stays where I put it as I move, with my eyes up and hands free."
-9. "I built Loci with Claude Code and CLAD in Lens Studio, using the Spectacles Interaction Kit and UI Kit. Every interaction is covered by LEAF tests running in the preview — placing, gaze to open, cards, Recall rounds, another user's palace, and the fixes from code review — all eight pass. Loci: remember what you figured out, where you live."
+9. "I built Loci with Claude Code and CLAD in Lens Studio, using the Spectacles Interaction Kit and UI Kit. Every interaction is covered by LEAF tests running in the preview — placing, gaze to open, cards, Recall rounds, another user's palace, and the fixes from code review — all ten pass. Loci: remember what you figured out, where you live."
 
 ## Honest limits to say (or put in the Devpost text)
 
