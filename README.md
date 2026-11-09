@@ -51,3 +51,7 @@ A memory palace works because ideas are tied to real places you move between; a 
 ## Repo map
 
 `Assets/Scripts/` (the Lens; `LociForceLayout.ts` is the layout physics), `Assets/Tests/` (LEAF), `supabase/` (graph schema and the `ingest` function), `tools/palace-builder/` (seed, sync, judge), `start.sh` (backend setup), `devpost/` (brief, data spec, design notes, build log, video script).
+
+## Licence
+
+MIT (`LICENSE`). Third-party packages under `Packages/` (Spectacles Interaction Kit, UI Kit, LEAF, Bitmoji 3D) keep their own licences.
